@@ -18,17 +18,15 @@
 
 package org.apache.skywalking.apm.agent.core.conf;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.jar.JarFile;
+
 import org.apache.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
 import org.apache.skywalking.apm.agent.core.boot.AgentPackagePath;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
@@ -47,6 +45,8 @@ public class SnifferConfigInitializer {
     private static String SPECIFIED_CONFIG_PATH = "skywalking_config";
     private static String DEFAULT_CONFIG_FILE_NAME = "/config/agent.config";
     private static String ENV_KEY_PREFIX = "skywalking.";
+    private static String BOOTSTRAP_FILE_NAME = "BOOT-INF/classes/bootstrap.properties";
+    private static String APPLICATION_NAME_KEY = "spring.application.name";
     private static boolean IS_INIT_COMPLETED = false;
 
     /**
@@ -83,6 +83,15 @@ public class SnifferConfigInitializer {
             logger.error(e, "Failed to read the system env.");
         }
 
+        //todo
+        String appName = readApplicationName();
+        if (appName != null) {
+            Config.Agent.APPLICATION_CODE = appName;
+        }
+
+        if (StringUtil.isEmpty(Config.Agent.APPLICATION_CODE)) {
+            throw new ExceptionInInitializerError("`agent.application_code` is missing.");
+        }
         if (!StringUtil.isEmpty(agentOptions)) {
             try {
                 agentOptions = agentOptions.trim();
@@ -195,5 +204,26 @@ public class SnifferConfigInitializer {
             }
         }
         throw new ConfigNotFoundException("Fail to load agent config file.");
+    }
+
+    /**
+     * 从业务的 Jar 包中读取服务的 application name
+     *
+     * @return
+     */
+    private static String readApplicationName() {
+        String appName = null;
+        try {
+            Properties prop = new Properties();
+            URL bizJarUrl =
+                    ((URLClassLoader) ConfigInitializer.class.getClassLoader()).getURLs()[0];
+            JarFile bizJar = new JarFile(bizJarUrl.getFile());
+            InputStream input = bizJar.getInputStream(bizJar.getEntry(BOOTSTRAP_FILE_NAME));
+            prop.load(input);
+            appName = prop.getProperty(APPLICATION_NAME_KEY);
+        } catch (Exception e) {
+            logger.error("Load bootstrap.properties error", e);
+        }
+        return appName;
     }
 }
