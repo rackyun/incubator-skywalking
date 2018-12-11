@@ -118,9 +118,9 @@ public class FileWriter implements IWriter, EventHandler<LogMessageHolder> {
             forceExecute(new Callable() {
                 @Override
                 public Object call() throws Exception {
-                    new File(Config.Logging.DIR, Config.Logging.FILE_NAME)
+                    new File(Config.Logging.DIR, getLogFilename())
                         .renameTo(new File(Config.Logging.DIR,
-                            Config.Logging.FILE_NAME + new SimpleDateFormat(".yyyy_MM_dd_HH_mm_ss").format(new Date())));
+                            getLogFilename() + new SimpleDateFormat(".yyyy_MM_dd_HH_mm_ss").format(new Date())));
                     return null;
                 }
             });
@@ -155,8 +155,8 @@ public class FileWriter implements IWriter, EventHandler<LogMessageHolder> {
                 System.err.println("Log dir(" + Config.Logging.DIR + ") is not a directory.");
             }
             try {
-                fileOutputStream = new FileOutputStream(new File(logFilePath, Config.Logging.FILE_NAME), true);
-                fileSize = Long.valueOf(new File(logFilePath, Config.Logging.FILE_NAME).length()).intValue();
+                fileOutputStream = new FileOutputStream(new File(logFilePath, getLogFilename()), true);
+                fileSize = Long.valueOf(new File(logFilePath, getLogFilename()).length()).intValue();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -175,5 +175,19 @@ public class FileWriter implements IWriter, EventHandler<LogMessageHolder> {
         } finally {
             buffer.publish(next);
         }
+    }
+
+    /**
+     * 获取日志的文件名
+     * 每个服务一个文件，互不影响
+     *
+     * @return
+     */
+    private String getLogFilename() {
+        String filename = Config.Logging.FILE_NAME;
+        if (!Config.Agent.APPLICATION_CODE.isEmpty()) {
+            filename = Config.Agent.APPLICATION_CODE + ".log";
+        }
+        return filename;
     }
 }
