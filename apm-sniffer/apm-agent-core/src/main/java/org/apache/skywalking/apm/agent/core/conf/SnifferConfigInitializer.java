@@ -29,6 +29,7 @@ import java.util.jar.JarFile;
 
 import org.apache.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
 import org.apache.skywalking.apm.agent.core.boot.AgentPackagePath;
+import org.apache.skywalking.apm.agent.core.boot.BizPackagePath;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.util.ConfigInitializer;
@@ -62,6 +63,13 @@ public class SnifferConfigInitializer {
      */
     public static void initialize(String agentOptions) throws ConfigNotFoundException, AgentPackageNotFoundException {
         InputStreamReader configFileStream;
+
+        // 读取业务 Jar 包目录，为了初始化日志的时候能写到业务目录
+        try {
+            BizPackagePath.getPath();
+        } catch (Exception e) {
+            logger.warn(e, "Failed to read the biz file path, skywalking is going use default log path.");
+        }
 
         try {
             configFileStream = loadConfig();

@@ -186,7 +186,7 @@ public class FileWriter implements IWriter, EventHandler<LogMessageHolder> {
     private String getLogFilename() {
         String filename = Config.Logging.FILE_NAME;
         if (!Config.Agent.APPLICATION_CODE.isEmpty()) {
-            filename = Config.Agent.APPLICATION_CODE + ".log";
+            filename = Config.Agent.APPLICATION_CODE + "-agent.log";
         }
         return filename;
     }
