@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import org.apache.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
 import org.apache.skywalking.apm.agent.core.boot.AgentPackagePath;
@@ -44,7 +45,8 @@ public class SnifferConfigInitializer {
     private static String SPECIFIED_CONFIG_PATH = "skywalking_config";
     private static String DEFAULT_CONFIG_FILE_NAME = "/config/agent.config";
     private static String ENV_KEY_PREFIX = "skywalking.";
-    private static String BOOTSTRAP_FILE_NAME = "BOOT-INF/classes/bootstrap.properties";
+    private static String BOOTSTRAP_FILE_PATH = "BOOT-INF/classes/";
+    private static String BOOTSTRAP_FILE_NAME = "bootstrap.properties";
     private static String APPLICATION_NAME_KEY = "spring.application.name";
     private static boolean IS_INIT_COMPLETED = false;
 
@@ -164,7 +166,14 @@ public class SnifferConfigInitializer {
             URL bizJarUrl =
                     ((URLClassLoader) ConfigInitializer.class.getClassLoader()).getURLs()[0];
             JarFile bizJar = new JarFile(bizJarUrl.getFile());
-            InputStream input = bizJar.getInputStream(bizJar.getEntry(BOOTSTRAP_FILE_NAME));
+
+            // 尝试从 BOOT-INF/classes/ 读取，读不到则从根目录读
+            ZipEntry bootfile = bizJar.getEntry(BOOTSTRAP_FILE_PATH + BOOTSTRAP_FILE_NAME);
+            if (bootfile == null) {
+                bootfile = bizJar.getEntry(BOOTSTRAP_FILE_NAME);
+            }
+
+            InputStream input = bizJar.getInputStream(bootfile);
             prop.load(input);
             appName = prop.getProperty(APPLICATION_NAME_KEY);
         } catch (Exception e) {
