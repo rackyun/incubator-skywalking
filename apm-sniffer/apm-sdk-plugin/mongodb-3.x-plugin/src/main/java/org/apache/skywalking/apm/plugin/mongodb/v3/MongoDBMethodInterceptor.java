@@ -201,7 +201,7 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Cluster cluster = (Cluster)allArguments[0];
         StringBuilder peers = new StringBuilder();
-        for (ServerDescription description : cluster.getDescription().getServerDescriptions()) {
+        for (ServerDescription description : cluster.getDescription().getAll()) {
             ServerAddress address = description.getAddress();
             peers.append(address.getHost() + ":" + address.getPort() + ";");
         }
