@@ -19,6 +19,7 @@
 package org.apache.skywalking.oap.server.receiver.trace.provider.parser.listener.segment;
 
 import org.apache.skywalking.apm.network.language.agent.UniqueId;
+import org.apache.skywalking.apm.util.HexUtil;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.cache.EndpointInventoryCache;
 import org.apache.skywalking.oap.server.core.source.Segment;
@@ -102,15 +103,16 @@ public class SegmentSpanListener implements FirstSpanListener, EntrySpanListener
             return;
         }
 
-        StringBuilder traceIdBuilder = new StringBuilder();
+        /*StringBuilder traceIdBuilder = new StringBuilder();
         for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
             if (i == 0) {
                 traceIdBuilder.append(uniqueId.getIdPartsList().get(i));
             } else {
                 traceIdBuilder.append(".").append(uniqueId.getIdPartsList().get(i));
             }
-        }
-        segment.setTraceId(traceIdBuilder.toString());
+        }*/
+//        segment.setTraceId(traceIdBuilder.toString());
+        segment.setTraceId(HexUtil.traceIdToString(uniqueId.getIdParts(0), uniqueId.getIdParts(1), uniqueId.getIdParts(2)));
     }
 
     @Override public void build() {

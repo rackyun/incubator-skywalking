@@ -36,55 +36,58 @@ public class IgnoredTracerContext implements AbstractTracerContext {
     private static final NoopSpan NOOP_SPAN = new NoopSpan();
 
     private int stackDepth;
+    private TracingContext delegate;
 
     public IgnoredTracerContext() {
         this.stackDepth = 0;
+        delegate = new TracingContext();
     }
 
     @Override
     public void inject(ContextCarrier carrier) {
-
+        delegate.inject(carrier);
+        carrier.setSampled(false);
     }
 
     @Override
     public void extract(ContextCarrier carrier) {
-
+        delegate.extract(carrier);
     }
 
     @Override public ContextSnapshot capture() {
-        return new ContextSnapshot(null, -1, null);
+        return delegate.capture();
     }
 
     @Override public void continued(ContextSnapshot snapshot) {
-
+        delegate.continued(snapshot);
     }
 
     @Override
     public String getReadableGlobalTraceId() {
-        return "[Ignored Trace]";
+        return delegate.getReadableGlobalTraceId();
     }
 
     @Override
     public AbstractSpan createEntrySpan(String operationName) {
         stackDepth++;
-        return NOOP_SPAN;
+        return delegate.createEntrySpan(operationName);
     }
 
     @Override
     public AbstractSpan createLocalSpan(String operationName) {
         stackDepth++;
-        return NOOP_SPAN;
+        return delegate.createLocalSpan(operationName);
     }
 
     @Override
     public AbstractSpan createExitSpan(String operationName, String remotePeer) {
         stackDepth++;
-        return NOOP_SPAN;
+        return delegate.createExitSpan(operationName, remotePeer);
     }
 
     @Override
     public AbstractSpan activeSpan() {
-        return NOOP_SPAN;
+        return delegate.activeSpan();
     }
 
     @Override

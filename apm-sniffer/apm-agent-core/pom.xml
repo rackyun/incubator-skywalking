@@ -149,6 +149,12 @@
             <version>${ststem-rules.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+            <scope>provide</scope>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

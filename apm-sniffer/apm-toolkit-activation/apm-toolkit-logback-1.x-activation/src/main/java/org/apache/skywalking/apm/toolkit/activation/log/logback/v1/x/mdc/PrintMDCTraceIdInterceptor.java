@@ -22,6 +22,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.util.StringUtil;
 
 import java.lang.reflect.Method;
 
@@ -36,7 +37,11 @@ public class PrintMDCTraceIdInterceptor implements InstanceMethodsAroundIntercep
 
     @Override public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Object ret) throws Throwable {
-        return "TID:" + ContextManager.getGlobalTraceId();
+        String traceStr = "";
+        if (!StringUtil.isEmpty(ContextManager.getGlobalTraceId())) {
+            traceStr = String.format("{\"TraceId\":\"%s\",\"SpanId\":%s}", ContextManager.getGlobalTraceId(), ContextManager.getCurrentSpanId());
+        }
+        return traceStr;
     }
 
     @Override public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,

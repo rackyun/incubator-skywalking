@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
+import org.apache.skywalking.apm.util.StringUtil;
 
 /**
  * Created by wusheng on 2016/12/7.
@@ -36,7 +37,11 @@ public class PrintTraceIdInterceptor implements StaticMethodsAroundInterceptor {
      */
     @Override public void beforeMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes,
         MethodInterceptResult result) {
-        ((StringBuilder)allArguments[0]).append("TID:" + ContextManager.getGlobalTraceId());
+        String traceStr = "";
+        if (!StringUtil.isEmpty(ContextManager.getGlobalTraceId())) {
+            traceStr = String.format("{\"TraceId\":\"%s\",\"SpanId\":%s}", ContextManager.getGlobalTraceId(), ContextManager.getCurrentSpanId());
+        }
+        ((StringBuilder)allArguments[0]).append(traceStr);
 
         //make sure origin method do not invoke.
         result.defineReturnValue(null);

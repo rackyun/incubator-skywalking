@@ -20,6 +20,8 @@
 package org.apache.skywalking.apm.agent.core.context.ids;
 
 import org.apache.skywalking.apm.network.language.agent.*;
+import org.apache.skywalking.apm.util.HexUtil;
+
 /**
  * @author wusheng
  */
@@ -39,7 +41,7 @@ public class ID {
     }
 
     public ID(String encodingString) {
-        String[] idParts = encodingString.split("\\.", 3);
+        /*String[] idParts = encodingString.split("\\.", 3);
         this.isValid = true;
         for (int part = 0; part < 3; part++) {
             try {
@@ -55,6 +57,15 @@ public class ID {
                 break;
             }
 
+        }*/
+        this.isValid = true;
+        long[] parts = HexUtil.stringToIDParts(encodingString);
+        try {
+            part1 = parts[0];
+            part2 = parts[1];
+            part3 = parts[2];
+        } catch (Exception e) {
+            this.isValid = false;
         }
     }
 
@@ -66,7 +77,8 @@ public class ID {
     }
 
     @Override public String toString() {
-        return part1 + "." + part2 + '.' + part3;
+        //return part1 + "." + part2 + '.' + part3;
+        return HexUtil.traceIdToString(part1, part2, part3);
     }
 
     @Override public boolean equals(Object o) {

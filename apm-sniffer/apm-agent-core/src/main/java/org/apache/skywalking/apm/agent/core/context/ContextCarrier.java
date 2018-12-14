@@ -76,6 +76,12 @@ public class ContextCarrier implements Serializable {
      */
     private DistributedTraceId primaryDistributedTraceId;
 
+
+    /**
+     * whether the data is sampled.
+     */
+    private boolean isSampled = true;
+
     public CarrierItem items() {
         CarrierItemHead head;
         if (Config.Agent.ACTIVE_V2_HEADER && Config.Agent.ACTIVE_V1_HEADER) {
@@ -111,7 +117,8 @@ public class ContextCarrier implements Serializable {
                         this.getPeerHost(),
                         this.getEntryEndpointName(),
                         this.getParentEndpointName(),
-                        this.getPrimaryDistributedTraceId().encode());
+                        this.getPrimaryDistributedTraceId().encode(),
+                        String.valueOf(this.isSampled));
                 } else {
                     return "";
                 }
@@ -126,7 +133,8 @@ public class ContextCarrier implements Serializable {
                         this.getEntryServiceInstanceId() + "",
                         Base64.encode(this.getPeerHost()),
                         Base64.encode(this.getEntryEndpointName()),
-                        Base64.encode(this.getParentEndpointName()));
+                        Base64.encode(this.getParentEndpointName()),
+                        Base64.encode(String.valueOf(this.isSampled)));
                 } else {
                     return "";
                 }
@@ -148,8 +156,8 @@ public class ContextCarrier implements Serializable {
                 return this;
             }
             if (HeaderVersion.v1.equals(version)) {
-                String[] parts = text.split("\\|", 8);
-                if (parts.length == 8) {
+                String[] parts = text.split("\\|", 9);
+                if (parts.length == 8 || parts.length == 9) {
                     try {
                         this.traceSegmentId = new ID(parts[0]);
                         this.spanId = Integer.parseInt(parts[1]);
@@ -159,13 +167,16 @@ public class ContextCarrier implements Serializable {
                         this.entryEndpointName = parts[5];
                         this.parentEndpointName = parts[6];
                         this.primaryDistributedTraceId = new PropagatedTraceId(parts[7]);
+                        if (parts.length == 9) {
+                            this.isSampled = Boolean.valueOf(parts[8]);
+                        }
                     } catch (NumberFormatException e) {
 
                     }
                 }
             } else if (HeaderVersion.v2.equals(version)) {
-                String[] parts = text.split("\\-", 9);
-                if (parts.length == 9) {
+                String[] parts = text.split("\\-", 10);
+                if (parts.length == 9 || parts.length == 10) {
                     try {
                         // parts[0] is sample flag, always trace if header exists.
                         this.primaryDistributedTraceId = new PropagatedTraceId(Base64.decode2UTFString(parts[1]));
@@ -176,6 +187,9 @@ public class ContextCarrier implements Serializable {
                         this.peerHost = Base64.decode2UTFString(parts[6]);
                         this.entryEndpointName = Base64.decode2UTFString(parts[7]);
                         this.parentEndpointName = Base64.decode2UTFString(parts[8]);
+                        if (parts.length == 10) {
+                            this.isSampled = Boolean.valueOf(Base64.decode2UTFString(parts[8]));
+                        }
                     } catch (NumberFormatException e) {
 
                     }
@@ -302,5 +316,12 @@ public class ContextCarrier implements Serializable {
 
     public enum HeaderVersion {
         v1, v2
+    }
+    public boolean isSampled() {
+        return isSampled;
+    }
+
+    public void setSampled(boolean sampled) {
+        isSampled = sampled;
     }
 }

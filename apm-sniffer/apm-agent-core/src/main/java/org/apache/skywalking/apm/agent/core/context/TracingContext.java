@@ -232,7 +232,7 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public String getReadableGlobalTraceId() {
-        return segment.getRelatedGlobalTraces().get(0).toString();
+        return segment.getRelatedGlobalTraces().get(0).encode();
     }
 
     /**
