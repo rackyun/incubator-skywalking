@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.skywalking.apm.agent.core.context.CarrierItem;
 import org.apache.skywalking.apm.agent.core.context.ContextCarrier;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
+import org.apache.skywalking.apm.agent.core.context.XIdCarrierItem;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
@@ -32,6 +33,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceM
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.apache.skywalking.apm.plugin.spring.mvc.commons.EnhanceRequireObjectCache;
+import org.apache.skywalking.apm.util.StringUtil;
 
 import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.FORWARD_REQUEST_FLAG;
 import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.REQUEST_KEY_IN_RUNTIME_CONTEXT;
@@ -73,11 +75,24 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
                 next.setHeadValue(request.getHeader(next.getHeadKey()));
             }
 
+            setXIdCarrier(contextCarrier, request, requestURL);
+
             AbstractSpan span = ContextManager.createEntrySpan(requestURL, contextCarrier);
             Tags.URL.set(span, request.getRequestURL().toString());
             Tags.HTTP.METHOD.set(span, request.getMethod());
             span.setComponent(ComponentsDefine.SPRING_MVC_ANNOTATION);
             SpanLayer.asHttp(span);
+        }
+    }
+
+    private void setXIdCarrier(ContextCarrier contextCarrier, HttpServletRequest request, String requestURL) {
+        String requestId = request.getHeader(XIdCarrierItem.HEADER_NAME);
+        if (!contextCarrier.isValid() && !StringUtil.isEmpty(requestId)) {
+            XIdCarrierItem.XIdCarrierValue carrierValue =
+                    new XIdCarrierItem.XIdCarrierValue(requestURL,
+                            request.getRemoteHost(), request.getHeader(XIdCarrierItem.DEVICE_NAME));
+            XIdCarrierItem carrierItem = new XIdCarrierItem(contextCarrier, null, carrierValue);
+            carrierItem.setHeadValue(requestId);
         }
     }
 

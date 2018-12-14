@@ -42,7 +42,6 @@
 
     <modules>
         <module>optional-spring-plugins</module>
-        <module>trace-ignore-plugin</module>
     </modules>
 
     <dependencies>

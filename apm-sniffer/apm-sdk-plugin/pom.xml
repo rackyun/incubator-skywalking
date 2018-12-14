@@ -60,6 +60,8 @@
         <module>activemq-5.x-plugin</module>
         <module>elasticsearch-5.x-plugin</module>
         <module>undertow-plugins</module>
+        <module>trace-ignore-plugin</module>
+        <module>hbase-1.x-plugin</module>
     </modules>
     <packaging>pom</packaging>
 

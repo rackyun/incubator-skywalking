@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.CallbackInstrumentation
-kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.KafkaConsumerInstrumentation
-kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.KafkaProducerInstrumentation
-kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.ProducerRecordInstrumentation
+# kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.CallbackInstrumentation
+# kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.KafkaConsumerInstrumentation
+# kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.KafkaProducerInstrumentation
+# kafka-0.11.x=org.apache.skywalking.apm.plugin.kafka.v1.define.ProducerRecordInstrumentation

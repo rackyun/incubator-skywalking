@@ -78,6 +78,12 @@ public class ContextCarrier implements Serializable {
      */
     private DistributedTraceId primaryDistributedTraceId;
 
+
+    /**
+     * whether the data is sampled.
+     */
+    private boolean isSampled = true;
+
     public CarrierItem items() {
         SW3CarrierItem carrierItem = new SW3CarrierItem(this, null);
         CarrierItemHead head = new CarrierItemHead(carrierItem);
@@ -100,7 +106,8 @@ public class ContextCarrier implements Serializable {
                 this.getPeerHost(),
                 this.getEntryOperationName(),
                 this.getParentOperationName(),
-                this.getPrimaryDistributedTraceId().encode());
+                this.getPrimaryDistributedTraceId().encode(),
+                String.valueOf(this.isSampled));
         } else {
             return "";
         }
@@ -113,8 +120,8 @@ public class ContextCarrier implements Serializable {
      */
     ContextCarrier deserialize(String text) {
         if (text != null) {
-            String[] parts = text.split("\\|", 8);
-            if (parts.length == 8) {
+            String[] parts = text.split("\\|", 9);
+            if (parts.length == 8 || parts.length == 9) {
                 try {
                     this.traceSegmentId = new ID(parts[0]);
                     this.spanId = Integer.parseInt(parts[1]);
@@ -124,6 +131,9 @@ public class ContextCarrier implements Serializable {
                     this.entryOperationName = parts[5];
                     this.parentOperationName = parts[6];
                     this.primaryDistributedTraceId = new PropagatedTraceId(parts[7]);
+                    if (parts.length == 9) {
+                        this.isSampled = Boolean.valueOf(parts[8]);
+                    }
                 } catch (NumberFormatException e) {
 
                 }
@@ -229,4 +239,11 @@ public class ContextCarrier implements Serializable {
         this.entryApplicationInstanceId = entryApplicationInstanceId;
     }
 
+    public boolean isSampled() {
+        return isSampled;
+    }
+
+    public void setSampled(boolean sampled) {
+        isSampled = sampled;
+    }
 }

@@ -22,6 +22,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.util.*;
 import lombok.Setter;
 import org.apache.skywalking.apm.network.language.agent.*;
+import org.apache.skywalking.apm.util.HexUtil;
 import org.apache.skywalking.oap.server.library.buffer.DataStreamReader;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.TimeBucketUtils;
@@ -90,19 +91,22 @@ public class SegmentParse {
     private boolean preBuild(List<UniqueId> traceIds, SegmentDecorator segmentDecorator) {
         StringBuilder segmentIdBuilder = new StringBuilder();
 
-        for (int i = 0; i < segmentDecorator.getTraceSegmentId().getIdPartsList().size(); i++) {
-            if (i == 0) {
-                segmentIdBuilder.append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
-            } else {
-                segmentIdBuilder.append(".").append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
-            }
-        }
+//        for (int i = 0; i < segmentDecorator.getTraceSegmentId().getIdPartsList().size(); i++) {
+//            if (i == 0) {
+//                segmentIdBuilder.append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
+//            } else {
+//                segmentIdBuilder.append(".").append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
+//            }
+//        }
 
         for (UniqueId uniqueId : traceIds) {
             notifyGlobalsListener(uniqueId);
         }
+        UniqueId uniqueId = segmentDecorator.getTraceSegmentId();
+        String segmentId = HexUtil.traceIdToString(uniqueId.getIdParts(0), uniqueId.getIdParts(1),
+                uniqueId.getIdParts(2));
 
-        segmentCoreInfo.setSegmentId(segmentIdBuilder.toString());
+        segmentCoreInfo.setSegmentId(segmentId);
         segmentCoreInfo.setApplicationId(segmentDecorator.getApplicationId());
         segmentCoreInfo.setApplicationInstanceId(segmentDecorator.getApplicationInstanceId());
         segmentCoreInfo.setDataBinary(segmentDecorator.toByteArray());

@@ -21,6 +21,7 @@ package org.apache.skywalking.oap.server.core.query;
 import java.io.IOException;
 import java.util.*;
 import org.apache.skywalking.apm.network.language.agent.*;
+import org.apache.skywalking.apm.util.HexUtil;
 import org.apache.skywalking.oap.server.core.*;
 import org.apache.skywalking.oap.server.core.analysis.manual.segment.SegmentRecord;
 import org.apache.skywalking.oap.server.core.cache.*;
@@ -190,14 +191,17 @@ public class TraceQueryService implements Service {
 
                 UniqueId uniqueId = reference.getParentTraceSegmentId();
                 StringBuilder segmentIdBuilder = new StringBuilder();
-                for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
+                /*for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
                     if (i == 0) {
                         segmentIdBuilder.append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                     } else {
                         segmentIdBuilder.append(".").append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                     }
-                }
-                ref.setParentSegmentId(segmentIdBuilder.toString());
+                }*/
+
+//                ref.setParentSegmentId(segmentIdBuilder.toString());
+                ref.setParentSegmentId(HexUtil.traceIdToString(uniqueId.getIdParts(0),
+                        uniqueId.getIdParts(1), uniqueId.getIdParts(2)));
 
                 span.setSegmentParentSpanId(ref.getParentSegmentId() + Const.SEGMENT_SPAN_SPLIT + String.valueOf(ref.getParentSpanId()));
 

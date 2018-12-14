@@ -104,7 +104,7 @@ public class ContextManagerTest {
 
     @Test
     public void createMultipleEntrySpan() {
-        ContextCarrier contextCarrier = new ContextCarrier().deserialize("1.2343.234234234|1|1|1|#127.0.0.1:8080|#/portal/|#/testEntrySpan|1.2343.234234234");
+        ContextCarrier contextCarrier = new ContextCarrier().deserialize("0000003f000000760036e004ac15b451|1|1|1|#127.0.0.1:8080|#/portal/|#/testEntrySpan|0000003f000000760036e004ac15b451");
         assertTrue(contextCarrier.isValid());
 
         AbstractSpan firstEntrySpan = ContextManager.createEntrySpan("/testFirstEntry", contextCarrier);

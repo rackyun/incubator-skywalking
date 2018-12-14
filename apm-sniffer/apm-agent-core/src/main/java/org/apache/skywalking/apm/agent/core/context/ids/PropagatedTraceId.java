@@ -28,4 +28,8 @@ public class PropagatedTraceId extends DistributedTraceId {
     public PropagatedTraceId(String id) {
         super(id);
     }
+
+    public PropagatedTraceId(ID id) {
+        super(id);
+    }
 }

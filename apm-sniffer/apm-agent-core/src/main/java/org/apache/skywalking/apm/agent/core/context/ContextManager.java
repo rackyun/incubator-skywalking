@@ -20,12 +20,17 @@ package org.apache.skywalking.apm.agent.core.context;
 
 import org.apache.skywalking.apm.agent.core.boot.BootService;
 import org.apache.skywalking.apm.agent.core.boot.ServiceManager;
+import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.conf.RemoteDownstreamConfig;
+import org.apache.skywalking.apm.agent.core.context.logging.Slf4jMDCSpanLog;
+import org.apache.skywalking.apm.agent.core.context.logging.SpanLog;
+import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.apache.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
+import org.apache.skywalking.apm.agent.core.os.OSUtil;
 import org.apache.skywalking.apm.agent.core.sampling.SamplingService;
 import org.apache.skywalking.apm.util.StringUtil;
 
@@ -44,8 +49,9 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     private static ThreadLocal<AbstractTracerContext> CONTEXT = new ThreadLocal<AbstractTracerContext>();
     private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new ThreadLocal<RuntimeContext>();
     private static ContextManagerExtendService EXTEND_SERVICE;
+    private static SpanLog SPANLOG = new Slf4jMDCSpanLog();
 
-    private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling) {
+    private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling, boolean forceIgnore) {
         AbstractTracerContext context = CONTEXT.get();
         if (EXTEND_SERVICE == null) {
             EXTEND_SERVICE = ServiceManager.INSTANCE.findService(ContextManagerExtendService.class);
@@ -58,8 +64,9 @@ public class ContextManager implements TracingContextListener, BootService, Igno
                 context = new IgnoredTracerContext();
             } else {
                 if (RemoteDownstreamConfig.Agent.APPLICATION_ID != DictionaryUtil.nullValue()
-                    && RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()
-                    ) {
+                        && RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()
+                        && !forceIgnore
+                ) {
                     context = EXTEND_SERVICE.createTraceContext(operationName, forceSampling);
                 } else {
                     /**
@@ -73,6 +80,10 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         return context;
     }
 
+    private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling) {
+        return getOrCreate(operationName, forceSampling, false);
+    }
+
     private static AbstractTracerContext get() {
         return CONTEXT.get();
     }
@@ -83,9 +94,21 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     public static String getGlobalTraceId() {
         AbstractTracerContext segment = CONTEXT.get();
         if (segment == null) {
-            return "N/A";
+            return "";
         } else {
             return segment.getReadableGlobalTraceId();
+        }
+    }
+
+    /**
+     * @return the current span id if have. Otherwise, empty string "".
+     */
+    public static String getCurrentSpanId() {
+        AbstractTracerContext segment = CONTEXT.get();
+        if (segment == null) {
+            return "";
+        } else {
+            return segment.activeSpan() != null ? String.valueOf(segment.activeSpan().getSpanId()) : "";
         }
     }
 
@@ -94,20 +117,29 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         AbstractSpan span;
         AbstractTracerContext context;
         if (carrier != null && carrier.isValid()) {
-            samplingService.forceSampled();
-            context = getOrCreate(operationName, true);
+            if (carrier.isSampled()) {
+                samplingService.forceSampled();
+                context = getOrCreate(operationName, true);
+            } else {
+                context = getOrCreate(operationName, false, true);
+            }
             span = context.createEntrySpan(operationName);
             context.extract(carrier);
         } else {
             context = getOrCreate(operationName, false);
             span = context.createEntrySpan(operationName);
         }
+        setServiceInstanceTag(span);
+        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
         return span;
     }
 
     public static AbstractSpan createLocalSpan(String operationName) {
         AbstractTracerContext context = getOrCreate(operationName, false);
-        return context.createLocalSpan(operationName);
+        AbstractSpan span = context.createLocalSpan(operationName);
+        setServiceInstanceTag(span);
+        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        return span;
     }
 
     public static AbstractSpan createExitSpan(String operationName, ContextCarrier carrier, String remotePeer) {
@@ -117,13 +149,21 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         AbstractTracerContext context = getOrCreate(operationName, false);
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
         context.inject(carrier);
+        setServiceInstanceTag(span);
+        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
         return span;
     }
 
     public static AbstractSpan createExitSpan(String operationName, String remotePeer) {
         AbstractTracerContext context = getOrCreate(operationName, false);
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
+        setServiceInstanceTag(span);
+        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
         return span;
+    }
+
+    private static void setServiceInstanceTag(AbstractSpan span) {
+        Tags.SERVICE_INSTANCE.set(span, OSUtil.getHostName() + "-" + Config.Agent.APPLICATION_CODE);
     }
 
     public static void inject(ContextCarrier carrier) {
@@ -158,10 +198,12 @@ public class ContextManager implements TracingContextListener, BootService, Igno
 
     public static void stopSpan() {
         stopSpan(activeSpan());
+
     }
 
     public static void stopSpan(AbstractSpan span) {
         get().stopSpan(span);
+        SPANLOG.logStoppedSpan(getGlobalTraceId(), span, activeSpan());
     }
 
     @Override
@@ -180,7 +222,8 @@ public class ContextManager implements TracingContextListener, BootService, Igno
 
     }
 
-    @Override public void shutdown() throws Throwable {
+    @Override
+    public void shutdown() throws Throwable {
 
     }
 

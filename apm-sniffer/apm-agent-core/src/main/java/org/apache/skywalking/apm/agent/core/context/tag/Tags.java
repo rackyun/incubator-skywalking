@@ -77,4 +77,9 @@ public final class Tags {
     public static final class HTTP {
         public static final StringTag METHOD = new StringTag("http.method");
     }
+
+    /**
+     * SERVICE_INSTANCE records the service host and port.
+     */
+    public static final StringTag SERVICE_INSTANCE = new StringTag("service.instance");
 }
