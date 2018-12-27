@@ -25,6 +25,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 
 /**
  * {@link EnqueueInterceptor} create a local span and the prefix of the span operation name is start with `Async` when
@@ -39,7 +40,8 @@ public class EnqueueInterceptor implements InstanceMethodsAroundInterceptor, Ins
         MethodInterceptResult result) throws Throwable {
         EnhancedInstance callbackInstance = (EnhancedInstance)allArguments[0];
         Request request = (Request)objInst.getSkyWalkingDynamicField();
-        ContextManager.createLocalSpan("Async" + request.url().uri().getPath());
+        String operationName = OperationNameUtil.normalizeUrl("Async" + request.url().uri().getPath());
+        ContextManager.createLocalSpan(operationName);
 
         /**
          * Here is the process about how to trace the async function.

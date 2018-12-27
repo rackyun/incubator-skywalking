@@ -16,8 +16,9 @@
  *
  */
 
-package org.apache.skywalking.apm.agent.core.context.logging;
+package org.apache.skywalking.apm.toolkit.activation.log.infra.mdc;
 
+import org.apache.skywalking.apm.agent.core.context.logging.SpanLog;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.slf4j.MDC;
 
@@ -27,7 +28,7 @@ import org.slf4j.MDC;
  */
 public class Slf4jMDCSpanLog implements SpanLog {
 
-    private static final String TRACE_ID_NAME = "traceid";
+    private static final String TRACE_ID_NAME = "traceId";
     private static final String SPAN_ID_NAME = "span";
 
     @Override
@@ -41,6 +42,7 @@ public class Slf4jMDCSpanLog implements SpanLog {
     @Override
     public void logStoppedSpan(String globalTraceId, AbstractSpan stoppedSpan, AbstractSpan parentSpan) {
         if (parentSpan != null) {
+            MDC.put(TRACE_ID_NAME, globalTraceId);
             MDC.put(SPAN_ID_NAME, String.valueOf(parentSpan.getSpanId()));
         } else {
             MDC.remove(TRACE_ID_NAME);

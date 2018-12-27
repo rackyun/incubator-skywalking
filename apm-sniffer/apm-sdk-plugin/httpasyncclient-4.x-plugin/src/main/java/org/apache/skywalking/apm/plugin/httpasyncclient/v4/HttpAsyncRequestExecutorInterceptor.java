@@ -31,6 +31,7 @@ import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
 import java.lang.reflect.Method;
@@ -58,7 +59,7 @@ public class HttpAsyncRequestExecutorInterceptor implements InstanceMethodsAroun
 
         RequestLine requestLine = requestWrapper.getRequestLine();
         String uri = requestLine.getUri();
-        String operationName = uri.startsWith("http") ? new URL(uri).getPath() : uri;
+        String operationName = OperationNameUtil.normalizeUrl(uri.startsWith("http") ? new URL(uri).getPath() : uri);
         int port = httpHost.getPort();
         AbstractSpan span = ContextManager.createExitSpan(operationName, contextCarrier, httpHost.getHostName() + ":" + (port == -1 ? 80 : port));
         span.setComponent(ComponentsDefine.HTTP_ASYNC_CLIENT);

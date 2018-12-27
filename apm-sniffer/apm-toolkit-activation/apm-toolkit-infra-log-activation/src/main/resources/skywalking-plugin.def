@@ -14,4 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-trace.ignore_path=Kafka/zipkin2/*,/eureka/**,/health,/info,/actuator/**,Mysql/JDBI/Connection/close
+infra-log-activation=org.apache.skywalking.apm.toolkit.activation.log.infra.mdc.Log4j2MDCAdapterInstrumentation
+infra-log-activation=org.apache.skywalking.apm.toolkit.activation.log.infra.mdc.LogbackMDCAdapterInstrumentation

@@ -34,6 +34,7 @@ import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
 public class HttpClientExecuteInterceptor implements InstanceMethodsAroundInterceptor {
@@ -53,7 +54,7 @@ public class HttpClientExecuteInterceptor implements InstanceMethodsAroundInterc
 
         String uri = httpRequest.getRequestLine().getUri();
         String requestURI = getRequestURI(uri);
-        String operationName = uri.startsWith("http") ? requestURI : uri;
+        String operationName = OperationNameUtil.normalizeUrl(uri.startsWith("http") ? requestURI : uri);
         AbstractSpan span = ContextManager.createExitSpan(operationName, contextCarrier, remotePeer);
 
         span.setComponent(ComponentsDefine.HTTPCLIENT);
