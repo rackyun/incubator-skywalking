@@ -63,7 +63,7 @@ public class SnifferConfigInitializer {
     public static void initialize() throws ConfigNotFoundException, AgentPackageNotFoundException {
         InputStreamReader configFileStream;
 
-        // 读取业务 Jar 包目录，为了初始化日志的时候能写到业务目录
+        // Reads the business Jar package directory so that it can be written to the business directory when the log is initialized
         try {
             BizPackagePath.getPath();
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class SnifferConfigInitializer {
     }
 
     /**
-     * 从业务的 Jar 包中读取服务的 application name
+     * The application name of the service is read from the Jar package of the business
      *
      * @return
      */
@@ -167,7 +167,7 @@ public class SnifferConfigInitializer {
                     ((URLClassLoader) ConfigInitializer.class.getClassLoader()).getURLs()[0];
             JarFile bizJar = new JarFile(bizJarUrl.getFile());
 
-            // 尝试从 BOOT-INF/classes/ 读取，读不到则从根目录读
+            // try to read at BOOT-INF/classes/, not found will read file in root folder
             ZipEntry bootfile = bizJar.getEntry(BOOTSTRAP_FILE_PATH + BOOTSTRAP_FILE_NAME);
             if (bootfile == null) {
                 bootfile = bizJar.getEntry(BOOTSTRAP_FILE_NAME);

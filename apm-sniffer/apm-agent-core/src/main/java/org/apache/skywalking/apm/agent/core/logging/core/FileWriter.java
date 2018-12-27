@@ -178,8 +178,8 @@ public class FileWriter implements IWriter, EventHandler<LogMessageHolder> {
     }
 
     /**
-     * 获取日志的文件名
-     * 每个服务一个文件，互不影响
+     * get log file name
+     * every service uses its own log file
      *
      * @return
      */

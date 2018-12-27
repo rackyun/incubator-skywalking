@@ -134,7 +134,7 @@ public class HttpAsyncClientInterceptorTest {
 
             @Override
             public String getUri() {
-                return "http://127.0.0.1:8080/test-web/test";
+                return "http://127.0.0.1:8080/test-web/test/123";
             }
         };
 
@@ -252,11 +252,11 @@ public class HttpAsyncClientInterceptorTest {
     }
 
     private void assertHttpSpan(AbstractTracingSpan span) {
-        assertThat(span.getOperationName(), is("/test-web/test"));
+        assertThat(span.getOperationName(), is("/test-web/test/ID"));
         assertThat(SpanHelper.getComponentId(span), is(26));
         List<KeyValuePair> tags = SpanHelper.getTags(span);
-        assertThat(tags.get(0).getValue(), is("http://localhost:8081/original/test"));
-        assertThat(tags.get(1).getValue(), is("GET"));
+        assertThat(tags.get(1).getValue(), is("http://localhost:8081/original/test"));
+        assertThat(tags.get(2).getValue(), is("GET"));
         assertThat(span.isExit(), is(true));
     }
 

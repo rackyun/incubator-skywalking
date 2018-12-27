@@ -34,6 +34,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
 /**
@@ -66,7 +67,8 @@ public class AsyncCallInterceptor implements InstanceConstructorInterceptor, Ins
 
 
         HttpUrl requestUrl = request.url();
-        AbstractSpan span = ContextManager.createExitSpan(requestUrl.uri().getPath(), requestUrl.host() + ":" + requestUrl.port());
+        String operationName = OperationNameUtil.normalizeUrl(requestUrl.uri().getPath());
+        AbstractSpan span = ContextManager.createExitSpan(operationName, requestUrl.host() + ":" + requestUrl.port());
         ContextManager.continued(enhanceRequiredInfo.getContextSnapshot());
         ContextCarrier contextCarrier = new ContextCarrier();
         ContextManager.inject(contextCarrier);

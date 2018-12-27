@@ -38,6 +38,7 @@ import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 
@@ -67,7 +68,7 @@ public class DefaultHttpClientInterceptor implements InstanceMethodsAroundInterc
         ContextCarrier contextCarrier = new ContextCarrier();
         int port = url.getPort() == -1 ? 80 : url.getPort();
         String remotePeer = url.getHost() + ":" + port;
-        String operationName = url.getPath();
+        String operationName = OperationNameUtil.normalizeUrl(url.getPath());
         if (operationName == null || operationName.length() == 0) {
             operationName = "/";
         }

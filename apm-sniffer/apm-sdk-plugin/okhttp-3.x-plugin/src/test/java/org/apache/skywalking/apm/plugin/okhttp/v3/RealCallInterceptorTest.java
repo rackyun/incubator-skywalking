@@ -139,8 +139,8 @@ public class RealCallInterceptorTest {
     private void assertSpan(AbstractTracingSpan span) {
         assertComponent(span, ComponentsDefine.OKHTTP);
         SpanAssert.assertLayer(span, SpanLayer.HTTP);
-        SpanAssert.assertTag(span, 0, "GET");
-        SpanAssert.assertTag(span, 1, "http://skywalking.org/");
+        SpanAssert.assertTag(span, 1, "GET");
+        SpanAssert.assertTag(span, 2, "http://skywalking.org/");
         assertThat(span.isExit(), is(true));
         assertThat(span.getOperationName(), is("/"));
     }

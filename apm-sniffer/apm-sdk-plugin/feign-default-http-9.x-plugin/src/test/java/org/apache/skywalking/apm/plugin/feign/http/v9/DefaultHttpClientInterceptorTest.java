@@ -110,9 +110,9 @@ public class DefaultHttpClientInterceptorTest {
         assertSpan(finishedSpan);
 
         List<KeyValuePair> tags = SpanHelper.getTags(finishedSpan);
-        assertThat(tags.size(), is(2));
-        assertThat(tags.get(0).getValue(), is("GET"));
-        assertThat(tags.get(1).getValue(), is("http://skywalking.org/"));
+        assertThat(tags.size(), is(3));
+        assertThat(tags.get(1).getValue(), is("GET"));
+        assertThat(tags.get(2).getValue(), is("http://skywalking.org/"));
 
         Assert.assertEquals(false, SpanHelper.getErrorOccurred(finishedSpan));
     }
@@ -133,10 +133,10 @@ public class DefaultHttpClientInterceptorTest {
         assertSpan(finishedSpan);
 
         List<KeyValuePair> tags = SpanHelper.getTags(finishedSpan);
-        assertThat(tags.size(), is(3));
-        assertThat(tags.get(0).getValue(), is("GET"));
-        assertThat(tags.get(1).getValue(), is("http://skywalking.org/"));
-        assertThat(tags.get(2).getValue(), is("404"));
+        assertThat(tags.size(), is(4));
+        assertThat(tags.get(1).getValue(), is("GET"));
+        assertThat(tags.get(2).getValue(), is("http://skywalking.org/"));
+        assertThat(tags.get(3).getValue(), is("404"));
 
         Assert.assertEquals(true, SpanHelper.getErrorOccurred(finishedSpan));
     }
@@ -164,9 +164,9 @@ public class DefaultHttpClientInterceptorTest {
         assertSpan(finishedSpan);
 
         List<KeyValuePair> tags = SpanHelper.getTags(finishedSpan);
-        assertThat(tags.size(), is(2));
-        assertThat(tags.get(0).getValue(), is("GET"));
-        assertThat(tags.get(1).getValue(), is("http://skywalking.org/"));
+        assertThat(tags.size(), is(3));
+        assertThat(tags.get(1).getValue(), is("GET"));
+        assertThat(tags.get(2).getValue(), is("http://skywalking.org/"));
 
         Assert.assertEquals(true, SpanHelper.getErrorOccurred(finishedSpan));
 

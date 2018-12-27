@@ -22,7 +22,6 @@ import org.apache.skywalking.apm.agent.core.boot.BootService;
 import org.apache.skywalking.apm.agent.core.boot.ServiceManager;
 import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.conf.RemoteDownstreamConfig;
-import org.apache.skywalking.apm.agent.core.context.logging.Slf4jMDCSpanLog;
 import org.apache.skywalking.apm.agent.core.context.logging.SpanLog;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
@@ -49,7 +48,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     private static ThreadLocal<AbstractTracerContext> CONTEXT = new ThreadLocal<AbstractTracerContext>();
     private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new ThreadLocal<RuntimeContext>();
     private static ContextManagerExtendService EXTEND_SERVICE;
-    private static SpanLog SPANLOG = new Slf4jMDCSpanLog();
+    private static SpanLog SPANLOG = null;
 
     private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling, boolean forceIgnore) {
         AbstractTracerContext context = CONTEXT.get();
@@ -130,7 +129,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
             span = context.createEntrySpan(operationName);
         }
         setServiceInstanceTag(span);
-        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        logStartedSpan(span);
         return span;
     }
 
@@ -138,7 +137,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         AbstractTracerContext context = getOrCreate(operationName, false);
         AbstractSpan span = context.createLocalSpan(operationName);
         setServiceInstanceTag(span);
-        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        logStartedSpan(span);
         return span;
     }
 
@@ -150,7 +149,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
         context.inject(carrier);
         setServiceInstanceTag(span);
-        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        logStartedSpan(span);
         return span;
     }
 
@@ -158,7 +157,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         AbstractTracerContext context = getOrCreate(operationName, false);
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
         setServiceInstanceTag(span);
-        SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        logStartedSpan(span);
         return span;
     }
 
@@ -203,7 +202,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
 
     public static void stopSpan(AbstractSpan span) {
         get().stopSpan(span);
-        SPANLOG.logStoppedSpan(getGlobalTraceId(), span, activeSpan());
+        logStoppedSpan(span);
     }
 
     @Override
@@ -249,5 +248,25 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         }
 
         return runtimeContext;
+    }
+
+    public static void setSPANLOG(SpanLog spanLog) {
+        SPANLOG = spanLog;
+    }
+
+    private static void logStartedSpan(AbstractSpan span) {
+        if (SPANLOG != null) {
+            SPANLOG.logStartedSpan(getGlobalTraceId(), span);
+        }
+    }
+
+    private static void logStoppedSpan(AbstractSpan span) {
+        AbstractSpan parentSpan = null;
+        if (get() != null) {
+            parentSpan = get().activeSpan();
+        }
+        if (SPANLOG != null) {
+            SPANLOG.logStoppedSpan(getGlobalTraceId(), span, parentSpan);
+        }
     }
 }
