@@ -21,6 +21,13 @@ package org.apache.skywalking.apm.agent.core.conf;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,12 +103,9 @@ public class SnifferConfigInitializer {
         //todo
         String appName = readApplicationName();
         if (appName != null) {
-            Config.Agent.APPLICATION_CODE = appName;
+            Config.Agent.SERVICE_NAME = appName;
         }
 
-        if (StringUtil.isEmpty(Config.Agent.APPLICATION_CODE)) {
-            throw new ExceptionInInitializerError("`agent.application_code` is missing.");
-        }
         if (!StringUtil.isEmpty(agentOptions)) {
             try {
                 agentOptions = agentOptions.trim();
@@ -229,10 +233,18 @@ public class SnifferConfigInitializer {
                     ((URLClassLoader) ConfigInitializer.class.getClassLoader()).getURLs()[0];
             JarFile bizJar = new JarFile(bizJarUrl.getFile());
 
-            // try to read at BOOT-INF/classes/, not found will read file in root folder
-            ZipEntry bootfile = bizJar.getEntry(BOOTSTRAP_FILE_PATH + BOOTSTRAP_FILE_NAME);
-            if (bootfile == null) {
-                bootfile = bizJar.getEntry(BOOTSTRAP_FILE_NAME);
+            // File bootstrap.properties may exist in:
+            // BOOT-INF/classes/bootstrap.properties
+            // WEB-INF/classes/bootstrap.properties
+            // bootstrap.properties
+            ZipEntry bootfile = null;
+            Enumeration<JarEntry> entries = bizJar.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().endsWith(BOOTSTRAP_FILE_NAME)) {
+                    bootfile = bizJar.getEntry(entry.getName());
+                    break;
+                }
             }
 
             InputStream input = bizJar.getInputStream(bootfile);
