@@ -83,6 +83,7 @@ public class DubboInterceptor implements InstanceMethodsAroundInterceptor {
             }
 
             span = ContextManager.createEntrySpan(generateOperationName(requestURL, invocation), contextCarrier);
+            Tags.SENDER_HOST.set(span, String.valueOf(rpcContext.getRemoteHost()) + ":" + rpcContext.getRemotePort());
         }
 
         Tags.URL.set(span, generateRequestURL(requestURL, invocation));

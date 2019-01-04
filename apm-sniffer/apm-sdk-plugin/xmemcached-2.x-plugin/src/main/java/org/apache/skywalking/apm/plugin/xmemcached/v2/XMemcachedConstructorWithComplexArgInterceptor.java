@@ -44,7 +44,7 @@ public class XMemcachedConstructorWithComplexArgInterceptor implements InstanceC
         if (length > 1) {
             memcachConnInfo = new StringBuilder(memcachConnInfo.substring(0, length - 1));
         }
-        objInst.setSkyWalkingDynamicField(memcachConnInfo.toString());
+        objInst.enSetSkyWalkingDynamicField(memcachConnInfo.toString());
     }
 
     /**

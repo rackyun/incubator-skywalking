@@ -81,7 +81,7 @@ public class ControllerConstructorInterceptorTest {
             return requireObjectCache;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             this.requireObjectCache = (EnhanceRequireObjectCache)value;
         }
     }
@@ -97,7 +97,7 @@ public class ControllerConstructorInterceptorTest {
             return requireObjectCache;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             this.requireObjectCache = (EnhanceRequireObjectCache)value;
         }
     }

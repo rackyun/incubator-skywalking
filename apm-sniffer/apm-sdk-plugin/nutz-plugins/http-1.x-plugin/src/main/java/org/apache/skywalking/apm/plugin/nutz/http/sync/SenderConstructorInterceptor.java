@@ -26,6 +26,6 @@ public class SenderConstructorInterceptor implements InstanceConstructorIntercep
 
     @Override
     public void onConstruct(final EnhancedInstance objInst, final Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(allArguments[0]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[0]);
     }
 }

@@ -37,7 +37,7 @@ public class SessionRequestFailInterceptor implements InstanceMethodsAroundInter
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
         //this means actual request will not started. so the span has not been created,we cannot log the status.
         CONTEXT_LOCAL.remove();
-        objInst.setSkyWalkingDynamicField(null);
+        objInst.enSetSkyWalkingDynamicField(null);
     }
 
     @Override

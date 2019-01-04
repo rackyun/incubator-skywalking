@@ -33,7 +33,7 @@ public class SessionRequestConstructorInterceptor implements InstanceConstructor
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         if (ContextManager.isActive()) {
             ContextSnapshot snapshot = ContextManager.capture();
-            objInst.setSkyWalkingDynamicField(new Object[]{snapshot, CONTEXT_LOCAL.get()});
+            objInst.enSetSkyWalkingDynamicField(new Object[]{snapshot, CONTEXT_LOCAL.get()});
         }
         CONTEXT_LOCAL.remove();
     }

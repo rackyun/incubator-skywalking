@@ -26,7 +26,7 @@ import org.apache.skywalking.apm.agent.core.context.ids.DistributedTraceId;
 import org.apache.skywalking.apm.agent.core.context.ids.GlobalIdGenerator;
 import org.apache.skywalking.apm.agent.core.context.ids.ID;
 import org.apache.skywalking.apm.agent.core.context.ids.PropagatedTraceId;
-import org.apache.skywalking.apm.agent.core.dictionary.OperationNameDictionary;
+import org.apache.skywalking.apm.agent.core.dictionary.EndpointNameDictionary;
 import org.apache.skywalking.apm.agent.core.sampling.SamplingService;
 import org.apache.skywalking.apm.util.HexUtil;
 
@@ -42,7 +42,7 @@ public class XIdCarrierItem extends CarrierItem {
     private XIdCarrierValue carrierValue;
 
     public XIdCarrierItem(ContextCarrier carrier, CarrierItem next, XIdCarrierValue xIdCarrierValue) {
-        super(HEADER_NAME, carrier.serialize(), next);
+        super(HEADER_NAME, carrier.serialize(ContextCarrier.HeaderVersion.v1), next);
         this.carrier = carrier;
         this.carrierValue = xIdCarrierValue;
     }
@@ -53,16 +53,16 @@ public class XIdCarrierItem extends CarrierItem {
         ID id = new ID(parts[0], parts[1], parts[2]);
         carrier.setTraceSegmentId(GlobalIdGenerator.generate());
         carrier.setSpanId(0);
-        carrier.setParentApplicationInstanceId(RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID);
-        carrier.setEntryApplicationInstanceId(RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID);
+        carrier.setParentServiceInstanceId(RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID);
+        carrier.setEntryServiceInstanceId(RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID);
         carrier.setPeerHost(carrierValue.peerHost);
-        String operationName = X_OPERATION_NAME_PREFIX + carrierValue.url;
-        carrier.setEntryOperationName(operationName);
-        carrier.setParentOperationName(operationName);
+        String endpointName = X_OPERATION_NAME_PREFIX + carrierValue.url;
+        carrier.setEntryEndpointName(endpointName);
+        carrier.setParentEndpointName(endpointName);
         carrier.setDistributedTraceIds(Lists.newArrayList((DistributedTraceId) new PropagatedTraceId(id)));
         carrier.setSampled(ServiceManager.INSTANCE.findService(SamplingService.class).trySampling());
-        OperationNameDictionary.INSTANCE.findOrPrepare4Register(RemoteDownstreamConfig.Agent.APPLICATION_ID,
-                operationName, false, true);
+        EndpointNameDictionary.INSTANCE.findOrPrepare4Register(RemoteDownstreamConfig.Agent.SERVICE_ID,
+                endpointName, false, true);
     }
 
     public static class XIdCarrierValue {

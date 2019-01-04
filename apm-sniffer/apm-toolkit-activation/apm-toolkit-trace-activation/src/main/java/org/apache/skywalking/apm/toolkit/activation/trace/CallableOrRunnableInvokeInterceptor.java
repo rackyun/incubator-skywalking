@@ -43,7 +43,7 @@ public class CallableOrRunnableInvokeInterceptor implements InstanceMethodsAroun
         Object ret) throws Throwable {
         ContextManager.stopSpan();
         // clear ContextSnapshot
-        objInst.setSkyWalkingDynamicField(null);
+        objInst.enSetSkyWalkingDynamicField(null);
         return ret;
     }
 

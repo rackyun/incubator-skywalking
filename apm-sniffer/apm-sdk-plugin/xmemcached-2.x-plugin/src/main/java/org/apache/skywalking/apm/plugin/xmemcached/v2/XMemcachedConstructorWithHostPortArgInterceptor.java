@@ -31,6 +31,6 @@ public class XMemcachedConstructorWithHostPortArgInterceptor implements Instance
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Object host = allArguments[0];
         Object port = allArguments[1];
-        objInst.setSkyWalkingDynamicField(host + ":" + port);
+        objInst.enSetSkyWalkingDynamicField(host + ":" + port);
     }
 }

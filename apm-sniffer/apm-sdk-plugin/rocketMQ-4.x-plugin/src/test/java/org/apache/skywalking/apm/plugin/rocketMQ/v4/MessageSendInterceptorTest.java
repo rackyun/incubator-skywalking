@@ -85,7 +85,7 @@ public class MessageSendInterceptorTest {
                 return "127.0.0.1:6543";
             }
 
-            @Override public void setSkyWalkingDynamicField(Object value) {
+            @Override public void enSetSkyWalkingDynamicField(Object value) {
 
             }
         };
@@ -112,7 +112,7 @@ public class MessageSendInterceptorTest {
         SpanAssert.assertComponent(mqSpan, ComponentsDefine.ROCKET_MQ_PRODUCER);
         SpanAssert.assertTag(mqSpan, 0, "127.0.0.1");
         verify(messageRequestHeader, times(1)).setProperties(anyString());
-        verify(callBack, times(1)).setSkyWalkingDynamicField(Matchers.any());
+        verify(callBack, times(1)).enSetSkyWalkingDynamicField(Matchers.any());
     }
 
     @Test

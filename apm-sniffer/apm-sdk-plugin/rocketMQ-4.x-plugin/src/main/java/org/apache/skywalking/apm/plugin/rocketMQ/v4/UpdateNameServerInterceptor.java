@@ -28,7 +28,7 @@ public class UpdateNameServerInterceptor implements InstanceMethodsAroundInterce
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
-        objInst.setSkyWalkingDynamicField(allArguments[0]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[0]);
     }
 
     @Override

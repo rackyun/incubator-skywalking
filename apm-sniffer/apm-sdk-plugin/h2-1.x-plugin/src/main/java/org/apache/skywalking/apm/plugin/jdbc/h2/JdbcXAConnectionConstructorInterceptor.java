@@ -33,6 +33,6 @@ public class JdbcXAConnectionConstructorInterceptor implements InstanceConstruct
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(((EnhancedInstance)allArguments[2]).getSkyWalkingDynamicField());
+        objInst.enSetSkyWalkingDynamicField(((EnhancedInstance)allArguments[2]).getSkyWalkingDynamicField());
     }
 }

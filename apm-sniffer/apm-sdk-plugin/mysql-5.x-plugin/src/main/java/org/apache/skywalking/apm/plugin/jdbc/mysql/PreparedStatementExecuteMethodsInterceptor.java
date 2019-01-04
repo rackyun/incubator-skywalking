@@ -46,12 +46,13 @@ public class PreparedStatementExecuteMethodsInterceptor implements InstanceMetho
          *
          * @see JDBCDriverInterceptor#afterMethod(EnhancedInstance, Method, Object[], Class[], Object)
          */
-        if (connectInfo != null) {
+        if (connectInfo != null && !cacheObject.isSkip()) {
+            String sql = cacheObject.getSql();
 
             AbstractSpan span = ContextManager.createExitSpan(buildOperationName(connectInfo, method.getName(), cacheObject.getStatementName()), connectInfo.getDatabasePeer());
             Tags.DB_TYPE.set(span, "sql");
             Tags.DB_INSTANCE.set(span, connectInfo.getDatabaseName());
-            Tags.DB_STATEMENT.set(span, cacheObject.getSql());
+            Tags.DB_STATEMENT.set(span, sql);
             span.setComponent(connectInfo.getComponent());
 
             SpanLayer.asDB(span);
@@ -63,7 +64,7 @@ public class PreparedStatementExecuteMethodsInterceptor implements InstanceMetho
         Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
         StatementEnhanceInfos cacheObject = (StatementEnhanceInfos)objInst.getSkyWalkingDynamicField();
-        if (cacheObject.getConnectionInfo() != null) {
+        if (cacheObject.getConnectionInfo() != null && !cacheObject.isSkip()) {
             ContextManager.stopSpan();
         }
         return ret;
@@ -72,7 +73,7 @@ public class PreparedStatementExecuteMethodsInterceptor implements InstanceMetho
     @Override public final void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Throwable t) {
         StatementEnhanceInfos cacheObject = (StatementEnhanceInfos)objInst.getSkyWalkingDynamicField();
-        if (cacheObject.getConnectionInfo() != null) {
+        if (cacheObject.getConnectionInfo() != null && !cacheObject.isSkip()) {
             ContextManager.activeSpan().errorOccurred().log(t);
         }
     }

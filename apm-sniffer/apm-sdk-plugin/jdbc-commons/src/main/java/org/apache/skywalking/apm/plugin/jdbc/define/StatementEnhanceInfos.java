@@ -20,6 +20,7 @@
 package org.apache.skywalking.apm.plugin.jdbc.define;
 
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
+import org.apache.skywalking.apm.plugin.jdbc.util.SqlUtil;
 
 /**
  * {@link StatementEnhanceInfos} contain the {@link ConnectionInfo} and
@@ -31,11 +32,13 @@ public class StatementEnhanceInfos {
     private ConnectionInfo connectionInfo;
     private String statementName;
     private String sql;
+    private boolean skip;
 
     public StatementEnhanceInfos(ConnectionInfo connectionInfo, String sql, String statementName) {
         this.connectionInfo = connectionInfo;
         this.sql = sql;
         this.statementName = statementName;
+        this.skip = SqlUtil.isSkip(sql);
     }
 
     public ConnectionInfo getConnectionInfo() {
@@ -48,5 +51,9 @@ public class StatementEnhanceInfos {
 
     public String getStatementName() {
         return statementName;
+    }
+
+    public boolean isSkip() {
+        return skip;
     }
 }

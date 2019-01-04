@@ -26,6 +26,6 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceC
 public class ConstructorInterceptor implements InstanceConstructorInterceptor {
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(ContextManager.capture());
+        objInst.enSetSkyWalkingDynamicField(ContextManager.capture());
     }
 }

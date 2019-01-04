@@ -100,7 +100,11 @@ public class ComponentsDefine {
 
     public static final OfficialComponent UNDERTOW =  new OfficialComponent(49, "Undertow");
 
-    public static final OfficialComponent HBASE = new OfficialComponent(51, "hbase");
+    public static final OfficialComponent RABBITMQ_PRODUCER = new OfficialComponent(52,"rabbitmq-producer");
+
+    public static final OfficialComponent RABBITMQ_CONSUMER = new OfficialComponent(53,"rabbitmq-consumer");
+
+    public static final OfficialComponent HBASE = new OfficialComponent(101, "hbase");
 
     private static ComponentsDefine INSTANCE = new ComponentsDefine();
 
@@ -111,7 +115,7 @@ public class ComponentsDefine {
     }
 
     public ComponentsDefine() {
-        components = new String[52];
+        components = new String[102];
         addComponent(TOMCAT);
         addComponent(HTTPCLIENT);
         addComponent(DUBBO);
@@ -148,6 +152,8 @@ public class ComponentsDefine {
         addComponent(ACTIVEMQ_PRODUCER);
         addComponent(ACTIVEMQ_CONSUMER);
         addComponent(UNDERTOW);
+        addComponent(RABBITMQ_PRODUCER);
+        addComponent(RABBITMQ_CONSUMER);
         addComponent(HBASE);
     }
 

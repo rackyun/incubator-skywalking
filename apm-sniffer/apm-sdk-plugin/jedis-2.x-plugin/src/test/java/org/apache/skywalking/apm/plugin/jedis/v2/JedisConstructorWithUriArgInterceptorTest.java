@@ -50,6 +50,6 @@ public class JedisConstructorWithUriArgInterceptorTest {
     public void onConstruct() throws Exception {
         interceptor.onConstruct(enhancedInstance, new Object[] {uri});
 
-        verify(enhancedInstance, times(1)).setSkyWalkingDynamicField("127.0.0.1:6379");
+        verify(enhancedInstance, times(1)).enSetSkyWalkingDynamicField("127.0.0.1:6379");
     }
 }

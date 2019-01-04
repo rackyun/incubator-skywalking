@@ -16,7 +16,6 @@
  *
  */
 
-
 package org.apache.skywalking.apm.plugin.spring.resttemplate.async;
 
 import java.lang.reflect.Method;
@@ -30,11 +29,11 @@ public class ResponseCallBackInterceptor implements InstanceMethodsAroundInterce
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
         EnhancedInstance successCallBak = (EnhancedInstance)allArguments[0];
-        successCallBak.setSkyWalkingDynamicField(objInst.getSkyWalkingDynamicField());
+        successCallBak.enSetSkyWalkingDynamicField(objInst.getSkyWalkingDynamicField());
 
         if (allArguments.length == 2) {
             EnhancedInstance failedCallBack = (EnhancedInstance)allArguments[1];
-            failedCallBack.setSkyWalkingDynamicField(objInst.getSkyWalkingDynamicField());
+            failedCallBack.enSetSkyWalkingDynamicField(objInst.getSkyWalkingDynamicField());
         }
     }
 

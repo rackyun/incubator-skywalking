@@ -177,8 +177,17 @@ http:
 rpc:
   id: 50
   languages: Java,C#,Node.js
-hbase:
+RabbitMQ:
   id: 51
+  languages: Java
+rabbitmq-producer:
+  id: 52
+  languages: Java
+rabbitmq-consumer:
+  id: 53
+  languages: Java
+hbase:
+  id: 101
   languages: Java
 
 # .NET/.NET Core components
@@ -255,6 +264,8 @@ Component-Server-Mappings:
   kafka-consumer: Kafka
   activemq-producer: ActiveMQ
   activemq-consumer: ActiveMQ
+  rabbitmq-producer: RabbitMQ
+  rabbitmq-consumer: RabbitMQ
   postgresql-jdbc-driver: PostgreSQL
   Xmemcached: Memcached
   Spymemcached: Memcached

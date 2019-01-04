@@ -59,6 +59,6 @@ public class GetBeanInterceptorTest {
     public void testResultIsNotEnhanceInstance() throws Throwable {
         interceptor.afterMethod(enhancedInstance, null, null, null, new Object());
 
-        verify(enhanceRet, times(0)).setSkyWalkingDynamicField(Matchers.any());
+        verify(enhanceRet, times(0)).enSetSkyWalkingDynamicField(Matchers.any());
     }
 }

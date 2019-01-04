@@ -62,10 +62,10 @@ public class ContextManager implements TracingContextListener, BootService, Igno
                 }
                 context = new IgnoredTracerContext();
             } else {
-                if (RemoteDownstreamConfig.Agent.APPLICATION_ID != DictionaryUtil.nullValue()
-                        && RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()
-                        && !forceIgnore
-                ) {
+                if (RemoteDownstreamConfig.Agent.SERVICE_ID != DictionaryUtil.nullValue()
+                    && RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID != DictionaryUtil.nullValue()
+                    && !forceIgnore
+                    ) {
                     context = EXTEND_SERVICE.createTraceContext(operationName, forceSampling);
                 } else {
                     /**
@@ -162,7 +162,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     }
 
     private static void setServiceInstanceTag(AbstractSpan span) {
-        Tags.SERVICE_INSTANCE.set(span, OSUtil.getHostName() + "-" + Config.Agent.APPLICATION_CODE);
+        Tags.SERVICE_INSTANCE.set(span, OSUtil.getHostName() + "-" + Config.Agent.SERVICE_NAME);
     }
 
     public static void inject(ContextCarrier carrier) {
@@ -197,7 +197,6 @@ public class ContextManager implements TracingContextListener, BootService, Igno
 
     public static void stopSpan() {
         stopSpan(activeSpan());
-
     }
 
     public static void stopSpan(AbstractSpan span) {
@@ -221,8 +220,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
 
     }
 
-    @Override
-    public void shutdown() throws Throwable {
+    @Override public void shutdown() throws Throwable {
 
     }
 

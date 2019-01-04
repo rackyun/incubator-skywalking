@@ -50,7 +50,7 @@ public class ConsumerConstructorInterceptorTest {
             return consumerEnhanceRequiredInfo;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             consumerEnhanceRequiredInfo = (ConsumerEnhanceRequiredInfo)value;
         }
     };

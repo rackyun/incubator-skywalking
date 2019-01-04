@@ -48,7 +48,7 @@ public class RealCallInterceptor implements InstanceMethodsAroundInterceptor, In
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(allArguments[1]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[1]);
     }
 
     /**

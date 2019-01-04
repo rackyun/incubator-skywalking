@@ -55,6 +55,6 @@ public class ForwardInterceptor implements InstanceMethodsAroundInterceptor, Ins
     }
 
     @Override public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(allArguments[2]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[2]);
     }
 }

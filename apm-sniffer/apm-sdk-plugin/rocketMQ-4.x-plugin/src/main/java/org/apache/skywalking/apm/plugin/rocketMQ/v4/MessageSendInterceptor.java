@@ -79,7 +79,7 @@ public class MessageSendInterceptor implements InstanceMethodsAroundInterceptor 
         requestHeader.setProperties(properties.toString());
 
         if (allArguments[6] != null) {
-            ((EnhancedInstance)allArguments[6]).setSkyWalkingDynamicField(new SendCallBackEnhanceInfo(message.getTopic(), ContextManager.capture()));
+            ((EnhancedInstance)allArguments[6]).enSetSkyWalkingDynamicField(new SendCallBackEnhanceInfo(message.getTopic(), ContextManager.capture()));
         }
     }
 

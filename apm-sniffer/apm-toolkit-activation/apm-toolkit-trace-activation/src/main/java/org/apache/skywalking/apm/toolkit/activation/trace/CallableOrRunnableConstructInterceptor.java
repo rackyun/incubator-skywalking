@@ -27,7 +27,7 @@ public class CallableOrRunnableConstructInterceptor implements InstanceConstruct
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         if (ContextManager.isActive()) {
-            objInst.setSkyWalkingDynamicField(ContextManager.capture());
+            objInst.enSetSkyWalkingDynamicField(ContextManager.capture());
         }
     }
 

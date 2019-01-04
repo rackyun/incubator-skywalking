@@ -45,7 +45,7 @@ import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 public class MotanConsumerInterceptor implements InstanceConstructorInterceptor, InstanceMethodsAroundInterceptor {
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(allArguments[1]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[1]);
     }
 
     @Override

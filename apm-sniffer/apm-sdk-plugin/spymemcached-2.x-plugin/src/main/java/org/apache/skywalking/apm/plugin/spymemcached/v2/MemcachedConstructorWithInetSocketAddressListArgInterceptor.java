@@ -39,6 +39,6 @@ public class MemcachedConstructorWithInetSocketAddressListArgInterceptor impleme
         if (memcachConnInfo.length() > 1) {
             memcachConnInfo = new StringBuilder(memcachConnInfo.substring(0, memcachConnInfo.length() - 1));
         }
-        objInst.setSkyWalkingDynamicField(memcachConnInfo.toString());
+        objInst.enSetSkyWalkingDynamicField(memcachConnInfo.toString());
     }
 }

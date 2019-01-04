@@ -27,14 +27,14 @@ import org.apache.skywalking.oap.server.core.remote.grpc.proto.RemoteData;
 import org.apache.skywalking.oap.server.core.source.Scope;
 import org.apache.skywalking.oap.server.core.storage.StorageBuilder;
 import org.apache.skywalking.oap.server.core.storage.annotation.*;
-import org.apache.skywalking.oap.server.library.util.StringUtils;
+import org.elasticsearch.common.Strings;
 
 /**
  * @author peng-yongsheng
  */
-@InventoryType(scope = Scope.NetworkAddress)
+@InventoryType
 @StreamData
-@StorageEntity(name = NetworkAddressInventory.MODEL_NAME, builder = NetworkAddressInventory.Builder.class, deleteHistory = false)
+@StorageEntity(name = NetworkAddressInventory.MODEL_NAME, builder = NetworkAddressInventory.Builder.class, deleteHistory = false, source = Scope.NetworkAddress)
 public class NetworkAddressInventory extends RegisterSource {
 
     public static final String MODEL_NAME = "network_address_inventory";
@@ -88,7 +88,7 @@ public class NetworkAddressInventory extends RegisterSource {
         remoteBuilder.addDataLongs(getRegisterTime());
         remoteBuilder.addDataLongs(getHeartbeatTime());
 
-        remoteBuilder.addDataStrings(StringUtils.getOrDefault(name, Const.EMPTY_STRING));
+        remoteBuilder.addDataStrings(Strings.isNullOrEmpty(name) ? Const.EMPTY_STRING : name);
         return remoteBuilder;
     }
 

@@ -42,7 +42,7 @@ public class JDBCDriverInterceptor implements InstanceMethodsAroundInterceptor {
     @Override public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Object ret) throws Throwable {
         if (ret != null) {
-            ((EnhancedInstance)ret).setSkyWalkingDynamicField(URLParser.parser((String)allArguments[0]));
+            ((EnhancedInstance)ret).enSetSkyWalkingDynamicField(URLParser.parser((String)allArguments[0]));
         }
 
         return ret;
