@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.spring.kafka.v11;
+package org.apache.skywalking.apm.plugin.spring.kafka.v1;
 
 import java.util.List;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -33,7 +33,6 @@ import org.apache.skywalking.apm.agent.test.tools.SegmentStorage;
 import org.apache.skywalking.apm.agent.test.tools.SegmentStoragePoint;
 import org.apache.skywalking.apm.agent.test.tools.SpanAssert;
 import org.apache.skywalking.apm.agent.test.tools.TracingSegmentRunner;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.CallbackInterceptor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,7 +70,7 @@ public class CallbackInterceptorTest {
             return MockContextSnapshot.INSTANCE.mockContextSnapshot();
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     };
@@ -139,7 +138,7 @@ public class CallbackInterceptorTest {
 
         TraceSegmentRef segmentRef = refs.get(0);
         SegmentRefAssert.assertSpanId(segmentRef, 1);
-        assertThat(segmentRef.getEntryOperationName(), is("/for-test-entryOperationName"));
+        assertThat(segmentRef.getEntryEndpointName(), is("/for-test-entryOperationName"));
     }
 
     private void assertCallbackSpan(AbstractTracingSpan span) {

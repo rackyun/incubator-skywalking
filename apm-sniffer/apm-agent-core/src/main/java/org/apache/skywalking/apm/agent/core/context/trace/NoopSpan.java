@@ -19,6 +19,8 @@
 
 package org.apache.skywalking.apm.agent.core.context.trace;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.apache.skywalking.apm.agent.core.context.IgnoredTracerContext;
 import org.apache.skywalking.apm.agent.core.context.tag.AbstractTag;
@@ -42,6 +44,11 @@ public class NoopSpan implements AbstractSpan {
 
     @Override public AbstractSpan errorOccurred() {
         return this;
+    }
+
+    @Override
+    public boolean isErrorOccurred() {
+        return false;
     }
 
     public void finish() {
@@ -108,7 +115,17 @@ public class NoopSpan implements AbstractSpan {
     @Override public void ref(TraceSegmentRef ref) {
     }
 
+    @Override
+    public List<TraceSegmentRef> getRefs() {
+        return Collections.emptyList();
+    }
+
     @Override public AbstractSpan start(long startTime) {
         return this;
+    }
+
+    @Override
+    public int durationTime() {
+        return 0;
     }
 }

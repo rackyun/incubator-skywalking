@@ -56,11 +56,13 @@ public class SkyWalkingAgent {
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) throws PluginException {
         final PluginFinder pluginFinder;
+        long start = System.currentTimeMillis();
         try {
             SnifferConfigInitializer.initialize(agentArgs);
+            logger.debug("premain() initialize complete at {}ms since premain start.", System.currentTimeMillis() - start);
 
             pluginFinder = new PluginFinder(new PluginBootstrap().loadPlugins());
-
+            logger.debug("premain() PluginFinder complete at {}ms since premain start.", System.currentTimeMillis() - start);
         } catch (Exception e) {
             logger.error(e, "Skywalking agent initialized failure. Shutting down.");
             return;
@@ -85,6 +87,7 @@ public class SkyWalkingAgent {
             .with(new Listener())
             .installOn(instrumentation);
 
+        logger.debug("premain() agent build complete at {}ms since premain start.", System.currentTimeMillis() - start);
         try {
             ServiceManager.INSTANCE.boot();
         } catch (Exception e) {

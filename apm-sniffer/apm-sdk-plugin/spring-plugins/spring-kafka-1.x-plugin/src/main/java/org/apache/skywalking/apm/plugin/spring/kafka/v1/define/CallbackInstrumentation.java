@@ -23,15 +23,16 @@ import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
+import org.apache.skywalking.apm.plugin.spring.kafka.v1.match.HierarchyAndExcludeMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
-import static org.apache.skywalking.apm.agent.core.plugin.match.HierarchyMatch.byHierarchyMatch;
 
 public class CallbackInstrumentation extends AbstractKafkaInstrumentation {
 
     public static final String ENHANCE_CLASS = "org.apache.kafka.clients.producer.Callback";
     public static final String ENHANCE_METHOD = "onCompletion";
     public static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.spring.kafka.v1.CallbackInterceptor";
+    public static final String EXCLUDE_CLASS = "org.apache.kafka.clients.producer.KafkaProducer$InterceptorCallback";
 
     @Override protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
         return new ConstructorInterceptPoint[0];
@@ -56,6 +57,6 @@ public class CallbackInstrumentation extends AbstractKafkaInstrumentation {
     }
 
     @Override protected ClassMatch enhanceClass() {
-        return byHierarchyMatch(new String[] {ENHANCE_CLASS});
+        return HierarchyAndExcludeMatch.byHierarchyAndExcludeMatch(new String[]{ENHANCE_CLASS}, new String[]{EXCLUDE_CLASS});
     }
 }

@@ -33,6 +33,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
+import org.apache.skywalking.apm.util.StringUtil;
 
 /**
  * {@link TomcatInvokeInterceptor} fetch the serialized context data by using {@link
@@ -66,6 +67,9 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
         AbstractSpan span = ContextManager.createEntrySpan(request.getRequestURI(), contextCarrier);
         Tags.URL.set(span, request.getRequestURL().toString());
         Tags.HTTP.METHOD.set(span, request.getMethod());
+        String remoteAddr = StringUtil.isEmpty(request.getHeader(Constants.X_FORWARD_HEADER)) ?
+                (request.getRemoteAddr() + ":" + request.getRemotePort()) : (request.getHeader(Constants.X_FORWARD_HEADER));
+        Tags.SENDER_HOST.set(span, remoteAddr);
         span.setComponent(ComponentsDefine.TOMCAT);
         SpanLayer.asHttp(span);
 

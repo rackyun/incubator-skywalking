@@ -187,6 +187,11 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
         return this;
     }
 
+    @Override
+    public boolean isErrorOccurred() {
+        return this.errorOccurred;
+    }
+
     /**
      * Set the operation name, just because these is not compress dictionary value for this name. Use the entire string
      * temporarily, the agent will compress this name in async mode.
@@ -321,5 +326,18 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
         if (!refs.contains(ref)) {
             refs.add(ref);
         }
+    }
+
+    @Override
+    public List<TraceSegmentRef> getRefs() {
+        if (refs == null) {
+            refs = new LinkedList<TraceSegmentRef>();
+        }
+        return refs;
+    }
+
+    @Override
+    public int durationTime() {
+        return endTime == 0 ? 0 : (int) (endTime - startTime);
     }
 }

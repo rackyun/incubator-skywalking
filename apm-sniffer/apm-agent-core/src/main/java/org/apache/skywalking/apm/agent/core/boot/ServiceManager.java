@@ -42,11 +42,15 @@ public enum ServiceManager {
     private Map<Class, BootService> bootedServices = Collections.emptyMap();
 
     public void boot() {
+        long start = System.currentTimeMillis();
         bootedServices = loadAllServices();
-
+        logger.debug("boot() loadAllServices cost {}ms", System.currentTimeMillis() - start);
         prepare();
+        logger.debug("boot() prepare complete at {}ms since boot start.", System.currentTimeMillis() - start);
         startup();
+        logger.debug("boot() startup complete at {}ms since boot start.", System.currentTimeMillis() - start);
         onComplete();
+        logger.debug("boot() onComplete complete at {}ms since boot start.", System.currentTimeMillis() - start);
     }
 
     public void shutdown() {

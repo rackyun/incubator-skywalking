@@ -20,7 +20,7 @@ package org.apache.skywalking.apm.agent.core.util;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author yunhai.hu
@@ -37,5 +37,11 @@ public class HttpUrlUtilTest {
         String wxUrl = "/hello/wxfcf4d8d8ad24b86a";
         String wxRet = OperationNameUtil.normalizeUrl(wxUrl);
         assertEquals("/hello/ID", wxRet);
+    }
+
+    @Test
+    public void testUrlEncode() {
+        String operationName = "Hystrix/GET /hello?cc={cc}/Execution";
+        assertEquals("url encode error", "Hystrix/GET_/hello/Execution", OperationNameUtil.operationEncode(operationName));
     }
 }

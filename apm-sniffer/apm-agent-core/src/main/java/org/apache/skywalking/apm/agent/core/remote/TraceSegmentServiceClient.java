@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.apm.agent.core.remote;
 
+import com.google.gson.Gson;
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
@@ -49,6 +50,8 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
     private volatile DataCarrier<TraceSegment> carrier;
     private volatile TraceSegmentReportServiceGrpc.TraceSegmentReportServiceStub serviceStub;
     private volatile GRPCChannelStatus status = GRPCChannelStatus.DISCONNECT;
+
+    private Gson gson = new Gson();
 
     @Override
     public void prepare() throws Throwable {
@@ -107,6 +110,9 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
 
             try {
                 for (TraceSegment segment : data) {
+                    if (logger.isDebugEnable()) {
+                        logger.debug("trace segment {} will be send.", gson.toJson(segment));
+                    }
                     UpstreamSegment upstreamSegment = segment.transform();
                     upstreamSegmentStreamObserver.onNext(upstreamSegment);
                 }

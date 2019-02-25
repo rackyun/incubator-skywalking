@@ -21,13 +21,12 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName;
 
-public class TransportClientNodesServiceInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+public class TransportClientNodesServiceInstrumentation extends ElasticsearchBaseClassEnhancePluginDefine {
 
     public static final String ADD_TRANSPORT_ADDRESSES_INTERCEPTOR = "org.apache.skywalking.apm.plugin.elasticsearch.v5.AddTransportAddressesInterceptor";
     public static final String REMOVE_TRANSPORT_ADDRESS_INTERCEPTOR = "org.apache.skywalking.apm.plugin.elasticsearch.v5.RemoveTransportAddressInterceptor";

@@ -16,14 +16,12 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.spring.kafka.v11;
+package org.apache.skywalking.apm.plugin.spring.kafka.v1;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.ConsumerConstructorInterceptor;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.ConsumerEnhanceRequiredInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +48,7 @@ public class ConsumerConstructorInterceptorTest {
             return consumerEnhanceRequiredInfo;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             consumerEnhanceRequiredInfo = (ConsumerEnhanceRequiredInfo)value;
         }
     };

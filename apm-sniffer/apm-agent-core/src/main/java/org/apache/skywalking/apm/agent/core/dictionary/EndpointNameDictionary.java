@@ -92,6 +92,11 @@ public enum EndpointNameDictionary {
                         DetectPoint.client.equals(element.getFrom()));
                     unRegisterEndpoints.remove(key);
                     endpointDictionary.put(key, element.getEndpointId());
+                    if (logger.isDebugEnable()) {
+                        logger.debug("register endpoint {}, serverId {}, endpointId {}, detectPoint {}",
+                                element.getEndpointName(), element.getServiceId(),
+                                element.getEndpointId(), element.getFrom().name());
+                    }
                 }
             }
         }
@@ -154,7 +159,8 @@ public enum EndpointNameDictionary {
             } else if (isExit) {
                 return DetectPoint.client;
             } else {
-                return DetectPoint.UNRECOGNIZED;
+//                return DetectPoint.UNRECOGNIZED;
+                return DetectPoint.proxy;
             }
         }
 

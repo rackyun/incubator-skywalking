@@ -32,7 +32,7 @@ public class SubscribeMethodInterceptor implements InstanceMethodsAroundIntercep
         ConsumerEnhanceRequiredInfo requiredInfo = (ConsumerEnhanceRequiredInfo)objInst.getSkyWalkingDynamicField();
         requiredInfo.setTopics((Collection<String>)allArguments[0]);
 
-        objInst.setSkyWalkingDynamicField(requiredInfo);
+        objInst.enSetSkyWalkingDynamicField(requiredInfo);
     }
 
     @Override
