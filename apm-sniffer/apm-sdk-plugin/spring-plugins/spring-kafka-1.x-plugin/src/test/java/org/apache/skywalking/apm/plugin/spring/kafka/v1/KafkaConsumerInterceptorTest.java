@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.spring.kafka.v11;
+package org.apache.skywalking.apm.plugin.spring.kafka.v1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +36,6 @@ import org.apache.skywalking.apm.agent.test.tools.SegmentStorage;
 import org.apache.skywalking.apm.agent.test.tools.SegmentStoragePoint;
 import org.apache.skywalking.apm.agent.test.tools.SpanAssert;
 import org.apache.skywalking.apm.agent.test.tools.TracingSegmentRunner;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.ConsumerEnhanceRequiredInfo;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.KafkaConsumerInterceptor;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -69,7 +67,7 @@ public class KafkaConsumerInterceptorTest {
             return consumerEnhanceRequiredInfo;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             consumerEnhanceRequiredInfo = (ConsumerEnhanceRequiredInfo)value;
         }
     };
@@ -135,7 +133,7 @@ public class KafkaConsumerInterceptorTest {
     }
 
     private void assertTraceSegmentRef(TraceSegmentRef ref) {
-        MatcherAssert.assertThat(SegmentRefHelper.getEntryApplicationInstanceId(ref), is(1));
+        MatcherAssert.assertThat(SegmentRefHelper.getEntryServiceInstanceId(ref), is(1));
         MatcherAssert.assertThat(SegmentRefHelper.getSpanId(ref), is(3));
         MatcherAssert.assertThat(SegmentRefHelper.getTraceSegmentId(ref).toString(), is("1.234.111"));
     }

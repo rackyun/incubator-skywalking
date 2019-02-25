@@ -80,7 +80,7 @@ public class ContextCarrier implements Serializable {
     /**
      * whether the data is sampled.
      */
-    private boolean isSampled = true;
+    private boolean sampled = true;
 
     public CarrierItem items() {
         CarrierItemHead head;
@@ -118,7 +118,7 @@ public class ContextCarrier implements Serializable {
                         this.getEntryEndpointName(),
                         this.getParentEndpointName(),
                         this.getPrimaryDistributedTraceId().encode(),
-                        String.valueOf(this.isSampled));
+                        String.valueOf(this.isSampled()));
                 } else {
                     return "";
                 }
@@ -134,7 +134,7 @@ public class ContextCarrier implements Serializable {
                         Base64.encode(this.getPeerHost()),
                         Base64.encode(this.getEntryEndpointName()),
                         Base64.encode(this.getParentEndpointName()),
-                        Base64.encode(String.valueOf(this.isSampled)));
+                        Base64.encode(String.valueOf(this.isSampled())));
                 } else {
                     return "";
                 }
@@ -168,7 +168,7 @@ public class ContextCarrier implements Serializable {
                         this.parentEndpointName = parts[6];
                         this.primaryDistributedTraceId = new PropagatedTraceId(parts[7]);
                         if (parts.length == 9) {
-                            this.isSampled = Boolean.valueOf(parts[8]);
+                            this.sampled = Boolean.valueOf(parts[8]);
                         }
                     } catch (NumberFormatException e) {
 
@@ -188,7 +188,7 @@ public class ContextCarrier implements Serializable {
                         this.entryEndpointName = Base64.decode2UTFString(parts[7]);
                         this.parentEndpointName = Base64.decode2UTFString(parts[8]);
                         if (parts.length == 10) {
-                            this.isSampled = Boolean.valueOf(Base64.decode2UTFString(parts[8]));
+                            this.sampled = Boolean.valueOf(Base64.decode2UTFString(parts[9]));
                         }
                     } catch (NumberFormatException e) {
 
@@ -318,10 +318,10 @@ public class ContextCarrier implements Serializable {
         v1, v2
     }
     public boolean isSampled() {
-        return isSampled;
+        return sampled;
     }
 
     public void setSampled(boolean sampled) {
-        isSampled = sampled;
+        this.sampled = sampled;
     }
 }

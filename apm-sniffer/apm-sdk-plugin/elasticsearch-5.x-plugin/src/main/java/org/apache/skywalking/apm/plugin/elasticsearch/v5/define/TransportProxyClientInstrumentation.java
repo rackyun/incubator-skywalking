@@ -23,7 +23,6 @@ import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.StaticMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.any;
@@ -32,7 +31,7 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
 /**
  * @author oatiz.
  */
-public class TransportProxyClientInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+public class TransportProxyClientInstrumentation extends ElasticsearchBaseClassEnhancePluginDefine {
 
     private static final String ENHANCE_CLASS = "org.apache.skywalking.apm.plugin.elasticsearch.v5.TransportProxyClientInterceptor";
 

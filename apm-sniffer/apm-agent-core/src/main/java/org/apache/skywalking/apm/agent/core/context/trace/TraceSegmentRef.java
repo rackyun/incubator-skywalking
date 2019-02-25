@@ -123,6 +123,14 @@ public class TraceSegmentRef {
         return entryEndpointId;
     }
 
+    public String getParentEndpointName() {
+        return parentEndpointName;
+    }
+
+    public int getParentEndpointId() {
+        return parentEndpointId;
+    }
+
     public int getEntryServiceInstanceId() {
         return entryServiceInstanceId;
     }

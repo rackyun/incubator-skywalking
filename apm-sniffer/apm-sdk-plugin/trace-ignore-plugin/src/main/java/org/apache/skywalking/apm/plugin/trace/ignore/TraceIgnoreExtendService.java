@@ -23,7 +23,7 @@ import org.apache.skywalking.apm.agent.core.boot.OverrideImplementor;
 import org.apache.skywalking.apm.agent.core.conf.ConfigNotFoundException;
 import org.apache.skywalking.apm.agent.core.context.AbstractTracerContext;
 import org.apache.skywalking.apm.agent.core.context.ContextManagerExtendService;
-import org.apache.skywalking.apm.agent.core.context.IgnoredTracerContext;
+import org.apache.skywalking.apm.agent.core.context.SkipedTracerContext;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.plugin.trace.ignore.conf.IgnoreConfig;
@@ -71,7 +71,7 @@ public class TraceIgnoreExtendService extends ContextManagerExtendService {
             for (String pattern : pattens.split(PATTERN_SEPARATOR)) {
                 if (pathMatcher.match(pattern, path)) {
                     LOGGER.debug("operationName : " + operationName + " Ignore tracking");
-                    return new IgnoredTracerContext();
+                    return new SkipedTracerContext();
                 }
             }
         }

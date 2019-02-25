@@ -51,6 +51,8 @@ public class ContextSnapshot {
 
     private int entryApplicationInstanceId = DictionaryUtil.nullValue();
 
+    private boolean sample = true;
+
     ContextSnapshot(ID traceSegmentId, int spanId,
         List<DistributedTraceId> distributedTraceIds) {
         this.traceSegmentId = traceSegmentId;
@@ -113,5 +115,13 @@ public class ContextSnapshot {
 
     public boolean isFromCurrent() {
         return traceSegmentId.equals(ContextManager.capture().getTraceSegmentId());
+    }
+
+    public boolean isSample() {
+        return sample;
+    }
+
+    public void setSample(boolean sample) {
+        this.sample = sample;
     }
 }

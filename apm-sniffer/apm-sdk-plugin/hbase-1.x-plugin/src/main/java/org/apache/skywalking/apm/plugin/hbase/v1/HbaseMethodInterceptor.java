@@ -97,7 +97,7 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
             String zkAdr = connection.getConfiguration().get(HConstants.ZOOKEEPER_QUORUM);
             requiredInfo.setZkAddr(zkAdr);
         }
-        objInst.setSkyWalkingDynamicField(requiredInfo);
+        objInst.enSetSkyWalkingDynamicField(requiredInfo);
     }
 
     private boolean isSkip(String tableName) {

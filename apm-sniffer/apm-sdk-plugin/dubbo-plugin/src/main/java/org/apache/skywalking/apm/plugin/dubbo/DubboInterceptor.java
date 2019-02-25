@@ -31,6 +31,8 @@ import org.apache.skywalking.apm.agent.core.context.CarrierItem;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
@@ -44,6 +46,7 @@ import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
  * @author zhangxin
  */
 public class DubboInterceptor implements InstanceMethodsAroundInterceptor {
+    private static final ILog logger = LogManager.getLogger(DubboInterceptor.class);
     /**
      * <h2>Consumer:</h2> The serialized trace context data will
      * inject to the {@link RpcContext#attachments} for transport to provider side.
@@ -73,6 +76,10 @@ public class DubboInterceptor implements InstanceMethodsAroundInterceptor {
             while (next.hasNext()) {
                 next = next.next();
                 rpcContext.getAttachments().put(next.getHeadKey(), next.getHeadValue());
+                if (logger.isDebugEnable()) {
+                    logger.debug("dubbo consumer invoke {} header {}={}",
+                            invocation.getMethodName(), next.getHeadKey(), next.getHeadValue());
+                }
             }
         } else {
             ContextCarrier contextCarrier = new ContextCarrier();
@@ -80,6 +87,8 @@ public class DubboInterceptor implements InstanceMethodsAroundInterceptor {
             while (next.hasNext()) {
                 next = next.next();
                 next.setHeadValue(rpcContext.getAttachment(next.getHeadKey()));
+                logger.debug("dubbo provider invoke {} header {}={}",
+                        invocation.getMethodName(),  next.getHeadKey(), rpcContext.getAttachment(next.getHeadKey()));
             }
 
             span = ContextManager.createEntrySpan(generateOperationName(requestURL, invocation), contextCarrier);

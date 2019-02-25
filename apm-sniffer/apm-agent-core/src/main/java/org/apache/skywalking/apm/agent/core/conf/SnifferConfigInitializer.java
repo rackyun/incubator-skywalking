@@ -106,6 +106,8 @@ public class SnifferConfigInitializer {
             }
         }
 
+        logger.info("Apm agent version is {}.", readVersion());
+
         if (StringUtil.isEmpty(Config.Agent.SERVICE_NAME)) {
             throw new ExceptionInInitializerError("`agent.service_code` is missing.");
         }
@@ -243,5 +245,17 @@ public class SnifferConfigInitializer {
             logger.error("Load bootstrap.properties error", e);
         }
         return appName;
+    }
+
+    private static String readVersion() {
+        try {
+            Properties prop = new Properties();
+            prop.load(SnifferConfigInitializer.class.getResourceAsStream(
+                        "/META-INF/maven/org.apache.skywalking/apm-agent-core/pom.properties"));
+            return prop.getProperty("version");
+        } catch (IOException e) {
+            logger.error("read pom.properties failed", e);
+        }
+        return "";
     }
 }

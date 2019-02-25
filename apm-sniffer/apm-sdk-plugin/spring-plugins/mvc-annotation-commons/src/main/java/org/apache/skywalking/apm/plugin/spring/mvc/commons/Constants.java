@@ -39,4 +39,6 @@ public class Constants {
     public static final String FORWARD_REQUEST_FLAG = "SW_FORWARD_REQUEST_FLAG";
 
     public static final String WEBFLUX_REQUEST_KEY = "SW_WEBFLUX_REQUEST_KEY";
+
+    public static final String X_FORWARD_HEADER = "X-Forwarded-For";
 }

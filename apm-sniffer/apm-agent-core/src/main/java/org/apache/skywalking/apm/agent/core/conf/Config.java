@@ -54,6 +54,10 @@ public class Config {
          */
         public static int SAMPLE_N_PER_3_SECS = -1;
 
+        public static int ERROR_SAMPLE_N_PER_10_SECS = -1;
+
+        public static int SLOW_SPAN_THRESHOLD_MILLISECONDS = 500;
+
         /**
          * If the operation name of the first span is included in this set, this segment should be ignored.
          */
@@ -80,6 +84,8 @@ public class Config {
          * Deactive V1 header in default
          */
         public static boolean ACTIVE_V1_HEADER = false;
+
+        public static String VERSION = "";
     }
 
     public static class Collector {

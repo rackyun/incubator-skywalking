@@ -26,6 +26,8 @@ import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
@@ -35,6 +37,8 @@ import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
  * @author zhang xin
  */
 public class KafkaProducerInterceptor implements InstanceMethodsAroundInterceptor {
+
+    private static final ILog logger = LogManager.getLogger(KafkaProducerInterceptor.class);
 
     public static final String OPERATE_NAME_PREFIX = "Kafka/";
     public static final String PRODUCER_OPERATE_NAME_SUFFIX = "/Producer";
@@ -63,7 +67,7 @@ public class KafkaProducerInterceptor implements InstanceMethodsAroundIntercepto
 
         EnhancedInstance callbackInstance = (EnhancedInstance)allArguments[1];
         if (callbackInstance != null) {
-            callbackInstance.setSkyWalkingDynamicField(ContextManager.capture());
+            callbackInstance.enSetSkyWalkingDynamicField(ContextManager.capture());
         }
     }
 

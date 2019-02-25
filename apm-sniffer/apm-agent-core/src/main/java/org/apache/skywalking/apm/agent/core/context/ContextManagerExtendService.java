@@ -48,6 +48,7 @@ public class ContextManagerExtendService implements BootService {
     public void registerListeners(ContextManager manager) {
         TracingContext.ListenerManager.add(manager);
         IgnoredTracerContext.ListenerManager.add(manager);
+        SkipedTracerContext.ListenerManager.add(manager);
     }
 
     public AbstractTracerContext createTraceContext(String operationName, boolean forceSampling) {

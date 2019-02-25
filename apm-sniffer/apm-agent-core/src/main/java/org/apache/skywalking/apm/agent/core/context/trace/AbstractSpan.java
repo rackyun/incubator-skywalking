@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.apm.agent.core.context.trace;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.skywalking.apm.agent.core.context.tag.AbstractTag;
 import org.apache.skywalking.apm.network.trace.component.Component;
@@ -74,6 +75,11 @@ public interface AbstractSpan {
     AbstractSpan errorOccurred();
 
     /**
+     * @return true if the actual span occurred error.
+     */
+    boolean isErrorOccurred();
+
+    /**
      * @return true if the actual span is an entry span.
      */
     boolean isEntry();
@@ -126,5 +132,9 @@ public interface AbstractSpan {
      */
     void ref(TraceSegmentRef ref);
 
+    List<TraceSegmentRef> getRefs();
+
     AbstractSpan start(long starttime);
+
+    int durationTime();
 }

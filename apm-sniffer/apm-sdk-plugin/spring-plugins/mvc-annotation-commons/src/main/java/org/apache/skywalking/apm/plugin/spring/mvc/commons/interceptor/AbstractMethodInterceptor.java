@@ -31,13 +31,12 @@ import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.apache.skywalking.apm.plugin.spring.mvc.commons.EnhanceRequireObjectCache;
 import org.apache.skywalking.apm.util.StringUtil;
 
-import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.FORWARD_REQUEST_FLAG;
-import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.REQUEST_KEY_IN_RUNTIME_CONTEXT;
-import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.RESPONSE_KEY_IN_RUNTIME_CONTEXT;
+import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.*;
 
 /**
  * the abstract method inteceptor
@@ -68,6 +67,7 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
 
         HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
         if (request != null) {
+            requestURL = OperationNameUtil.normalizeUrl(requestURL);
             ContextCarrier contextCarrier = new ContextCarrier();
             CarrierItem next = contextCarrier.items();
             while (next.hasNext()) {
@@ -80,6 +80,9 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
             AbstractSpan span = ContextManager.createEntrySpan(requestURL, contextCarrier);
             Tags.URL.set(span, request.getRequestURL().toString());
             Tags.HTTP.METHOD.set(span, request.getMethod());
+            String remoteAddr = StringUtil.isEmpty(request.getHeader(X_FORWARD_HEADER)) ?
+                    (request.getRemoteAddr() + ":" + request.getRemotePort()) : (request.getHeader(X_FORWARD_HEADER));
+            Tags.SENDER_HOST.set(span, remoteAddr);
             span.setComponent(ComponentsDefine.SPRING_MVC_ANNOTATION);
             SpanLayer.asHttp(span);
         }

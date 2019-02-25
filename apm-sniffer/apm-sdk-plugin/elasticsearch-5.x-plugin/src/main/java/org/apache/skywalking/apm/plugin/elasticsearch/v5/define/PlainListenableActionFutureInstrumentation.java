@@ -23,7 +23,6 @@ import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.StaticMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
@@ -32,7 +31,7 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
 /**
  * @author oatiz.
  */
-public class PlainListenableActionFutureInstrumentation extends ClassEnhancePluginDefine {
+public class PlainListenableActionFutureInstrumentation extends ElasticsearchBaseClassEnhancePluginDefine {
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {

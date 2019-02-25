@@ -56,6 +56,17 @@ public abstract class AbstractClassEnhancePluginDefine {
 
         logger.debug("prepare to enhance class {} by {}.", transformClassName, interceptorDefineClassName);
 
+        String[] opponentClasses = opponentClasses();
+        if (opponentClasses != null) {
+            for (String opponentClass : opponentClasses) {
+                if (WitnessClassFinder.INSTANCE.exist(opponentClass, classLoader)) {
+                    logger.warn("enhance class {} by plugin {] is not working. Because opponent class {] is existed.",
+                            transformClassName, interceptorDefineClassName, opponentClass);
+                    return null;
+                }
+            }
+        }
+
         /**
          * find witness classes for enhance class
          */
@@ -103,5 +114,14 @@ public abstract class AbstractClassEnhancePluginDefine {
      */
     protected String[] witnessClasses() {
         return new String[] {};
+    }
+
+    /**
+     * when match classname, enhance will be skip.
+     *
+     * @return
+     */
+    protected String[] opponentClasses() {
+        return new String[]{};
     }
 }

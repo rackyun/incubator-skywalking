@@ -19,11 +19,13 @@
 package org.apache.skywalking.apm.agent.core.util;
 
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.skywalking.apm.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yunhai.hu
@@ -41,12 +43,16 @@ public class OperationNameUtil {
     public static String normalizeUrl(List<String> pathSegments) {
         List<String> newPathSegments = new ArrayList<String>(pathSegments.size());
         for (String pathSegment : pathSegments) {
-            if (isNumber(pathSegment)) {
+            if (isNumber(pathSegment) || isPlaceHolder(pathSegment)) {
                 pathSegment = PLACEHOLDER;
             }
             newPathSegments.add(pathSegment);
         }
         return StringUtil.join(SEPARATOR.charAt(0), newPathSegments.toArray(new String[0]));
+    }
+
+    private static boolean isPlaceHolder(String data) {
+        return data.startsWith("{") && data.endsWith("}");
     }
 
     private static boolean isHexOrUUID(String data) {
@@ -84,5 +90,36 @@ public class OperationNameUtil {
         } else {
             return isHexOrUUID(pathSegment) || isWxId(pathSegment);
         }
+    }
+
+    public static String operationEncode(String operationName) {
+        String[] pathSegments = operationName.split("/");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < pathSegments.length; i++) {
+            stringBuilder.append(segmentEncode(pathSegments[i]));
+            if (i != pathSegments.length - 1) {
+                stringBuilder.append("/");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private static Map<Character, Character> ENCODE_MAP = ImmutableMap.of(' ', '_');
+
+
+    private static String segmentEncode(String segment) {
+        int idx;
+        if ((idx = segment.indexOf("?")) > -1) {
+            segment = segment.substring(0, idx);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char chr : segment.toCharArray()) {
+            if (ENCODE_MAP.containsKey(chr)) {
+                stringBuilder.append(ENCODE_MAP.get(chr));
+            } else {
+                stringBuilder.append(chr);
+            }
+        }
+        return stringBuilder.toString();
     }
 }

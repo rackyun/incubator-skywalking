@@ -60,9 +60,11 @@ public class XIdCarrierItem extends CarrierItem {
         carrier.setEntryEndpointName(endpointName);
         carrier.setParentEndpointName(endpointName);
         carrier.setDistributedTraceIds(Lists.newArrayList((DistributedTraceId) new PropagatedTraceId(id)));
-        carrier.setSampled(ServiceManager.INSTANCE.findService(SamplingService.class).trySampling());
+        SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
+        carrier.setSampled(samplingService == null || samplingService.trySampling());
+
         EndpointNameDictionary.INSTANCE.findOrPrepare4Register(RemoteDownstreamConfig.Agent.SERVICE_ID,
-                endpointName, false, true);
+                endpointName, true, false);
     }
 
     public static class XIdCarrierValue {

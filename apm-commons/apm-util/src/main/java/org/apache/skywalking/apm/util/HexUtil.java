@@ -23,24 +23,10 @@ package org.apache.skywalking.apm.util;
  */
 public final class HexUtil {
 
-    private HexUtil() {}
-
-    public static String byteToHex(byte num) {
-        char[] hexDigits = new char[2];
-        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
-        hexDigits[1] = Character.forDigit(num & 0xF, 16);
-        return new String(hexDigits);
+    private HexUtil() {
     }
 
-    public static String encodeHexString(byte[] byteArray) {
-        StringBuffer hexStringBuffer = new StringBuffer();
-        for (int i = 0; i < byteArray.length; i++) {
-            hexStringBuffer.append(byteToHex(byteArray[i]));
-        }
-        return hexStringBuffer.toString();
-    }
-
-    public static byte hexToByte(String hexString) {
+    private static byte hexToByte(String hexString) {
         int firstDigit = toDigit(hexString.charAt(0));
         int secondDigit = toDigit(hexString.charAt(1));
         return (byte) ((firstDigit << 4) + secondDigit);
@@ -55,7 +41,7 @@ public final class HexUtil {
         return digit;
     }
 
-    public static byte[] decodeHexString(String hexString) {
+    private static byte[] decodeHexString(String hexString) {
         if (hexString.length() % 2 == 1) {
             throw new IllegalArgumentException(
                     "Invalid hexadecimal String supplied.");
@@ -68,52 +54,48 @@ public final class HexUtil {
         return bytes;
     }
 
-    //integer convert to byte
-    public static byte intToByte(int x) {
-        return (byte) x;
-    }
-
-    public static int byteToInt(byte b) {
-        return b & 0xFF;
-    }
-
     //byte convert to byte
-    public static int byteArrayToInt(byte[] b, int begin) {
-        return   b[begin + 3] & 0xFF |
+    private static int byteArrayToInt(byte[] b, int begin) {
+        return b[begin + 3] & 0xFF |
                 (b[begin + 2] & 0xFF) << 8 |
                 (b[begin + 1] & 0xFF) << 16 |
                 (b[begin] & 0xFF) << 24;
     }
 
     //byte convert to byte
-    public static long byteArrayToLong(byte[] b, int begin) {
-        return  (long) b[begin + 7] & 0xFF |
-                (long) (b[begin + 6] & 0xFF) << 8 |
-                (long) (b[begin + 5] & 0xFF) << 16 |
-                (long) (b[begin + 4] & 0xFF) << 24 |
-                (long) (b[begin + 3] & 0xFF) << 32 |
-                (long) (b[begin + 2] & 0xFF) << 40 |
-                (long) (b[begin + 1] & 0xFF) << 48 |
-                (long) (b[begin] & 0xFF) << 56;
-    }
-
-    public static byte[] intToByteArray(int a) {
-        return new byte[]{(byte) ((a >> 24) & 0xFF), (byte) ((a >> 16) & 0xFF), (byte) ((a >> 8) & 0xFF), (byte) (a & 0xFF)};
-    }
-
-    public static byte[] longToByteArray(long a) {
-        return new byte[]{(byte) ((a >> 54) & 0xFF), (byte) ((a >> 48) & 0xFF), (byte) ((a >> 40) & 0xFF), (byte) ((a >> 32) & 0xFF), (byte) ((a >> 24) & 0xFF), (byte) ((a >> 16) & 0xFF), (byte) ((a >> 8) & 0xFF), (byte) (a & 0xFF)};
+    private static long longFrom8Bytes(byte[] input, int offset, boolean littleEndian) {
+        long value = 0;
+        for (int count = 0; count < 8; ++count) {
+            int shift = (littleEndian ? count : (7 - count)) << 3;
+            value |= ((long) 0xff << shift) & ((long) input[offset + count] << shift);
+        }
+        return value;
     }
 
     public static String traceIdToString(long part1, long part2, long part3) {
         StringBuilder stringBuilder = new StringBuilder();
-        byte[] part1Byte = HexUtil.intToByteArray((int) part1);
-        stringBuilder.append(encodeHexString(part1Byte));
-        byte[] part2Byte = HexUtil.intToByteArray((int) part2);
-        stringBuilder.append(encodeHexString(part2Byte));
-        byte[] part3byte = HexUtil.longToByteArray(part3);
-        stringBuilder.append(encodeHexString(part3byte));
+        stringBuilder.append(intHexString((int) part1, 8));
+        stringBuilder.append(intHexString((int) part2, 8));
+        stringBuilder.append(longHexString(part3, 16));
         return stringBuilder.toString();
+    }
+
+    private static String intHexString(int value, int length) {
+        String hexString = Integer.toHexString(value);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < length - hexString.length(); i++) {
+            stringBuilder.append(0);
+        }
+        return stringBuilder.append(hexString).toString();
+    }
+
+    private static String longHexString(long value, int length) {
+        String hexStr = Long.toHexString(value);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < length - hexStr.length(); i++) {
+            stringBuilder.append(0);
+        }
+        return stringBuilder.append(hexStr).toString();
     }
 
     public static long[] stringToIDParts(String hexStr) {
@@ -121,7 +103,7 @@ public final class HexUtil {
         if (hexStr != null && hexStr.length() == 32) {
             result[0] = (long) HexUtil.byteArrayToInt(HexUtil.decodeHexString(hexStr.substring(0, 8)), 0);
             result[1] = (long) HexUtil.byteArrayToInt(HexUtil.decodeHexString(hexStr.substring(8, 16)), 0);
-            result[2] = HexUtil.byteArrayToLong(HexUtil.decodeHexString(hexStr.substring(16, 32)), 0);
+            result[2] = longFrom8Bytes(HexUtil.decodeHexString(hexStr.substring(16, 32)), 0, false);
         }
         return result;
     }

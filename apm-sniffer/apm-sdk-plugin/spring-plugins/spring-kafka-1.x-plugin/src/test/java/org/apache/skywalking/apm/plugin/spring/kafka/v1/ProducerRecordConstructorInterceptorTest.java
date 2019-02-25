@@ -16,10 +16,9 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.spring.kafka.v11;
+package org.apache.skywalking.apm.plugin.spring.kafka.v1;
 
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.ProducerRecordConstructorInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,7 @@ public class ProducerRecordConstructorInterceptorTest {
             return brokerServers;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             brokerServers = (String)value;
         }
     };

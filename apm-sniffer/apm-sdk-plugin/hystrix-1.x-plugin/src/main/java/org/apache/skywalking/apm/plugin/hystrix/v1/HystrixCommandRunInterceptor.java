@@ -18,16 +18,22 @@
 
 package org.apache.skywalking.apm.plugin.hystrix.v1;
 
-import java.lang.reflect.Method;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.ContextSnapshot;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
+import java.lang.reflect.Method;
+
 public class HystrixCommandRunInterceptor implements InstanceMethodsAroundInterceptor {
+    private ILog logger = LogManager.getLogger(HystrixCommandRunInterceptor.class);
+
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
@@ -35,8 +41,13 @@ public class HystrixCommandRunInterceptor implements InstanceMethodsAroundInterc
         // hystrix strategy is `THREAD`.
         EnhanceRequireObjectCache enhanceRequireObjectCache = (EnhanceRequireObjectCache)objInst.getSkyWalkingDynamicField();
         ContextSnapshot snapshot = enhanceRequireObjectCache.getContextSnapshot();
+        if (logger.isDebugEnable()) {
+            logger.debug("hystrix interceptor entryOperationName={}, parentOperationName={}, spanId={}",
+                    snapshot.getEntryOperationName(), snapshot.getParentOperationName(), snapshot.getSpanId());
+        }
 
-        AbstractSpan activeSpan = ContextManager.createLocalSpan(enhanceRequireObjectCache.getOperationNamePrefix() + "/Execution");
+        String endpointName = OperationNameUtil.operationEncode(enhanceRequireObjectCache.getOperationNamePrefix() + "/Execution");
+        AbstractSpan activeSpan = ContextManager.createLocalSpan(endpointName, snapshot != null && snapshot.isSample());
         activeSpan.setComponent(ComponentsDefine.HYSTRIX);
         if (snapshot != null) {
             ContextManager.continued(snapshot);

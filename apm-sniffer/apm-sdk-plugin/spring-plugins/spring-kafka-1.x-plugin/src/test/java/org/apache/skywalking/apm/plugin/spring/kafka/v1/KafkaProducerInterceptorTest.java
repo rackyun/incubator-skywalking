@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.spring.kafka.v11;
+package org.apache.skywalking.apm.plugin.spring.kafka.v1;
 
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -30,7 +30,6 @@ import org.apache.skywalking.apm.agent.test.tools.SegmentStorage;
 import org.apache.skywalking.apm.agent.test.tools.SegmentStoragePoint;
 import org.apache.skywalking.apm.agent.test.tools.SpanAssert;
 import org.apache.skywalking.apm.agent.test.tools.TracingSegmentRunner;
-import org.apache.skywalking.apm.plugin.spring.kafka.v1.KafkaProducerInterceptor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,7 +60,7 @@ public class KafkaProducerInterceptorTest {
             return "localhost:9092";
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     };
@@ -78,7 +77,7 @@ public class KafkaProducerInterceptorTest {
             return "test";
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     }

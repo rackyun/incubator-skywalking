@@ -19,10 +19,13 @@
 
 package org.apache.skywalking.apm.agent.core.context;
 
+import org.apache.skywalking.apm.agent.core.boot.ServiceManager;
+import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
+import org.apache.skywalking.apm.agent.core.sampling.ErrorSamplingService;
+import org.apache.skywalking.apm.agent.core.sampling.SlowTraceSamplingService;
+
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
-import org.apache.skywalking.apm.agent.core.context.trace.NoopSpan;
 
 /**
  * The <code>IgnoredTracerContext</code> represent a context should be ignored.
@@ -33,14 +36,18 @@ import org.apache.skywalking.apm.agent.core.context.trace.NoopSpan;
  * @author wusheng
  */
 public class IgnoredTracerContext implements AbstractTracerContext {
-    private static final NoopSpan NOOP_SPAN = new NoopSpan();
 
     private int stackDepth;
     private TracingContext delegate;
+    private boolean errorOccurred = false;
+    private ErrorSamplingService errorSamplingService;
+    private SlowTraceSamplingService slowTraceSamplingService;
 
     public IgnoredTracerContext() {
         this.stackDepth = 0;
         delegate = new TracingContext();
+        errorSamplingService = ServiceManager.INSTANCE.findService(ErrorSamplingService.class);
+        slowTraceSamplingService = ServiceManager.INSTANCE.findService(SlowTraceSamplingService.class);
     }
 
     @Override
@@ -55,7 +62,9 @@ public class IgnoredTracerContext implements AbstractTracerContext {
     }
 
     @Override public ContextSnapshot capture() {
-        return delegate.capture();
+        ContextSnapshot snapshot = delegate.capture();
+        snapshot.setSample(false);
+        return snapshot;
     }
 
     @Override public void continued(ContextSnapshot snapshot) {
@@ -93,8 +102,14 @@ public class IgnoredTracerContext implements AbstractTracerContext {
     @Override
     public void stopSpan(AbstractSpan span) {
         stackDepth--;
-        if (stackDepth == 0) {
+        if (span.isErrorOccurred()) {
+            this.errorOccurred = true;
+        }
+        if (stackDepth == 0 && !errorOccurred && !slowTraceSamplingService.trySampling(span.durationTime()) &&
+                errorSamplingService.trySampling()) {
             ListenerManager.notifyFinish(this);
+        } else {
+            delegate.stopSpan(span);
         }
     }
 
