@@ -111,11 +111,50 @@ public class SnifferConfigInitializer {
         if (StringUtil.isEmpty(Config.Agent.SERVICE_NAME)) {
             throw new ExceptionInInitializerError("`agent.service_code` is missing.");
         }
-        if (StringUtil.isEmpty(Config.Collector.BACKEND_SERVICE)) {
+
+        String appEnv = System.getenv("APP_ENV");
+        if (StringUtil.isEmpty(appEnv)) {
+            appEnv = "dev";
+        }
+        String backendService = selectBackendService(appEnv);
+        if (StringUtil.isEmpty(backendService)) {
             throw new ExceptionInInitializerError("`collector.direct_servers` and `collector.servers` cannot be empty at the same time.");
         }
+        Config.Collector.BACKEND_SERVICE = backendService;
 
         IS_INIT_COMPLETED = true;
+    }
+
+    private static String selectBackendService(String appEnv) {
+
+        switch (AppEnv.valueOfName(appEnv)) {
+            case DEV:
+                return Config.Collector.BACKEND_SERVICE_DEV;
+            case PRE:
+                return Config.Collector.BACKEND_SERVICE_PRE;
+            case ONLINE:
+                return Config.Collector.BACKEND_SERVICE_ONLINE;
+        }
+        return null;
+    }
+
+    private enum AppEnv {
+        DEV("dev"), PRE("pre"), ONLINE("online");
+
+        private String name;
+
+        AppEnv(String name) {
+            this.name = name;
+        }
+
+        static AppEnv valueOfName(String name) {
+            for (AppEnv appEnv : AppEnv.values()) {
+                if (appEnv.name.equals(name)) {
+                    return appEnv;
+                }
+            }
+            throw new ExceptionInInitializerError("APP_ENV " + name + " is illegal");
+        }
     }
 
     private static void overrideConfigByAgentOptions(String agentOptions) throws IllegalAccessException {

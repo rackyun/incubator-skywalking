@@ -109,7 +109,7 @@
                                 <copy file="${project.build.directory}/skywalking-agent.jar" tofile="${project.basedir}/../../skywalking-agent/skywalking-agent.jar" overwrite="true" />
                                 <mkdir dir="${project.basedir}/../../skywalking-agent/config" />
                                 <mkdir dir="${project.basedir}/../../skywalking-agent/logs" />
-                                <copydir src="${project.basedir}/../config/${profiles.active}/" dest="${project.basedir}/../../skywalking-agent/config" forceoverwrite="true" />
+                                <copydir src="${project.basedir}/../config/" dest="${project.basedir}/../../skywalking-agent/config" forceoverwrite="true" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -118,33 +118,6 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <!-- 本地开发环境 -->
-            <id>dev</id>
-            <properties>
-                <profiles.active>dev</profiles.active>
-            </properties>
-            <!-- 默认是本地开发环境 -->
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <!-- 测试环境 -->
-            <id>pre</id>
-            <properties>
-                <profiles.active>pre</profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <!-- online -->
-            <id>online</id>
-            <properties>
-                <profiles.active>online</profiles.active>
-            </properties>
-        </profile>
-    </profiles>
 
 
 </project>

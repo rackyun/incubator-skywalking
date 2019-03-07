@@ -18,7 +18,10 @@
 
 package org.apache.skywalking.oap.server.core.register;
 
+import java.nio.charset.Charset;
 import java.util.*;
+
+import com.google.common.hash.Hashing;
 import lombok.*;
 import org.apache.skywalking.oap.server.core.Const;
 import org.apache.skywalking.oap.server.core.register.annotation.InventoryType;
@@ -43,12 +46,23 @@ public class EndpointInventory extends RegisterSource {
     public static final String NAME = "name";
     public static final String DETECT_POINT = "detect_point";
 
+    private static final Charset UTF8 = Charset.forName("utf-8");
+
     @Setter @Getter @Column(columnName = SERVICE_ID) private int serviceId;
     @Setter @Getter @Column(columnName = NAME, matchQuery = true) private String name = Const.EMPTY_STRING;
     @Setter @Getter @Column(columnName = DETECT_POINT) private int detectPoint;
 
     public static String buildId(int serviceId, String endpointName, int detectPoint) {
-        return serviceId + Const.ID_SPLIT + endpointName + Const.ID_SPLIT + detectPoint;
+        String hashString = getNameString(endpointName);
+        return serviceId + Const.ID_SPLIT + hashString + Const.ID_SPLIT + detectPoint;
+    }
+
+    private static String getNameString(String endpointName) {
+        if (endpointName.length() < 100) {
+            return endpointName;
+        }
+        byte[] endpointNameHash = Hashing.murmur3_128().hashString(endpointName, UTF8).asBytes();
+        return Base64.getEncoder().encodeToString(endpointNameHash);
     }
 
     @Override public String id() {

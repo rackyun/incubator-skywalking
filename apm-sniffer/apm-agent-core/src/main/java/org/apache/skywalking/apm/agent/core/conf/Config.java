@@ -101,6 +101,9 @@ public class Config {
          * Collector skywalking trace receiver service addresses.
          */
         public static String BACKEND_SERVICE = "";
+        public static String BACKEND_SERVICE_DEV = "";
+        public static String BACKEND_SERVICE_PRE = "";
+        public static String BACKEND_SERVICE_ONLINE = "";
     }
 
     public static class Jvm {

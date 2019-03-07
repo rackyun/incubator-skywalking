@@ -105,12 +105,25 @@ public class IgnoredTracerContext implements AbstractTracerContext {
         if (span.isErrorOccurred()) {
             this.errorOccurred = true;
         }
-        if (stackDepth == 0 && !errorOccurred && !slowTraceSamplingService.trySampling(span.durationTime()) &&
-                errorSamplingService.trySampling()) {
+        if (isCompleted(stackDepth)
+                && !isSampledError(errorOccurred, errorSamplingService)
+                && !isSampledSlowTrace(span, slowTraceSamplingService)) {
             ListenerManager.notifyFinish(this);
         } else {
             delegate.stopSpan(span);
         }
+    }
+
+    private static boolean isCompleted(int stackDepth) {
+        return stackDepth == 0;
+    }
+
+    private static boolean isSampledError(boolean errorOccurred, ErrorSamplingService errorSamplingService) {
+        return errorOccurred && errorSamplingService.trySampling();
+    }
+
+    private static boolean isSampledSlowTrace(AbstractSpan span, SlowTraceSamplingService slowTraceSamplingService) {
+        return slowTraceSamplingService.trySampling(span.durationTime());
     }
 
     public static class ListenerManager {

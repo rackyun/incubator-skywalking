@@ -25,6 +25,7 @@ import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
+import org.apache.skywalking.apm.agent.core.util.RateLimiter;
 
 /**
  * The <code>SamplingService</code> take charge of how to sample the {@link TraceSegment}. Every {@link TraceSegment}s
@@ -40,6 +41,7 @@ public class SlowTraceSamplingService implements BootService {
     private static final ILog logger = LogManager.getLogger(SlowTraceSamplingService.class);
 
     private volatile boolean on = false;
+    private RateLimiter rateLimiter;
 
     @Override
     public void prepare() throws Throwable {
@@ -49,8 +51,10 @@ public class SlowTraceSamplingService implements BootService {
     @Override
     public void boot() throws Throwable {
 
-        if (Config.Agent.SLOW_SPAN_THRESHOLD_MILLISECONDS > 0) {
+        if (Config.Agent.SLOW_SPAN_THRESHOLD_MILLISECONDS > 0 && Config.Agent.ERROR_SAMPLE_N_PER_10_SECS > 0) {
             on = true;
+            double maxBalance = Config.Agent.ERROR_SAMPLE_N_PER_10_SECS < 1.0 ? 1.0 : Config.Agent.ERROR_SAMPLE_N_PER_10_SECS;
+            rateLimiter = new RateLimiter((float) Config.Agent.ERROR_SAMPLE_N_PER_10_SECS / 10, maxBalance);
         }
     }
 
@@ -68,7 +72,7 @@ public class SlowTraceSamplingService implements BootService {
      */
     public boolean trySampling(int elapsedTime) {
         if (on) {
-            return elapsedTime > Config.Agent.SLOW_SPAN_THRESHOLD_MILLISECONDS;
+            return (elapsedTime > Config.Agent.SLOW_SPAN_THRESHOLD_MILLISECONDS) && rateLimiter.checkCredit();
         }
         return true;
     }
