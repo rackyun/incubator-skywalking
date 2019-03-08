@@ -20,6 +20,7 @@ package org.apache.skywalking.apm.plugin.rocketMQ.v4.define;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.apache.skywalking.apm.agent.core.plugin.bytebuddy.ReturnTypeNameMatch;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
@@ -32,6 +33,7 @@ public class ConsumeMessageConcurrentlyInstrumentation extends ClassInstanceMeth
     private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently";
     private static final String CONSUMER_MESSAGE_METHOD = "consumeMessage";
     private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.rocketMQ.v4.MessageConcurrentlyConsumeInterceptor";
+    private static final String RETURN_CLASS = "com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus";
 
     @Override protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
         return new ConstructorInterceptPoint[0];
@@ -41,7 +43,7 @@ public class ConsumeMessageConcurrentlyInstrumentation extends ClassInstanceMeth
         return new InstanceMethodsInterceptPoint[] {
             new InstanceMethodsInterceptPoint() {
                 @Override public ElementMatcher<MethodDescription> getMethodsMatcher() {
-                    return named(CONSUMER_MESSAGE_METHOD);
+                    return named(CONSUMER_MESSAGE_METHOD).and(ReturnTypeNameMatch.takesReturnTypeNameMatch(RETURN_CLASS));
                 }
 
                 @Override public String getMethodsInterceptor() {

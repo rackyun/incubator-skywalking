@@ -20,6 +20,7 @@ package org.apache.skywalking.apm.plugin.rocketMQ.v3.define;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.apache.skywalking.apm.agent.core.plugin.bytebuddy.ReturnTypeNameMatch;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
@@ -39,6 +40,7 @@ public class ConsumeMessageOrderlyInstrumentation extends ClassInstanceMethodsEn
     private static final String ENHANCE_CLASS = "com.alibaba.rocketmq.client.consumer.listener.MessageListenerOrderly";
     private static final String ENHANCE_METHOD = "consumeMessage";
     private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.rocketMQ.v3.MessageOrderlyConsumeInterceptor";
+    private static final String RETURN_CLASS = "com.alibaba.rocketmq.client.consumer.listener.ConsumeOrderlyStatus";
 
     @Override protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
         return new ConstructorInterceptPoint[0];
@@ -48,7 +50,7 @@ public class ConsumeMessageOrderlyInstrumentation extends ClassInstanceMethodsEn
         return new InstanceMethodsInterceptPoint[] {
             new InstanceMethodsInterceptPoint() {
                 @Override public ElementMatcher<MethodDescription> getMethodsMatcher() {
-                    return named(ENHANCE_METHOD);
+                    return named(ENHANCE_METHOD).and(ReturnTypeNameMatch.takesReturnTypeNameMatch(RETURN_CLASS));
                 }
 
                 @Override public String getMethodsInterceptor() {
