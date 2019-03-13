@@ -80,6 +80,9 @@ public class SegmentParse {
             }
             TraceSegmentObject segmentObject = bufferData.getV1Segment();
 
+            if (logger.isDebugEnabled()) {
+                logger.debug("This trace segment object {}", segmentObject.toString());
+            }
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
             if (!preBuild(traceIds, segmentDecorator)) {
