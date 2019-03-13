@@ -135,7 +135,14 @@ public class MultiScopesSpanListener implements EntrySpanListener, ExitSpanListe
             return;
         }
         int destServiceId = serviceInventoryCache.getServiceId(peerId);
-        int mappingServiceId = serviceInventoryCache.get(destServiceId).getMappingServiceId();
+        int mappingServiceId = Const.NONE;
+        try {
+            mappingServiceId = serviceInventoryCache.get(destServiceId).getMappingServiceId();
+        } catch (Exception e) {
+            logger.error("operationName {}, peerId {} get destServiceId {} error",
+                    spanDecorator.getOperationName(), peerId, destServiceId);
+            throw e;
+        }
         int destInstanceId = instanceInventoryCache.getServiceInstanceId(destServiceId, peerId);
 
         sourceBuilder.setSourceEndpointId(Const.USER_ENDPOINT_ID);

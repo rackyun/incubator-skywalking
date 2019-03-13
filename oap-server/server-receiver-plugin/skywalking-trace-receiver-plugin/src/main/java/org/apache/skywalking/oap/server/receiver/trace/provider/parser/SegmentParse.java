@@ -77,6 +77,9 @@ public class SegmentParse {
             List<UniqueId> traceIds = segment.getGlobalTraceIdsList();
             TraceSegmentObject segmentObject = parseBinarySegment(segment);
 
+            if (logger.isDebugEnabled()) {
+                logger.debug("This trace segment object {}", segmentObject.toString());
+            }
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
             if (!preBuild(traceIds, segmentDecorator)) {

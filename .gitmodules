@@ -1,6 +1,7 @@
 [submodule "skywalking-ui"]
 	path = skywalking-ui
-	url = https://github.com/apache/incubator-skywalking-ui
+    branch = 6.0.0-keep
+	url = ssh://git@phab.gotokeep.com/diffusion/RSWUI/skywalking-ui.git 
 [submodule "apm-protocol/apm-network/src/main/proto"]
 	path = apm-protocol/apm-network/src/main/proto
 	url = https://github.com/apache/incubator-skywalking-data-collect-protocol.git
