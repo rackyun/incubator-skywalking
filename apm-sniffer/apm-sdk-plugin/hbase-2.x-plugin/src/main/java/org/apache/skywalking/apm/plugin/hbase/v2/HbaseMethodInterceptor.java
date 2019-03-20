@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.hbase.v1;
+package org.apache.skywalking.apm.plugin.hbase.v2;
 
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.TableName;
@@ -36,7 +36,7 @@ import java.lang.reflect.Method;
 
 /**
  * @author yunhai.hu
- * at 2018/12/13
+ * at 2019/3/20
  */
 public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor, InstanceConstructorInterceptor {
 
@@ -52,8 +52,7 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
                              Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
-        Object[] arguments = allArguments;
-        //todo add key tag
+
         String executeMethod = method.getName();
         String tableName = ((HbaseEnhanceRequiredInfo) objInst.getSkyWalkingDynamicField()).getTableName();
         if (isSkip(tableName)) {
