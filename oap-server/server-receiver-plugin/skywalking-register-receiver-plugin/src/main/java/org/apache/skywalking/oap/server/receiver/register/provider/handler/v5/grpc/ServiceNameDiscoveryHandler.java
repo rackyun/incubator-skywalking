@@ -19,14 +19,17 @@
 package org.apache.skywalking.oap.server.receiver.register.provider.handler.v5.grpc;
 
 import io.grpc.stub.StreamObserver;
-import java.util.List;
 import org.apache.skywalking.apm.network.language.agent.*;
-import org.apache.skywalking.oap.server.core.*;
+import org.apache.skywalking.oap.server.core.Const;
+import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.register.service.IEndpointInventoryRegister;
 import org.apache.skywalking.oap.server.core.source.DetectPoint;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.server.grpc.GRPCHandler;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author peng-yongsheng

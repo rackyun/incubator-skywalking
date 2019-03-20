@@ -54,7 +54,7 @@ public class EndpointInventory extends RegisterSource {
     @Setter @Getter @Column(columnName = DETECT_POINT) private int detectPoint;
 
     public static String buildId(int serviceId, String endpointName, int detectPoint) {
-        String hashString = getNameString(endpointName);
+        String hashString = getNameString(OperationNameUtil.normalizeUrl(endpointName));
         return serviceId + Const.ID_SPLIT + hashString + Const.ID_SPLIT + detectPoint;
     }
 

@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.plugin.hbase.v1.define;
+package org.apache.skywalking.apm.plugin.hbase.v2.define;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -36,8 +36,8 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
 public class HbaseInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
 
     private static final String ENHANCE_CLASS = "org.apache.hadoop.hbase.client.HTable";
-    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.hbase.v1.HbaseMethodInterceptor";
-    private static final String WITNESS_CLASS = "org.apache.hadoop.hbase.client.HTableInterface";
+    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.hbase.v2.HbaseMethodInterceptor";
+    private static final String WITNESS_CLASS = "org.apache.hadoop.hbase.client.AsyncAdmin";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
@@ -45,7 +45,7 @@ public class HbaseInstrumentation extends ClassInstanceMethodsEnhancePluginDefin
             new ConstructorInterceptPoint() {
                 @Override
                 public ElementMatcher<MethodDescription> getConstructorMatcher() {
-                    return takesArgumentWithType(3, "org.apache.hadoop.hbase.client.RpcRetryingCallerFactory");
+                    return takesArgumentWithType(2, "org.apache.hadoop.hbase.client.RpcRetryingCallerFactory");
                 }
 
                 @Override
