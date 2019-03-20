@@ -4,7 +4,9 @@
 	url = ssh://git@phab.gotokeep.com/diffusion/RSWUI/skywalking-ui.git 
 [submodule "apm-protocol/apm-network/src/main/proto"]
 	path = apm-protocol/apm-network/src/main/proto
-	url = https://github.com/apache/incubator-skywalking-data-collect-protocol.git
+	url = https://github.com/rackyun/incubator-skywalking-data-collect-protocol.git
+	branch = v6.0.0_keep
 [submodule "oap-server/server-query-plugin/query-graphql-plugin/src/main/resources/query-protocol"]
 	path = oap-server/server-query-plugin/query-graphql-plugin/src/main/resources/query-protocol
-	url = https://github.com/apache/incubator-skywalking-query-protocol.git
+	url = https://github.com/rackyun/incubator-skywalking-query-protocol.git
+	branch = 6.0.0-keep

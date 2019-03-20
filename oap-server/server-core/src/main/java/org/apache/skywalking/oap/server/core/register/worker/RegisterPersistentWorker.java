@@ -19,6 +19,8 @@
 package org.apache.skywalking.oap.server.core.register.worker;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.skywalking.apm.commons.datacarrier.DataCarrier;
 import org.apache.skywalking.apm.commons.datacarrier.consumer.IConsumer;
 import org.apache.skywalking.oap.server.core.analysis.data.EndOfBatchContext;
@@ -68,8 +70,9 @@ public class RegisterPersistentWorker extends AbstractWorker<RegisterSource> {
         }
 
         if (registerSource.getEndOfBatchContext().isEndOfBatch()) {
-
+            String sourcesId = sources.values().stream().map(StorageData::id).collect(Collectors.joining(","));
             if (registerLockDAO.tryLock(scope)) {
+                logger.info("Inventory register {}:id={} try lock success.", scope, sourcesId);
                 try {
                     sources.values().forEach(source -> {
                         try {
@@ -90,7 +93,7 @@ public class RegisterPersistentWorker extends AbstractWorker<RegisterSource> {
                     registerLockDAO.releaseLock(scope);
                 }
             } else {
-                logger.info("Inventory register try lock failure.");
+                logger.info("Inventory register {}:id={} try lock failure.", scope, sourcesId);
             }
         }
     }

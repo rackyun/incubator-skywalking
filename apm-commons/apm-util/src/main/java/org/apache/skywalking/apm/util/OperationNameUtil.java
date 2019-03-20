@@ -16,16 +16,11 @@
  *
  */
 
-package org.apache.skywalking.apm.agent.core.util;
+package org.apache.skywalking.apm.util;
 
-
-import com.google.common.collect.ImmutableMap;
-import org.apache.skywalking.apm.util.StringUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author yunhai.hu
@@ -34,9 +29,13 @@ import java.util.Map;
 public class OperationNameUtil {
     private static final String PLACEHOLDER = "ID";
     private static final String SEPARATOR = "/";
+    private static final Pattern PATTERN = Pattern.compile("([0-9a-fA-F]{8,})|([0-9]{4,})");
 
     public static String normalizeUrl(String url) {
         List<String> pathSegments = Arrays.asList(url.split(SEPARATOR));
+        if (pathSegments.size() <= 1) {
+            return url;
+        }
         return normalizeUrl(pathSegments);
     }
 
@@ -45,10 +44,20 @@ public class OperationNameUtil {
         for (String pathSegment : pathSegments) {
             if (isNumber(pathSegment) || isPlaceHolder(pathSegment)) {
                 pathSegment = PLACEHOLDER;
+            } else {
+                pathSegment = complicatedStringReplace(pathSegment);
             }
             newPathSegments.add(pathSegment);
         }
         return StringUtil.join(SEPARATOR.charAt(0), newPathSegments.toArray(new String[0]));
+    }
+
+    private static String complicatedStringReplace(String path) {
+        Matcher matcher = PATTERN.matcher(path);
+        if (matcher.find()) {
+            return matcher.replaceAll(PLACEHOLDER);
+        }
+        return path;
     }
 
     private static boolean isPlaceHolder(String data) {
@@ -104,7 +113,12 @@ public class OperationNameUtil {
         return stringBuilder.toString();
     }
 
-    private static Map<Character, Character> ENCODE_MAP = ImmutableMap.of(' ', '_');
+    private static final Map<Character, Character> ENCODE_MAP;
+
+    static {
+        ENCODE_MAP = new HashMap<Character, Character>();
+        ENCODE_MAP.put(' ', '_');
+    }
 
 
     private static String segmentEncode(String segment) {

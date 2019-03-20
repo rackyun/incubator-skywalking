@@ -20,7 +20,7 @@
 package org.apache.skywalking.apm.agent.core.context;
 
 /**
- * @author wusheng
+ * @author yunhai.hu
  */
 public interface SkipedTracerContextListener {
     void afterFinished(SkipedTracerContext traceSegment);

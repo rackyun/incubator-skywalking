@@ -15,14 +15,14 @@
 # limitations under the License.
 
 server:
-  port: 8080
+  port: 19888
 
 collector:
   path: /graphql
   ribbon:
     ReadTimeout: 10000
     # Point to all backend's restHost:restPort, split by ,
-    listOfServers: 127.0.0.1:12800
+    listOfServers: 172.20.4.65:22800,172.20.8.129:22800
 
 security:
   user:

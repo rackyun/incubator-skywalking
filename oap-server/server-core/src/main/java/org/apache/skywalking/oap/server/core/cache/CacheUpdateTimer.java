@@ -58,7 +58,8 @@ public enum CacheUpdateTimer {
         List<ServiceInventory> serviceInventories = serviceInventoryCacheDAO.loadLastMappingUpdate();
 
         serviceInventories.forEach(serviceInventory -> {
-            logger.info("Update mapping service id in the cache of service inventory, service id: {}, mapping service id: {}", serviceInventory.getSequence(), serviceInventory.getMappingServiceId());
+            logger.debug("Update mapping service id in the cache of service inventory, service id: {}, mapping service id: {}",
+                    serviceInventory.getSequence(), serviceInventory.getMappingServiceId());
             ServiceInventory cache = serviceInventoryCache.get(serviceInventory.getSequence());
             if (Objects.nonNull(cache)) {
                 cache.setMappingServiceId(serviceInventory.getMappingServiceId());

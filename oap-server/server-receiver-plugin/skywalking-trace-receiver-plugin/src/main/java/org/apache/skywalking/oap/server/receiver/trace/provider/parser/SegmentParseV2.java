@@ -26,6 +26,7 @@ import org.apache.skywalking.apm.network.language.agent.SpanType;
 import org.apache.skywalking.apm.network.language.agent.UniqueId;
 import org.apache.skywalking.apm.network.language.agent.UpstreamSegment;
 import org.apache.skywalking.apm.network.language.agent.v2.SegmentObject;
+import org.apache.skywalking.apm.util.HexUtil;
 import org.apache.skywalking.oap.server.library.buffer.DataStreamReader;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.apache.skywalking.oap.server.library.util.TimeBucketUtils;
@@ -81,9 +82,11 @@ public class SegmentParseV2 {
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
             if (!preBuild(traceIds, segmentDecorator)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("This segment id exchange not success, write to buffer file, id: {}", segmentCoreInfo.getSegmentId());
-                }
+//                if (logger.isDebugEnabled()) {
+//                    logger.debug("This segment id exchange not success, write to buffer file, id: {}", segmentCoreInfo.getSegmentId());
+//                }
+                logger.warn("This segment id exchange not success, write to buffer file, id: {}, serviceId: {}",
+                        segmentCoreInfo.getSegmentId(), segmentCoreInfo.getServiceId());
 
                 if (source.equals(SegmentSource.Agent)) {
                     writeToBufferFile(segmentCoreInfo.getSegmentId(), segment);
@@ -107,21 +110,15 @@ public class SegmentParseV2 {
     }
 
     private boolean preBuild(List<UniqueId> traceIds, SegmentDecorator segmentDecorator) {
-        StringBuilder segmentIdBuilder = new StringBuilder();
-
-        for (int i = 0; i < segmentDecorator.getTraceSegmentId().getIdPartsList().size(); i++) {
-            if (i == 0) {
-                segmentIdBuilder.append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
-            } else {
-                segmentIdBuilder.append(".").append(segmentDecorator.getTraceSegmentId().getIdPartsList().get(i));
-            }
-        }
 
         for (UniqueId uniqueId : traceIds) {
             notifyGlobalsListener(uniqueId);
         }
+        UniqueId uniqueId = segmentDecorator.getTraceSegmentId();
+        String segmentId = HexUtil.traceIdToString(uniqueId.getIdParts(0), uniqueId.getIdParts(1),
+                uniqueId.getIdParts(2));
 
-        segmentCoreInfo.setSegmentId(segmentIdBuilder.toString());
+        segmentCoreInfo.setSegmentId(segmentId);
         segmentCoreInfo.setServiceId(segmentDecorator.getServiceId());
         segmentCoreInfo.setServiceInstanceId(segmentDecorator.getServiceInstanceId());
         segmentCoreInfo.setDataBinary(segmentDecorator.toByteArray());
@@ -131,11 +128,13 @@ public class SegmentParseV2 {
             SpanDecorator spanDecorator = segmentDecorator.getSpans(i);
 
             if (!SpanIdExchanger.getInstance(moduleManager).exchange(spanDecorator, segmentCoreInfo.getServiceId())) {
+                logger.warn("serviceId {} SpanIdExchanger not found", segmentCoreInfo.getServiceId());
                 return false;
             } else {
                 for (int j = 0; j < spanDecorator.getRefsCount(); j++) {
                     ReferenceDecorator referenceDecorator = spanDecorator.getRefs(j);
                     if (!ReferenceIdExchanger.getInstance(moduleManager).exchange(referenceDecorator, segmentCoreInfo.getServiceId())) {
+                        logger.warn("serviceId {} ReferenceIdExchanger not found", segmentCoreInfo.getServiceId());
                         return false;
                     }
                 }

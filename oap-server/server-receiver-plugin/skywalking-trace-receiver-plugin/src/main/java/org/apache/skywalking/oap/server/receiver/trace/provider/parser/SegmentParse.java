@@ -109,7 +109,7 @@ public class SegmentParse {
     }
 
     private boolean preBuild(List<UniqueId> traceIds, SegmentDecorator segmentDecorator) {
-        StringBuilder segmentIdBuilder = new StringBuilder();
+//        StringBuilder segmentIdBuilder = new StringBuilder();
 
 //        for (int i = 0; i < segmentDecorator.getTraceSegmentId().getIdPartsList().size(); i++) {
 //            if (i == 0) {
