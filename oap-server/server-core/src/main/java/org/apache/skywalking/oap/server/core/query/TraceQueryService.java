@@ -198,15 +198,16 @@ public class TraceQueryService implements Service {
                 ref.setParentSpanId(reference.getParentSpanId());
 
                 UniqueId uniqueId = reference.getParentTraceSegmentId();
-                StringBuilder segmentIdBuilder = new StringBuilder();
+                /*StringBuilder segmentIdBuilder = new StringBuilder();
                 for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
                     if (i == 0) {
                         segmentIdBuilder.append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                     } else {
                         segmentIdBuilder.append(".").append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                     }
-                }
-                ref.setParentSegmentId(segmentIdBuilder.toString());
+                }*/
+
+                ref.setParentSegmentId(HexUtil.traceIdToString(uniqueId.getIdPartsList()));
 
                 span.setSegmentParentSpanId(ref.getParentSegmentId() + Const.SEGMENT_SPAN_SPLIT + String.valueOf(ref.getParentSpanId()));
 
@@ -303,8 +304,8 @@ public class TraceQueryService implements Service {
                 ref.setParentSpanId(reference.getParentSpanId());
 
                 UniqueId uniqueId = reference.getParentTraceSegmentId();
-                StringBuilder segmentIdBuilder = new StringBuilder();
-                /*for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
+                /*StringBuilder segmentIdBuilder = new StringBuilder();
+                for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
                     if (i == 0) {
                         segmentIdBuilder.append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                     } else {

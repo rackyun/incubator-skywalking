@@ -23,6 +23,7 @@ import java.util.*;
 
 import com.google.common.hash.Hashing;
 import lombok.*;
+import org.apache.skywalking.apm.util.OperationNameUtil;
 import org.apache.skywalking.oap.server.core.Const;
 import org.apache.skywalking.oap.server.core.register.annotation.InventoryType;
 import org.apache.skywalking.oap.server.core.remote.annotation.StreamData;
@@ -117,7 +118,7 @@ public class EndpointInventory extends RegisterSource {
         setRegisterTime(remoteData.getDataLongs(0));
         setHeartbeatTime(remoteData.getDataLongs(1));
 
-        setName(remoteData.getDataStrings(0));
+        setName(OperationNameUtil.normalizeUrl(remoteData.getDataStrings(0)));
     }
 
     @Override public int remoteHashCode() {

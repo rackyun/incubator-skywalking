@@ -17,6 +17,8 @@ package org.apache.skywalking.apm.util;
  *
  */
 
+import java.util.List;
+
 /**
  * @author yunhai.hu
  * at 2018/12/10
@@ -70,6 +72,10 @@ public final class HexUtil {
             value |= ((long) 0xff << shift) & ((long) input[offset + count] << shift);
         }
         return value;
+    }
+
+    public static String traceIdToString(List<Long> partList) {
+        return traceIdToString(partList.get(0), partList.get(1), partList.get(2));
     }
 
     public static String traceIdToString(long part1, long part2, long part3) {

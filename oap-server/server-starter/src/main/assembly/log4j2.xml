@@ -32,8 +32,6 @@
             </Policies>
             <DefaultRolloverStrategy max="30"/>
         </RollingFile>
-    </Appenders>
-    <Appenders>
         <RollingFile name="TraceReceiverFile" fileName="${log-path}/skywalking-trace-receiver.log"
                      filePattern="${log-path}/skywalking-trace-receiver-%d{yyyy-MM-dd}-%i.log" >
             <PatternLayout>
@@ -49,7 +47,7 @@
         <logger name="org.eclipse.jetty" level="INFO"/>
         <logger name="org.apache.zookeeper" level="INFO"/>
         <logger name="io.grpc.netty" level="INFO"/>
-        <logger name="org.apache.skywalking.oap.server.receiver.trace" level="DEBUG">
+        <logger name="org.apache.skywalking.oap.server.receiver.trace" level="info">
             <AppenderRef ref="TraceReceiverFile"/>
         </logger>
         <Root level="info">

@@ -19,6 +19,8 @@
 package org.apache.skywalking.oap.server.core.register.worker;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.skywalking.apm.commons.datacarrier.DataCarrier;
 import org.apache.skywalking.apm.commons.datacarrier.consumer.IConsumer;
 import org.apache.skywalking.oap.server.core.Const;

@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.apm.agent.core.util;
 
+import org.apache.skywalking.apm.util.OperationNameUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,11 +38,18 @@ public class HttpUrlUtilTest {
         String wxUrl = "/hello/wxfcf4d8d8ad24b86a";
         String wxRet = OperationNameUtil.normalizeUrl(wxUrl);
         assertEquals("/hello/ID", wxRet);
+
+        String compStr = "/internal/social/like/liverun/574af9fe8d62d33b05b02575_city0795_1552902898443/likes";
+        assertEquals("/internal/social/like/liverun/ID_cityID_ID/likes", OperationNameUtil.normalizeUrl(compStr));
+
+        String dubboStr = "com.gotokeep.keepevent.api.service.QueryEventListService.findAllMyOngoingEventList(String)";
+        assertEquals(dubboStr, OperationNameUtil.normalizeUrl(dubboStr));
     }
 
     @Test
     public void testUrlEncode() {
         String operationName = "Hystrix/GET /hello?cc={cc}/Execution";
-        assertEquals("url encode error", "Hystrix/GET_/hello/Execution", OperationNameUtil.operationEncode(operationName));
+        assertEquals("url encode error", "Hystrix/GET_/hello/Execution",
+                OperationNameUtil.operationEncode(operationName));
     }
 }

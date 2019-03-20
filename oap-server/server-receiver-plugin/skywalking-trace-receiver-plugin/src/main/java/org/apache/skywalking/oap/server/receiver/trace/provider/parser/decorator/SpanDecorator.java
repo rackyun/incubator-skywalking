@@ -22,6 +22,7 @@ import java.util.*;
 import org.apache.skywalking.apm.network.common.KeyStringValuePair;
 import org.apache.skywalking.apm.network.language.agent.*;
 import org.apache.skywalking.apm.network.language.agent.v2.SpanObjectV2;
+import org.apache.skywalking.apm.util.OperationNameUtil;
 
 import static java.util.Objects.isNull;
 
@@ -239,6 +240,7 @@ public class SpanDecorator implements StandardBuilder {
         if (isOrigin) {
             toBuilder();
         }
+        value = OperationNameUtil.normalizeUrl(value);
         if (isV2) {
             spanBuilderV2.setOperationName(value);
         } else {

@@ -15,15 +15,15 @@
 # limitations under the License.
 
 cluster:
-  standalone:
+  #  standalone:
   # Please check your ZooKeeper is 3.5+, However, it is also compatible with ZooKeeper 3.4.x. Replace the ZooKeeper 3.5+
   # library the oap-libs folder with your ZooKeeper 3.4.x library.
-#  zookeeper:
-#    nameSpace: ${SW_NAMESPACE:""}
-#    hostPort: ${SW_CLUSTER_ZK_HOST_PORT:localhost:2181}
-#    #Retry Policy
-#    baseSleepTimeMs: ${SW_CLUSTER_ZK_SLEEP_TIME:1000} # initial amount of time to wait between retries
-#    maxRetries: ${SW_CLUSTER_ZK_MAX_RETRIES:3} # max number of times to retry
+  zookeeper:
+    nameSpace: ${SW_NAMESPACE:"skywalking"}
+    hostPort: ${SW_CLUSTER_ZK_HOST_PORT:p-etcd-04.ali.keep:2181,p-etcd-05.ali.keep:2181,p-etcd-06.ali.keep:2181}
+    #Retry Policy
+    baseSleepTimeMs: ${SW_CLUSTER_ZK_SLEEP_TIME:1000} # initial amount of time to wait between retries
+    maxRetries: ${SW_CLUSTER_ZK_MAX_RETRIES:3} # max number of times to retry
 #  kubernetes:
 #    watchTimeoutSeconds: ${SW_CLUSTER_K8S_WATCH_TIMEOUT:60}
 #    namespace: ${SW_CLUSTER_K8S_NAMESPACE:default}
@@ -36,16 +36,16 @@ cluster:
 core:
   default:
     restHost: ${SW_CORE_REST_HOST:0.0.0.0}
-    restPort: ${SW_CORE_REST_PORT:12800}
+    restPort: ${SW_CORE_REST_PORT:22800}
     restContextPath: ${SW_CORE_REST_CONTEXT_PATH:/}
     gRPCHost: ${SW_CORE_GRPC_HOST:0.0.0.0}
-    gRPCPort: ${SW_CORE_GRPC_PORT:11800}
+    gRPCPort: ${SW_CORE_GRPC_PORT:21800}
     downsampling:
     - Hour
     - Day
     - Month
     # Set a timeout on metric data. After the timeout has expired, the metric data will automatically be deleted.
-    recordDataTTL: ${SW_CORE_RECORD_DATA_TTL:90} # Unit is minute
+    recordDataTTL: ${SW_CORE_RECORD_DATA_TTL:2880} # Unit is minute
     minuteMetricsDataTTL: ${SW_CORE_MINUTE_METRIC_DATA_TTL:90} # Unit is minute
     hourMetricsDataTTL: ${SW_CORE_HOUR_METRIC_DATA_TTL:36} # Unit is hour
     dayMetricsDataTTL: ${SW_CORE_DAY_METRIC_DATA_TTL:45} # Unit is day
@@ -61,14 +61,14 @@ storage:
   #    url: jdbc:h2:mem:skywalking-oap-db
   #    user: sa
   elasticsearch:
-    clusterNodes: 172.16.1.40:9200
-    indexShardsNumber: 2
+    clusterNodes: bj-trace-es-01:9200,bj-trace-es-02:9200
+    indexShardsNumber: 4
     indexReplicasNumber: 0
     # Batch process setting, refer to https://www.elastic.co/guide/en/elasticsearch/client/java-api/5.5/java-docs-bulk-processor.html
-    bulkActions: 2000 # Execute the bulk every 2000 requests
+    bulkActions: 500 # Execute the bulk every 2000 requests
     bulkSize: 20 # flush the bulk every 20mb
     flushInterval: 10 # flush the bulk every 10 seconds whatever the number of requests
-    concurrentRequests: 2 # the number of concurrent requests
+    concurrentRequests: 4 # the number of concurrent requests
 receiver-register:
   default:
 receiver-trace:

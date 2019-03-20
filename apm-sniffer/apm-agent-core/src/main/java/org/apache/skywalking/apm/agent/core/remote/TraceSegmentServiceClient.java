@@ -49,7 +49,7 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
     private long segmentAbandonedCounter;
     private volatile DataCarrier<TraceSegment> carrier;
     private volatile TraceSegmentReportServiceGrpc.TraceSegmentReportServiceStub serviceStub;
-    private volatile GRPCChannelStatus status = GRPCChannelStatus.DISCONNECT;
+    private volatile GRPCChannelStatus channelStatus = GRPCChannelStatus.DISCONNECT;
 
     private Gson gson = new Gson();
 
@@ -85,7 +85,7 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
 
     @Override
     public void consume(List<TraceSegment> data) {
-        if (CONNECTED.equals(status)) {
+        if (CONNECTED.equals(channelStatus)) {
             final GRPCStreamServiceStatus status = new GRPCStreamServiceStatus(false);
             StreamObserver<UpstreamSegment> upstreamSegmentStreamObserver = serviceStub.collect(new StreamObserver<Commands>() {
                 @Override
@@ -173,6 +173,6 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
             Channel channel = ServiceManager.INSTANCE.findService(GRPCChannelManager.class).getChannel();
             serviceStub = TraceSegmentReportServiceGrpc.newStub(channel);
         }
-        this.status = status;
+        this.channelStatus = status;
     }
 }
