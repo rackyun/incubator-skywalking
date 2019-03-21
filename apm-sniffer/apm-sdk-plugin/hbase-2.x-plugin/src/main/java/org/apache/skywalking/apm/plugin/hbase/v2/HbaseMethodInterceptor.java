@@ -19,8 +19,8 @@
 package org.apache.skywalking.apm.plugin.hbase.v2;
 
 import org.apache.hadoop.hbase.HConstants;
-import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.ClusterConnection;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.skywalking.apm.agent.core.context.ContextCarrier;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
@@ -31,6 +31,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceC
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
+import org.apache.skywalking.apm.util.StringUtil;
 
 import java.lang.reflect.Method;
 
@@ -54,7 +55,15 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
                              Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
 
         String executeMethod = method.getName();
-        String tableName = ((HbaseEnhanceRequiredInfo) objInst.getSkyWalkingDynamicField()).getTableName();
+        HbaseEnhanceRequiredInfo requiredInfo = (HbaseEnhanceRequiredInfo) objInst.getSkyWalkingDynamicField();
+        if (requiredInfo == null) {
+            return;
+        }
+        String tableName = requiredInfo.getTableName();
+        if (StringUtil.isEmpty(tableName)) {
+            tableName = ((HTable) objInst).getName().getNameAsString();
+            requiredInfo.setTableName(tableName);
+        }
         if (isSkip(tableName)) {
             return;
         }
@@ -70,7 +79,10 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
                               Class<?>[] argumentsTypes, Object ret) throws Throwable {
         HbaseEnhanceRequiredInfo requiredInfo = (HbaseEnhanceRequiredInfo) objInst.getSkyWalkingDynamicField();
-        if (requiredInfo == null || !isSkip(requiredInfo.getTableName())) {
+        if (requiredInfo == null) {
+            return ret;
+        }
+        if (!isSkip(requiredInfo.getTableName())) {
             ContextManager.stopSpan();
         }
         return ret;
@@ -85,13 +97,8 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        TableName tableName = (TableName) allArguments[0];
         HbaseEnhanceRequiredInfo requiredInfo = new HbaseEnhanceRequiredInfo();
-        if (tableName != null) {
-            String tableNameStr = tableName.getNameAsString();
-            requiredInfo.setTableName(tableNameStr);
-        }
-        ClusterConnection connection = (ClusterConnection) allArguments[1];
+        ClusterConnection connection = (ClusterConnection) allArguments[0];
         if (connection != null) {
             String zkAdr = connection.getConfiguration().get(HConstants.ZOOKEEPER_QUORUM);
             requiredInfo.setZkAddr(zkAdr);
@@ -100,6 +107,6 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
     }
 
     private boolean isSkip(String tableName) {
-        return SKIP_HOST.equals(tableName);
+        return StringUtil.isEmpty(tableName) || SKIP_HOST.equals(tableName);
     }
 }
