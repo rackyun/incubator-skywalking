@@ -14,4 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-hbase-2.x=org.apache.skywalking.apm.plugin.hbase.v2.define.HbaseInstrumentation
+server:
+  port: 8080
+
+collector:
+  path: /graphql
+  ribbon:
+    ReadTimeout: 10000
+    # Point to all backend's restHost:restPort, split by ,
+    listOfServers: localhost:12800
+
+security:
+  user:
+    # username
+    admin:
+      # password
+      password: admin

@@ -26,6 +26,8 @@ import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
@@ -40,6 +42,8 @@ import java.lang.reflect.Method;
  * at 2019/3/20
  */
 public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor, InstanceConstructorInterceptor {
+
+    private static final ILog logger = LogManager.getLogger(HbaseMethodInterceptor.class);
 
     private static final String DB_TYPE = "HBaseDB";
 
@@ -62,6 +66,7 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
         String tableName = requiredInfo.getTableName();
         if (StringUtil.isEmpty(tableName)) {
             tableName = ((HTable) objInst).getName().getNameAsString();
+            logger.debug("get hbase table name {}", tableName);
             requiredInfo.setTableName(tableName);
         }
         if (isSkip(tableName)) {

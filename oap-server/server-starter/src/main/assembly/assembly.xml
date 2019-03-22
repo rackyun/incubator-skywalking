@@ -32,7 +32,7 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <directory>src/main/assembly</directory>
+            <directory>src/main/assembly/${profiles.active}</directory>
             <outputDirectory>/config</outputDirectory>
             <includes>
                 <include>log4j2.xml</include>

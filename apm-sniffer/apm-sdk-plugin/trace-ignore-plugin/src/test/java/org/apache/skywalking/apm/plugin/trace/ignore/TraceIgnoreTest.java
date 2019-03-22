@@ -50,15 +50,18 @@ public class TraceIgnoreTest {
     @Test
     public void testTraceIgnore() {
         ContextManagerExtendService service = ServiceManager.INSTANCE.findService(ContextManagerExtendService.class);
-        IgnoreConfig.Trace.IGNORE_PATH = "/eureka/**,Kafka/zipkin2/*";
+        IgnoreConfig.Trace.IGNORE_PATH = "/eureka/**,Kafka/zipkin2/*,/health";
         AbstractTracerContext ignoredTracerContext = service.createTraceContext("/eureka/apps", false);
-        Assert.assertEquals(IgnoredTracerContext.class, ignoredTracerContext.getClass());
+        Assert.assertEquals(SkipedTracerContext.class, ignoredTracerContext.getClass());
 
         AbstractTracerContext traceContext = service.createTraceContext("/consul/apps", false);
         Assert.assertEquals(TracingContext.class, traceContext.getClass());
 
         AbstractTracerContext zipkin2Context = service.createTraceContext("Kafka/zipkin2/Producer", false);
-        Assert.assertEquals(IgnoredTracerContext.class, zipkin2Context.getClass());
+        Assert.assertEquals(SkipedTracerContext.class, zipkin2Context.getClass());
+
+        AbstractTracerContext healthContext = service.createTraceContext(OperationNameUtil.normalizeUrl("/health"), false);
+        Assert.assertEquals(SkipedTracerContext.class, healthContext.getClass());
     }
 
     @Test

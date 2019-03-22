@@ -28,6 +28,8 @@ import org.apache.skywalking.apm.agent.core.context.XIdCarrierItem;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
@@ -42,6 +44,9 @@ import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.*;
  * the abstract method inteceptor
  */
 public abstract class AbstractMethodInterceptor implements InstanceMethodsAroundInterceptor {
+
+    private static final ILog logger = LogManager.getLogger(AbstractMethodInterceptor.class);
+
     public abstract String getRequestURL(Method method);
 
     @Override
@@ -68,16 +73,26 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
         HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
         if (request != null) {
             requestURL = OperationNameUtil.normalizeUrl(requestURL);
-            ContextCarrier contextCarrier = new ContextCarrier();
-            CarrierItem next = contextCarrier.items();
-            while (next.hasNext()) {
-                next = next.next();
-                next.setHeadValue(request.getHeader(next.getHeadKey()));
+
+            AbstractSpan span;
+            if (ContextManager.isActive() && ContextManager.activeSpan() != null) {
+                logger.debug("before spring mvc has a active span {}", ContextManager.activeSpan().getOperationName());
+
+                span = ContextManager.createLocalSpan(requestURL);
+            } else {
+                logger.debug("before spring mvc has no span");
+
+                ContextCarrier contextCarrier = new ContextCarrier();
+                CarrierItem next = contextCarrier.items();
+                while (next.hasNext()) {
+                    next = next.next();
+                    next.setHeadValue(request.getHeader(next.getHeadKey()));
+                }
+                setXIdCarrier(contextCarrier, request, requestURL);
+                span = ContextManager.createEntrySpan(requestURL, contextCarrier);
             }
 
-            setXIdCarrier(contextCarrier, request, requestURL);
 
-            AbstractSpan span = ContextManager.createEntrySpan(requestURL, contextCarrier);
             Tags.URL.set(span, request.getRequestURL().toString());
             Tags.HTTP.METHOD.set(span, request.getMethod());
             String remoteAddr = StringUtil.isEmpty(request.getHeader(X_FORWARD_HEADER)) ?
