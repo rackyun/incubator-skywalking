@@ -41,6 +41,8 @@ public class HttpUrlUtilTest {
 
         String compStr = "/internal/social/like/liverun/574af9fe8d62d33b05b02575_city0795_1552902898443/likes";
         assertEquals("/internal/social/like/liverun/ID_cityID_ID/likes", OperationNameUtil.normalizeUrl(compStr));
+        assertEquals("/internal/social/like/liverun/ID_cityID_ID/likes",
+                OperationNameUtil.normalizeUrl("/internal/social/like/liverun/ID_cityID_ID/likes"));
 
         String dubboStr = "com.gotokeep.keepevent.api.service.QueryEventListService.findAllMyOngoingEventList(String)";
         assertEquals(dubboStr, OperationNameUtil.normalizeUrl(dubboStr));

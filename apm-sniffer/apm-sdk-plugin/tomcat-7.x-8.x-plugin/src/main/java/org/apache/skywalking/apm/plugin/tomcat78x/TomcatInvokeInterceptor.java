@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.skywalking.apm.agent.core.context.CarrierItem;
 import org.apache.skywalking.apm.agent.core.context.ContextCarrier;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
+import org.apache.skywalking.apm.agent.core.context.XIdCarrierItem;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
@@ -33,6 +34,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
+import org.apache.skywalking.apm.util.OperationNameUtil;
 import org.apache.skywalking.apm.util.StringUtil;
 
 /**
@@ -56,13 +58,16 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
     @Override public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
         HttpServletRequest request = (HttpServletRequest)allArguments[0];
-        ContextCarrier contextCarrier = new ContextCarrier();
 
+        ContextCarrier contextCarrier = new ContextCarrier();
         CarrierItem next = contextCarrier.items();
         while (next.hasNext()) {
             next = next.next();
             next.setHeadValue(request.getHeader(next.getHeadKey()));
         }
+        String requestURI = request.getRequestURI();
+        requestURI = OperationNameUtil.normalizeUrl(requestURI);
+        setXIdCarrier(contextCarrier, request, requestURI);
 
         AbstractSpan span = ContextManager.createEntrySpan(request.getRequestURI(), contextCarrier);
         Tags.URL.set(span, request.getRequestURL().toString());
@@ -73,6 +78,17 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
         span.setComponent(ComponentsDefine.TOMCAT);
         SpanLayer.asHttp(span);
 
+    }
+
+    private void setXIdCarrier(ContextCarrier contextCarrier, HttpServletRequest request, String requestURL) {
+        String requestId = request.getHeader(XIdCarrierItem.HEADER_NAME);
+        if (!contextCarrier.isValid() && !StringUtil.isEmpty(requestId)) {
+            XIdCarrierItem.XIdCarrierValue carrierValue =
+                    new XIdCarrierItem.XIdCarrierValue(requestURL,
+                            request.getRemoteHost(), request.getHeader(XIdCarrierItem.DEVICE_NAME));
+            XIdCarrierItem carrierItem = new XIdCarrierItem(contextCarrier, null, carrierValue);
+            carrierItem.setHeadValue(requestId);
+        }
     }
 
     @Override public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
