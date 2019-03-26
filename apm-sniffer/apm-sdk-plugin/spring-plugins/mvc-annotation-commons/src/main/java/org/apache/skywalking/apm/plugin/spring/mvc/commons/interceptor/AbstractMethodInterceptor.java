@@ -18,9 +18,6 @@
 
 package org.apache.skywalking.apm.plugin.spring.mvc.commons.interceptor;
 
-import java.lang.reflect.Method;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.skywalking.apm.agent.core.context.CarrierItem;
 import org.apache.skywalking.apm.agent.core.context.ContextCarrier;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
@@ -33,10 +30,14 @@ import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
-import org.apache.skywalking.apm.util.OperationNameUtil;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.apache.skywalking.apm.plugin.spring.mvc.commons.EnhanceRequireObjectCache;
+import org.apache.skywalking.apm.util.OperationNameUtil;
 import org.apache.skywalking.apm.util.StringUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.*;
 
@@ -72,7 +73,8 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
         }
 
         HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
-        if (request != null) {
+        HttpServletResponse response = (HttpServletResponse)ContextManager.getRuntimeContext().get(RESPONSE_KEY_IN_RUNTIME_CONTEXT);
+        if (request != null && response != null) {
             requestURL = OperationNameUtil.normalizeUrl(requestURL);
 
             AbstractSpan span;
@@ -126,10 +128,10 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
         if (forwardRequestFlag != null && forwardRequestFlag) {
             return ret;
         }
-
+        HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
         HttpServletResponse response = (HttpServletResponse)ContextManager.getRuntimeContext().get(RESPONSE_KEY_IN_RUNTIME_CONTEXT);
         try {
-            if (response != null) {
+            if (request != null && response != null) {
                 AbstractSpan span = ContextManager.activeSpan();
                 if (response.getStatus() >= 400) {
                     span.errorOccurred();
@@ -137,7 +139,7 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
                 }
                 ContextManager.stopSpan();
             } else {
-                logger.warn("response is null");
+                logger.debug("method {} invoke, but response is null", method.getName());
             }
         } finally {
             ContextManager.getRuntimeContext().remove(REQUEST_KEY_IN_RUNTIME_CONTEXT);

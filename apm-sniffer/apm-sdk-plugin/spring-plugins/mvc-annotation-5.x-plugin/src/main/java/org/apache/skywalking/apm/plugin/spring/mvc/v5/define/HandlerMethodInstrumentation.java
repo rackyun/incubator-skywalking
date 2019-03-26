@@ -23,6 +23,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterc
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 import org.apache.skywalking.apm.agent.core.plugin.match.NameMatch;
+import org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
@@ -53,7 +54,7 @@ public class HandlerMethodInstrumentation extends AbstractSpring5Instrumentation
 
                 @Override
                 public String getMethodsInterceptor() {
-                    return "org.apache.skywalking.apm.plugin.spring.mvc.v5.GetBeanInterceptor";
+                    return Constants.GET_BEAN_INTERCEPTOR;
                 }
 
                 @Override

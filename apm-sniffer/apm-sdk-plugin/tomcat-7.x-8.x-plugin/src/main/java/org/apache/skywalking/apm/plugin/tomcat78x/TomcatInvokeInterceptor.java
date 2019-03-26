@@ -69,7 +69,7 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
         requestURI = OperationNameUtil.normalizeUrl(requestURI);
         setXIdCarrier(contextCarrier, request, requestURI);
 
-        AbstractSpan span = ContextManager.createEntrySpan(request.getRequestURI(), contextCarrier);
+        AbstractSpan span = ContextManager.createEntrySpan(requestURI, contextCarrier);
         Tags.URL.set(span, request.getRequestURL().toString());
         Tags.HTTP.METHOD.set(span, request.getMethod());
         String remoteAddr = StringUtil.isEmpty(request.getHeader(Constants.X_FORWARD_HEADER)) ?
