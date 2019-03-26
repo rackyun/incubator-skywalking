@@ -18,9 +18,6 @@
 
 package org.apache.skywalking.apm.plugin.hbase.v2;
 
-import org.apache.hadoop.hbase.HConstants;
-import org.apache.hadoop.hbase.client.ClusterConnection;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.skywalking.apm.agent.core.context.ContextCarrier;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
@@ -29,11 +26,9 @@ import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
-import org.apache.skywalking.apm.util.StringUtil;
 
 import java.lang.reflect.Method;
 
@@ -41,9 +36,9 @@ import java.lang.reflect.Method;
  * @author yunhai.hu
  * at 2019/3/20
  */
-public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor, InstanceConstructorInterceptor {
+public class HTableMethodInterceptor implements InstanceMethodsAroundInterceptor {
 
-    private static final ILog logger = LogManager.getLogger(HbaseMethodInterceptor.class);
+    private static final ILog logger = LogManager.getLogger(HTableMethodInterceptor.class);
 
     private static final String DB_TYPE = "HBaseDB";
 
@@ -51,7 +46,6 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
 
     private static final String HBASE_HOST_PREFIX = "hbase:";
 
-    private static final String SKIP_HOST = "hbase:meta";
 
 
     @Override
@@ -64,14 +58,7 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
             return;
         }
         String tableName = requiredInfo.getTableName();
-        if (StringUtil.isEmpty(tableName)) {
-            tableName = ((HTable) objInst).getName().getNameAsString();
-            logger.debug("get hbase table name {}", tableName);
-            requiredInfo.setTableName(tableName);
-        }
-        if (isSkip(tableName)) {
-            return;
-        }
+        logger.debug("get hbase table name {}", tableName);
         AbstractSpan span = ContextManager.createExitSpan(HBASE_OP_PREFIX + executeMethod, new ContextCarrier(),
                 HBASE_HOST_PREFIX + tableName);
         span.setComponent(ComponentsDefine.HBASE);
@@ -87,9 +74,7 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
         if (requiredInfo == null) {
             return ret;
         }
-        if (!isSkip(requiredInfo.getTableName())) {
-            ContextManager.stopSpan();
-        }
+        ContextManager.stopSpan();
         return ret;
     }
 
@@ -99,19 +84,4 @@ public class HbaseMethodInterceptor implements InstanceMethodsAroundInterceptor,
         ContextManager.activeSpan().errorOccurred().log(t);
     }
 
-
-    @Override
-    public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        HbaseEnhanceRequiredInfo requiredInfo = new HbaseEnhanceRequiredInfo();
-        ClusterConnection connection = (ClusterConnection) allArguments[0];
-        if (connection != null) {
-            String zkAdr = connection.getConfiguration().get(HConstants.ZOOKEEPER_QUORUM);
-            requiredInfo.setZkAddr(zkAdr);
-        }
-        objInst.enSetSkyWalkingDynamicField(requiredInfo);
-    }
-
-    private boolean isSkip(String tableName) {
-        return StringUtil.isEmpty(tableName) || SKIP_HOST.equals(tableName);
-    }
 }

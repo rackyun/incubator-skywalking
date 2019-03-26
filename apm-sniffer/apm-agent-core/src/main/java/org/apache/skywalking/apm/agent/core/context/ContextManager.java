@@ -200,6 +200,12 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     }
 
     public static void stopSpan() {
+        if (get() != null && get().activeSpan() != null) {
+            AbstractSpan span = get().activeSpan();
+            logger.debug("stop span {}, spanId {}", span.getOperationName(), span.getSpanId());
+        } else {
+            logger.debug("stop a empty span");
+        }
         stopSpan(activeSpan());
     }
 

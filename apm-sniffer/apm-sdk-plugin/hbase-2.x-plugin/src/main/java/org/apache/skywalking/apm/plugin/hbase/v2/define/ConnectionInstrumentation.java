@@ -24,36 +24,23 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterc
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
+import org.apache.skywalking.apm.agent.core.plugin.match.HierarchyMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
-import static org.apache.skywalking.apm.agent.core.plugin.bytebuddy.ArgumentTypeNameMatch.takesArgumentWithType;
-import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName;
 
 /**
  * @author yunhai.hu
- * at 2018/12/13
+ * at 2019-03-26
  */
-public class HbaseInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+public class ConnectionInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
 
-    private static final String ENHANCE_CLASS = "org.apache.hadoop.hbase.client.HTable";
-    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.hbase.v2.HbaseMethodInterceptor";
+    private static final String ENHANCE_CLASS = "org.apache.hadoop.hbase.client.Connection";
+    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.hbase.v2.ConnectionMethodInterceptor";
     private static final String WITNESS_CLASS = "org.apache.hadoop.hbase.client.AsyncAdmin";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
-        return new ConstructorInterceptPoint[]{
-            new ConstructorInterceptPoint() {
-                @Override
-                public ElementMatcher<MethodDescription> getConstructorMatcher() {
-                    return takesArgumentWithType(2, "org.apache.hadoop.hbase.client.RpcRetryingCallerFactory");
-                }
-
-                @Override
-                public String getConstructorInterceptor() {
-                    return INTERCEPTOR_CLASS;
-                }
-            }
-        };
+        return new ConstructorInterceptPoint[0];
     }
 
     @Override
@@ -62,8 +49,7 @@ public class HbaseInstrumentation extends ClassInstanceMethodsEnhancePluginDefin
             new InstanceMethodsInterceptPoint() {
                 @Override
                 public ElementMatcher<MethodDescription> getMethodsMatcher() {
-                    return named("get").or(named("put")).or(named("delete")).or(named("getScanner")).
-                            or(named("checkAndPut"));
+                    return named("getTable");
                 }
 
                 @Override
@@ -81,7 +67,7 @@ public class HbaseInstrumentation extends ClassInstanceMethodsEnhancePluginDefin
 
     @Override
     protected ClassMatch enhanceClass() {
-        return byName(ENHANCE_CLASS);
+        return HierarchyMatch.byHierarchyMatch(new String[]{ENHANCE_CLASS});
     }
 
     @Override
