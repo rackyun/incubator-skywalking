@@ -98,7 +98,7 @@ public class MetadataQueryEsDAO extends EsDAO implements IMetadataQueryDAO {
         boolQueryBuilder.must().add(QueryBuilders.termQuery(ServiceInventory.IS_ADDRESS, BooleanUtils.FALSE));
 
         sourceBuilder.query(boolQueryBuilder);
-        sourceBuilder.size(100);
+        sourceBuilder.size(200);
 
         SearchResponse response = getClient().search(ServiceInventory.MODEL_NAME, sourceBuilder);
 
