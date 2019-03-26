@@ -47,6 +47,7 @@ import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.*;
 public abstract class AbstractMethodInterceptor implements InstanceMethodsAroundInterceptor {
 
     private static final String MVC_FREFIX = "MVC/";
+    private static final String REFLECT_CLASS = "sun.reflect.NativeMethodAccessorImpl";
     private static final ILog logger = LogManager.getLogger(AbstractMethodInterceptor.class);
 
     public abstract String getRequestURL(Method method);
@@ -75,6 +76,12 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
         HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
         HttpServletResponse response = (HttpServletResponse)ContextManager.getRuntimeContext().get(RESPONSE_KEY_IN_RUNTIME_CONTEXT);
         if (request != null && response != null) {
+
+            logger.debug("this class is {}, method is {}", objInst.getClass().getCanonicalName(), method.getName());
+            if (!isControllerHandler(objInst)) {
+                return;
+            }
+
             requestURL = OperationNameUtil.normalizeUrl(requestURL);
 
             AbstractSpan span;
@@ -117,6 +124,17 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
         }
     }
 
+    private boolean isControllerHandler(EnhancedInstance objInst) {
+        String controllerClass = objInst.getClass().getCanonicalName();
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (int i = 0; i < elements.length; i++) {
+            if (controllerClass.equals(elements[i].getClassName())) {
+                return REFLECT_CLASS.equals(elements[i + 1].getClassName());
+            }
+        }
+        return false;
+    }
+
     @Override
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
@@ -126,6 +144,9 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
          * Ref: https://github.com/apache/incubator-skywalking/pull/1325
          */
         if (forwardRequestFlag != null && forwardRequestFlag) {
+            return ret;
+        }
+        if (!isControllerHandler(objInst)) {
             return ret;
         }
         HttpServletRequest request = (HttpServletRequest)ContextManager.getRuntimeContext().get(REQUEST_KEY_IN_RUNTIME_CONTEXT);
