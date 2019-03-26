@@ -110,6 +110,9 @@ public class TraceSegmentServiceClient implements BootService, IConsumer<TraceSe
 
             try {
                 for (TraceSegment segment : data) {
+                    if (logger.isDebugEnable()) {
+                        logger.debug("trace segment {} will be send.", gson.toJson(segment));
+                    }
                     UpstreamSegment upstreamSegment = segment.transform();
                     upstreamSegmentStreamObserver.onNext(upstreamSegment);
                 }

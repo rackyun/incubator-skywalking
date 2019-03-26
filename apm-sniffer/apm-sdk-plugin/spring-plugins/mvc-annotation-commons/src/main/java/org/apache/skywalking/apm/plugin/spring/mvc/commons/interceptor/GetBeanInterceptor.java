@@ -28,6 +28,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.REQUEST_KEY_IN_RUNTIME_CONTEXT;
+import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.RESPONSE_KEY_IN_RUNTIME_CONTEXT;
 
 /**
  * {@link GetBeanInterceptor} pass the {@link NativeWebRequest} object into the {@link
@@ -46,6 +47,7 @@ public class GetBeanInterceptor implements InstanceMethodsAroundInterceptor {
         Object ret) throws Throwable {
         if (ret instanceof EnhancedInstance) {
             ContextManager.getRuntimeContext().put(REQUEST_KEY_IN_RUNTIME_CONTEXT, ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest());
+            ContextManager.getRuntimeContext().put(RESPONSE_KEY_IN_RUNTIME_CONTEXT, ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse());
         }
         return ret;
     }
