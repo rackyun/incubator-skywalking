@@ -24,15 +24,6 @@ package org.apache.skywalking.apm.plugin.hbase.v2;
  */
 public class HbaseEnhanceRequiredInfo {
     private String tableName;
-    private String zkAddr;
-
-    public String getZkAddr() {
-        return zkAddr;
-    }
-
-    public void setZkAddr(String zkAddr) {
-        this.zkAddr = zkAddr;
-    }
 
     public String getTableName() {
         return tableName;

@@ -45,6 +45,7 @@ import static org.apache.skywalking.apm.plugin.spring.mvc.commons.Constants.*;
  */
 public abstract class AbstractMethodInterceptor implements InstanceMethodsAroundInterceptor {
 
+    private static final String MVC_FREFIX = "MVC/";
     private static final ILog logger = LogManager.getLogger(AbstractMethodInterceptor.class);
 
     public abstract String getRequestURL(Method method);
@@ -78,7 +79,7 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
             if (ContextManager.isActive() && ContextManager.activeSpan() != null) {
                 logger.debug("before spring mvc has a active span {}", ContextManager.activeSpan().getOperationName());
 
-                span = ContextManager.createLocalSpan(requestURL);
+                span = ContextManager.createLocalSpan(MVC_FREFIX + method.getName());
             } else {
                 logger.debug("before spring mvc has no span");
 
@@ -135,6 +136,8 @@ public abstract class AbstractMethodInterceptor implements InstanceMethodsAround
                     Tags.STATUS_CODE.set(span, Integer.toString(response.getStatus()));
                 }
                 ContextManager.stopSpan();
+            } else {
+                logger.warn("response is null");
             }
         } finally {
             ContextManager.getRuntimeContext().remove(REQUEST_KEY_IN_RUNTIME_CONTEXT);
