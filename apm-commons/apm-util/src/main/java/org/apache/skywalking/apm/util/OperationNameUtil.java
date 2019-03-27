@@ -50,7 +50,7 @@ public class OperationNameUtil {
                 //do nothing
             } else if (isNumber(pathSegment) || isPlaceHolder(pathSegment)) {
                 pathSegment = PLACEHOLDER;
-            } else if((replacedPath = complicatedStringReplace(pathSegment)) != null) {
+            } else if ((replacedPath = complicatedStringReplace(pathSegment)) != null) {
                 pathSegment = replacedPath;
             } else if ((replacedPath = base64Replace(pathSegment)) != null) {
                 pathSegment = replacedPath;
