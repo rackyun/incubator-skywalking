@@ -30,6 +30,9 @@ public class OperationNameUtil {
     private static final String PLACEHOLDER = "ID";
     private static final String SEPARATOR = "/";
     private static final Pattern PATTERN = Pattern.compile("([0-9a-fA-F]{8,})|([0-9]{4,})");
+    private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z.()_-]*$");
+    private static final Pattern BASE64_PATTERN =
+            Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$");
 
     public static String normalizeUrl(String url) {
         List<String> pathSegments = Arrays.asList(url.split(SEPARATOR));
@@ -41,15 +44,33 @@ public class OperationNameUtil {
 
     public static String normalizeUrl(List<String> pathSegments) {
         List<String> newPathSegments = new ArrayList<String>(pathSegments.size());
+        String replacedPath;
         for (String pathSegment : pathSegments) {
-            if (isNumber(pathSegment) || isPlaceHolder(pathSegment)) {
+            if (StringUtil.isEmpty(pathSegment) || isWord(pathSegment)) {
+                //do nothing
+            } else if (isNumber(pathSegment) || isPlaceHolder(pathSegment)) {
                 pathSegment = PLACEHOLDER;
-            } else {
-                pathSegment = complicatedStringReplace(pathSegment);
+            } else if((replacedPath = complicatedStringReplace(pathSegment)) != null) {
+                pathSegment = replacedPath;
+            } else if ((replacedPath = base64Replace(pathSegment)) != null) {
+                pathSegment = replacedPath;
             }
             newPathSegments.add(pathSegment);
         }
         return StringUtil.join(SEPARATOR.charAt(0), newPathSegments.toArray(new String[0]));
+    }
+
+    private static boolean isWord(String path) {
+        Matcher matcher = WORD_PATTERN.matcher(path);
+        return matcher.find();
+    }
+
+    private static String base64Replace(String path) {
+        Matcher matcher = BASE64_PATTERN.matcher(path);
+        if (matcher.find()) {
+            return PLACEHOLDER;
+        }
+        return null;
     }
 
     private static String complicatedStringReplace(String path) {
@@ -57,7 +78,7 @@ public class OperationNameUtil {
         if (matcher.find()) {
             return matcher.replaceAll(PLACEHOLDER);
         }
-        return path;
+        return null;
     }
 
     private static boolean isPlaceHolder(String data) {

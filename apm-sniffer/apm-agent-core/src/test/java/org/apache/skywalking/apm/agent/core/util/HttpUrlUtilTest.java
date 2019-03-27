@@ -46,6 +46,9 @@ public class HttpUrlUtilTest {
 
         String dubboStr = "com.gotokeep.keepevent.api.service.QueryEventListService.findAllMyOngoingEventList(String)";
         assertEquals(dubboStr, OperationNameUtil.normalizeUrl(dubboStr));
+
+        String qiniuStr = "/mkfile/ID/mimeType/YXBwbGljYXRpb24vb2N0ZXQtc3RyZWFt/key/NGVlN2UyMmVmMDJjM2Q5MjU2Zjk1MmRlMWRmMTVlMTYwNWY1OWI5ZV9zZWcuZ2lm";
+        assertEquals("/mkfile/ID/mimeType/ID/key/ID", OperationNameUtil.normalizeUrl(qiniuStr));
     }
 
     @Test
