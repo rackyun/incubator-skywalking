@@ -28,11 +28,13 @@ import java.util.regex.Pattern;
  */
 public class OperationNameUtil {
     private static final String PLACEHOLDER = "ID";
+    private static final String TEXT_PLACEHOLDER = "Text";
     private static final String SEPARATOR = "/";
     private static final Pattern PATTERN = Pattern.compile("([0-9a-fA-F]{8,})|([0-9]{4,})");
     private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z.()_-]*$");
     private static final Pattern BASE64_PATTERN =
             Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$");
+    private static final Pattern CHINESE_PATTERN = Pattern.compile("[^\\x00-\\xff]+");
 
     public static String normalizeUrl(String url) {
         List<String> pathSegments = Arrays.asList(url.split(SEPARATOR));
@@ -54,6 +56,8 @@ public class OperationNameUtil {
                 pathSegment = replacedPath;
             } else if ((replacedPath = base64Replace(pathSegment)) != null) {
                 pathSegment = replacedPath;
+            } else if (isChinese(pathSegment)) {
+                pathSegment = TEXT_PLACEHOLDER;
             }
             newPathSegments.add(pathSegment);
         }
@@ -71,6 +75,11 @@ public class OperationNameUtil {
             return PLACEHOLDER;
         }
         return null;
+    }
+
+    private static boolean isChinese(String path) {
+        Matcher matcher = CHINESE_PATTERN.matcher(path);
+        return matcher.find();
     }
 
     private static String complicatedStringReplace(String path) {
