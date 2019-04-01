@@ -50,8 +50,6 @@ public class HttpUrlUtilTest {
         String qiniuStr = "/mkfile/ID/mimeType/YXBwbGljYXRpb24vb2N0ZXQtc3RyZWFt/key/NGVlN2UyMmVmMDJjM2Q5MjU2Zjk1MmRlMWRmMTVlMTYwNWY1OWI5ZV9zZWcuZ2lm";
         assertEquals("/mkfile/ID/mimeType/ID/key/ID", OperationNameUtil.normalizeUrl(qiniuStr));
 
-        String chineseStr = "internal/social/article/v2/「一周最热」原来是这个身体器官，让你又胖又饿的！>>";
-        assertEquals("internal/social/article/v2/Text", OperationNameUtil.normalizeUrl(chineseStr));
     }
 
     @Test
