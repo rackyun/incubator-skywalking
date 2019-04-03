@@ -42,8 +42,12 @@ public class HystrixCommandRunInterceptor implements InstanceMethodsAroundInterc
         EnhanceRequireObjectCache enhanceRequireObjectCache = (EnhanceRequireObjectCache)objInst.getSkyWalkingDynamicField();
         ContextSnapshot snapshot = enhanceRequireObjectCache.getContextSnapshot();
         if (logger.isDebugEnable()) {
-            logger.debug("hystrix interceptor entryOperationName={}, parentOperationName={}, spanId={}",
-                    snapshot.getEntryOperationName(), snapshot.getParentOperationName(), snapshot.getSpanId());
+            if (snapshot == null) {
+                logger.debug("hystrix interceptor snapshot is empty");
+            } else {
+                logger.debug("hystrix interceptor entryOperationName={}, parentOperationName={}, spanId={}",
+                        snapshot.getEntryOperationName(), snapshot.getParentOperationName(), snapshot.getSpanId());
+            }
         }
 
         String endpointName = OperationNameUtil.operationEncode(enhanceRequireObjectCache.getOperationNamePrefix() + "/Execution");

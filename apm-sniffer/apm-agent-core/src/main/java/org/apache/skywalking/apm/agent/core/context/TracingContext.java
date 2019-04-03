@@ -125,9 +125,9 @@ public class TracingContext implements AbstractTracerContext {
             carrier.setPeerId(peerId);
         }
         List<TraceSegmentRef> refs = this.segment.getRefs();
-        int operationId;
-        String operationName;
-        int entryApplicationInstanceId;
+        int operationId = DictionaryUtil.nullValue();
+        String operationName = null;
+        int entryApplicationInstanceId = DictionaryUtil.nullValue();
         if (refs != null && refs.size() > 0) {
             TraceSegmentRef ref = refs.get(0);
             operationId = ref.getEntryEndpointId();
@@ -135,9 +135,11 @@ public class TracingContext implements AbstractTracerContext {
             entryApplicationInstanceId = ref.getEntryServiceInstanceId();
         } else {
             AbstractSpan firstSpan = first();
-            operationId = firstSpan.getOperationId();
-            operationName = firstSpan.getOperationName();
-            entryApplicationInstanceId = this.segment.getApplicationInstanceId();
+            if (!span.equals(firstSpan) && !isIgnoreOperation(firstSpan)) {
+                operationId = firstSpan.getOperationId();
+                operationName = firstSpan.getOperationName();
+                entryApplicationInstanceId = this.segment.getApplicationInstanceId();
+            }
         }
         carrier.setEntryServiceInstanceId(entryApplicationInstanceId);
 
@@ -168,8 +170,11 @@ public class TracingContext implements AbstractTracerContext {
         }
 
         AbstractSpan firstSpan = first();
-        if (firstSpan.getOperationName().contains(IGNORE_PARENT_OPERATION_NAME)) {
+        if (isIgnoreOperation(firstSpan)) {
             for (TraceSegmentRef ref : firstSpan.getRefs()) {
+                logger.debug("first span ref parentEpName={}, parentEpId={}, entryEpName={}, entryEpId={}, entryServiceInstanceId={}",
+                        ref.getParentEndpointName(), ref.getParentEndpointId(),
+                        ref.getEntryEndpointName(), ref.getEntryEndpointId(), ref.getEntryServiceInstanceId());
                 int parentOperationId = ref.getParentEndpointId();
                 if (parentOperationId == DictionaryUtil.nullValue()) {
                     carrier.setParentEndpointName(ref.getParentEndpointName());
@@ -178,6 +183,8 @@ public class TracingContext implements AbstractTracerContext {
                 }
             }
         } else {
+            logger.debug("first span ref operationName={}, operationId={}",
+                    firstSpan.getOperationName(), firstSpan.getOperationId());
             int parentOperationId = firstSpan.getOperationId();
             if (parentOperationId == DictionaryUtil.nullValue()) {
                 carrier.setParentEndpointName(firstSpan.getOperationName());
@@ -192,6 +199,10 @@ public class TracingContext implements AbstractTracerContext {
         }
 
         carrier.setDistributedTraceIds(this.segment.getRelatedGlobalTraces());
+    }
+
+    private boolean isIgnoreOperation(AbstractSpan firstSpan) {
+        return firstSpan.getOperationName().contains(IGNORE_PARENT_OPERATION_NAME);
     }
 
     /**
