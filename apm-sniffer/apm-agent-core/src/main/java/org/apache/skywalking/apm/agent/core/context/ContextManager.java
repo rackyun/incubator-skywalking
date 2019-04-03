@@ -210,8 +210,8 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     }
 
     public static void stopSpan(AbstractSpan span) {
-        get().stopSpan(span);
         logStoppedSpan(span);
+        get().stopSpan(span);
     }
 
     @Override
