@@ -16,7 +16,7 @@
  *
  */
 
-package org.apache.skywalking.apm.toolkit.activation.log.infra.mdc;
+package org.apache.skywalking.apm.toolkit.activation.log.keep.mdc;
 
 import org.apache.skywalking.apm.agent.core.context.logging.SpanLog;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;

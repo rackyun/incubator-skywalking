@@ -16,57 +16,53 @@
  *
  */
 
-package org.apache.skywalking.apm.toolkit.activation.log.infra.mdc;
+package org.apache.skywalking.apm.toolkit.activation.log.keep.mdc;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
-import static net.bytebuddy.matcher.ElementMatchers.named;
+import static net.bytebuddy.matcher.ElementMatchers.any;
 import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName;
 
 /**
  * @author yunhai.hu
  * at 2018/12/19
  */
-public class LogbackMDCAdapterInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+public class LogbackInstrumentation extends LogMDCInstrumentation {
 
-    private static final String ENHANCE_CLASS = "com.keep.infra.commons.log.pattern.KeepLogbackPatternOperator";
-    private static final String ENHANCE_METHOD = "modifyPattern";
-    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.infra.MDCInjectInterceptor";
+    private static final String ENHANCE_CLASS = "ch.qos.logback.classic.LoggerContext";
+    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.infra" +
+            ".MDCConstructorInterceptor";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
-        return new ConstructorInterceptPoint[0];
-    }
-
-    @Override
-    protected InstanceMethodsInterceptPoint[] getInstanceMethodsInterceptPoints() {
-        return new InstanceMethodsInterceptPoint[]{
-            new InstanceMethodsInterceptPoint() {
+        return new ConstructorInterceptPoint[]{
+            new ConstructorInterceptPoint() {
                 @Override
-                public ElementMatcher<MethodDescription> getMethodsMatcher() {
-                    return named(ENHANCE_METHOD);
+                public ElementMatcher<MethodDescription> getConstructorMatcher() {
+                    return any();
                 }
 
                 @Override
-                public String getMethodsInterceptor() {
+                public String getConstructorInterceptor() {
                     return INTERCEPTOR_CLASS;
-                }
-
-                @Override
-                public boolean isOverrideArgs() {
-                    return false;
                 }
             }
         };
     }
 
     @Override
+    protected InstanceMethodsInterceptPoint[] getInstanceMethodsInterceptPoints() {
+        return new InstanceMethodsInterceptPoint[0];
+    }
+
+    @Override
     protected ClassMatch enhanceClass() {
         return byName(ENHANCE_CLASS);
     }
+
+
 }
