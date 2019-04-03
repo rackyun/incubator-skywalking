@@ -34,7 +34,7 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
 public class Log4j2Instrumentation extends LogMDCInstrumentation {
 
     private static final String ENHANCE_CLASS = "org.slf4j.impl.Log4jLoggerFactory";
-    private static final String CONSTRUCTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.infra.MDCConstructorInterceptor";
+    private static final String CONSTRUCTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.keep.MDCConstructorInterceptor";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
