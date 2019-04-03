@@ -14,5 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-infra-log-activation=org.apache.skywalking.apm.toolkit.activation.log.infra.mdc.Log4j2MDCAdapterInstrumentation
-infra-log-activation=org.apache.skywalking.apm.toolkit.activation.log.infra.mdc.LogbackMDCAdapterInstrumentation
+keep-log-activation=org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.Log4j2Instrumentation
+keep-log-activation=org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.LogbackInstrumentation

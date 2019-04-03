@@ -17,7 +17,9 @@
   ~
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>apm-toolkit-activation</artifactId>
         <groupId>org.apache.skywalking</groupId>
@@ -25,7 +27,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>apm-toolkit-infra-log-activation</artifactId>
+    <groupId>org.apache.skywalking</groupId>
+    <artifactId>apm-toolkit-keep-log-activation</artifactId>
+    <version>6.0.0-beta-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -34,4 +38,5 @@
             <version>1.7.20</version>
         </dependency>
     </dependencies>
+
 </project>

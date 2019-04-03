@@ -16,13 +16,12 @@
  *
  */
 
-package org.apache.skywalking.apm.toolkit.activation.log.infra.mdc;
+package org.apache.skywalking.apm.toolkit.activation.log.keep.mdc;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.any;
@@ -32,9 +31,9 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
  * @author yunhai.hu
  * at 2018/12/19
  */
-public class Log4j2MDCAdapterInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+public class Log4j2Instrumentation extends LogMDCInstrumentation {
 
-    private static final String ENHANCE_CLASS = "com.keep.infra.commons.log.pattern.KeepLog4j2Pattern";
+    private static final String ENHANCE_CLASS = "org.slf4j.impl.Log4jLoggerFactory";
     private static final String CONSTRUCTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.infra.MDCConstructorInterceptor";
 
     @Override

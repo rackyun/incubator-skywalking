@@ -31,7 +31,7 @@
         <module>apm-toolkit-logback-1.x-activation</module>
         <module>apm-toolkit-opentracing-activation</module>
         <module>apm-toolkit-trace-activation</module>
-        <module>apm-toolkit-infra-log-activation</module>
+        <module>apm-toolkit-keep-log-activation</module>
     </modules>
 
     <artifactId>apm-toolkit-activation</artifactId>

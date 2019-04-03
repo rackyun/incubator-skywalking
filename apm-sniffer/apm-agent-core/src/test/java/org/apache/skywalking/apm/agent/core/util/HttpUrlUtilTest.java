@@ -50,6 +50,9 @@ public class HttpUrlUtilTest {
         String qiniuStr = "/mkfile/ID/mimeType/YXBwbGljYXRpb24vb2N0ZXQtc3RyZWFt/key/NGVlN2UyMmVmMDJjM2Q5MjU2Zjk1MmRlMWRmMTVlMTYwNWY1OWI5ZV9zZWcuZ2lm";
         assertEquals("/mkfile/ID/mimeType/ID/key/ID", OperationNameUtil.normalizeUrl(qiniuStr));
 
+        String legoStr = "/lego/v1/miniprogram/course/5a5611e27b6e200fcd63eed8/detail";
+        assertEquals("/lego/v1/miniprogram/course/ID/detail", OperationNameUtil.normalizeUrl(legoStr));
+
     }
 
     @Test
