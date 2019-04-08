@@ -54,12 +54,14 @@ public class ReferenceIdExchanger implements IdExchanger<ReferenceDecorator> {
 
     @Override public boolean exchange(ReferenceDecorator standardBuilder, int serviceId) {
         if (standardBuilder.getEntryEndpointId() == 0) {
-            String entryEndpointName = Strings.isNullOrEmpty(standardBuilder.getEntryEndpointName()) ? Const.DOMAIN_OPERATION_NAME : standardBuilder.getEntryEndpointName();
-            int entryEndpointId = endpointInventoryRegister.get(serviceInstanceInventoryCache.get(standardBuilder.getEntryServiceInstanceId()).getServiceId(), entryEndpointName, DetectPoint.SERVER.ordinal());
+            String entryEndpointName = Strings.isNullOrEmpty(standardBuilder.getEntryEndpointName()) ?
+                    Const.DOMAIN_OPERATION_NAME : standardBuilder.getEntryEndpointName();
+            int entryServiceId =
+                    serviceInstanceInventoryCache.get(standardBuilder.getEntryServiceInstanceId()).getServiceId();
+            int entryEndpointId = endpointInventoryRegister.get(entryServiceId, entryEndpointName, DetectPoint.SERVER.ordinal());
 
             if (entryEndpointId == 0) {
                 if (logger.isDebugEnabled()) {
-                    int entryServiceId = serviceInstanceInventoryCache.get(standardBuilder.getEntryServiceInstanceId()).getServiceId();
                     logger.debug("entry endpoint name: {} from service id: {} exchange failed", entryEndpointName, entryServiceId);
                 }
                 return false;

@@ -228,6 +228,8 @@ public class ContextCarrier implements Serializable {
                 && parentServiceInstanceId != DictionaryUtil.nullValue()
                 && entryServiceInstanceId != DictionaryUtil.nullValue()
                 && !StringUtil.isEmpty(peerHost)
+                && !StringUtil.isEmpty(entryEndpointName)
+                && !StringUtil.isEmpty(parentEndpointName)
                 && primaryDistributedTraceId != null;
         } else {
             throw new IllegalArgumentException("Unimplemented header version." + version);
