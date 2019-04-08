@@ -17,19 +17,10 @@
 
 package org.apache.skywalking.apm.plugin.elasticsearch.v6;
 
-import org.apache.skywalking.apm.agent.core.context.ContextManager;
-import org.apache.skywalking.apm.agent.core.context.tag.Tags;
-import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
-import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
-import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
-
-import static org.apache.skywalking.apm.agent.core.conf.Config.Plugin.Elasticsearch.TRACE_DSL;
-import static org.apache.skywalking.apm.plugin.elasticsearch.v6.Constants.*;
-import static org.apache.skywalking.apm.plugin.elasticsearch.v6.Util.wrapperNullStringValue;
 
 /**
  * @author yunhai.hu
@@ -41,7 +32,7 @@ public class ActionRequestBuilderInterceptor implements InstanceConstructorInter
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
 
-        logger.debug("elasticsearch requestBuilder construct be invoke, class is {}", objInst.getClass().toString());
+        /*logger.debug("elasticsearch requestBuilder construct be invoke, class is {}", objInst.getClass().toString());
 
         if (allArguments.length < 2 || !(allArguments[1] instanceof EnhancedInstance)) {
             if (logger.isDebugEnable()) {
@@ -71,6 +62,6 @@ public class ActionRequestBuilderInterceptor implements InstanceConstructorInter
         SpanLayer.asDB(span);
         if (logger.isDebugEnable()) {
             logger.debug("create span {} success, spanId = {}.", operationName, span.getSpanId());
-        }
+        }*/
     }
 }
