@@ -19,12 +19,14 @@
 package org.apache.skywalking.apm.plugin.elasticsearch.v6;
 
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
+import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.search.SearchResponse;
 
@@ -42,7 +44,9 @@ public class PlainActionFutureInterceptor implements InstanceMethodsAroundInterc
 
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes, MethodInterceptResult result) throws Throwable {
-
+        AbstractSpan span = ContextManager.createLocalSpan(ELASTICSEARCH_DB_OP_PREFIX + BASE_FUTURE_METHOD);
+        span.setComponent(ComponentsDefine.TRANSPORT_CLIENT);
+        Tags.DB_TYPE.set(span, DB_TYPE);
     }
 
     @Override

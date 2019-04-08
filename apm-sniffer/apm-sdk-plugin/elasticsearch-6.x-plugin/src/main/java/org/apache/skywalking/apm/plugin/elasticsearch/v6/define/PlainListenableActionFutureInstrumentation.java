@@ -49,7 +49,7 @@ public class PlainListenableActionFutureInstrumentation extends ElasticsearchBas
 
                 @Override
                 public String getMethodsInterceptor() {
-                    return "org.apache.skywalking.apm.plugin.elasticsearch.v6.PlainListenableActionFutureInterceptor";
+                    return "org.apache.skywalking.apm.plugin.elasticsearch.v6.PlainActionFutureInterceptor";
                 }
 
                 @Override

@@ -15,7 +15,7 @@
 # limitations under the License.
 
 elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.TransportProxyClientInstrumentation
-# elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.TransportActionNodeProxyInstrumentation
+elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.TransportActionNodeProxyInstrumentation
 elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.PlainListenableActionFutureInstrumentation
 elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.PlainActionFutureInstrumentation
 elasticsearch-6.x=org.apache.skywalking.apm.plugin.elasticsearch.v6.define.GenericActionInstrumentation
