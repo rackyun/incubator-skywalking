@@ -135,7 +135,7 @@ public class TracingContext implements AbstractTracerContext {
             entryApplicationInstanceId = ref.getEntryServiceInstanceId();
         } else {
             AbstractSpan firstSpan = first();
-            if (!span.equals(firstSpan) && !isIgnoreOperation(firstSpan)) {
+            if (firstSpan.isEntry() && !span.equals(firstSpan) && !isIgnoreOperation(firstSpan.getOperationName())) {
                 operationId = firstSpan.getOperationId();
                 operationName = firstSpan.getOperationName();
                 entryApplicationInstanceId = this.segment.getApplicationInstanceId();
@@ -144,7 +144,7 @@ public class TracingContext implements AbstractTracerContext {
         carrier.setEntryServiceInstanceId(entryApplicationInstanceId);
 
         if (operationId == DictionaryUtil.nullValue()) {
-            if (!StringUtil.isEmpty(operationName)) {
+            if (!StringUtil.isEmpty(operationName) && !isIgnoreOperation(operationName)) {
                 carrier.setEntryEndpointName(operationName);
             }
         } else {
@@ -170,7 +170,7 @@ public class TracingContext implements AbstractTracerContext {
         }
 
         AbstractSpan firstSpan = first();
-        if (isIgnoreOperation(firstSpan)) {
+        if (isIgnoreOperation(firstSpan.getOperationName())) {
             for (TraceSegmentRef ref : firstSpan.getRefs()) {
                 logger.debug("first span ref parentEpName={}, parentEpId={}, entryEpName={}, entryEpId={}, entryServiceInstanceId={}",
                         ref.getParentEndpointName(), ref.getParentEndpointId(),
@@ -201,10 +201,9 @@ public class TracingContext implements AbstractTracerContext {
         carrier.setDistributedTraceIds(this.segment.getRelatedGlobalTraces());
     }
 
-    private boolean isIgnoreOperation(AbstractSpan firstSpan) {
-        return firstSpan.getOperationName().contains(IGNORE_PARENT_OPERATION_NAME);
+    private boolean isIgnoreOperation(String operationName) {
+        return operationName.contains(IGNORE_PARENT_OPERATION_NAME);
     }
-
     /**
      * Extract the carrier to build the reference for the pre segment.
      *
