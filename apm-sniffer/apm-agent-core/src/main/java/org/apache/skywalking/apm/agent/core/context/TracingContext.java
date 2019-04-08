@@ -170,7 +170,7 @@ public class TracingContext implements AbstractTracerContext {
         }
 
         AbstractSpan firstSpan = first();
-        if (isIgnoreOperation(firstSpan.getOperationName())) {
+        if (!firstSpan.isEntry() || isIgnoreOperation(firstSpan.getOperationName())) {
             for (TraceSegmentRef ref : firstSpan.getRefs()) {
                 logger.debug("first span ref parentEpName={}, parentEpId={}, entryEpName={}, entryEpId={}, entryServiceInstanceId={}",
                         ref.getParentEndpointName(), ref.getParentEndpointId(),

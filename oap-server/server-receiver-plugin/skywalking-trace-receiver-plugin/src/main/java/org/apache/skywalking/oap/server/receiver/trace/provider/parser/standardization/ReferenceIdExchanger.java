@@ -74,11 +74,11 @@ public class ReferenceIdExchanger implements IdExchanger<ReferenceDecorator> {
 
         if (standardBuilder.getParentEndpointId() == 0) {
             String parentEndpointName = Strings.isNullOrEmpty(standardBuilder.getParentEndpointName()) ? Const.DOMAIN_OPERATION_NAME : standardBuilder.getParentEndpointName();
-            int parentEndpointId = endpointInventoryRegister.get(serviceInstanceInventoryCache.get(standardBuilder.getParentServiceInstanceId()).getServiceId(), parentEndpointName, DetectPoint.SERVER.ordinal());
+            int parentServiceId = serviceInstanceInventoryCache.get(standardBuilder.getParentServiceInstanceId()).getServiceId();
+            int parentEndpointId = endpointInventoryRegister.get(parentServiceId, parentEndpointName, DetectPoint.SERVER.ordinal());
 
             if (parentEndpointId == 0) {
                 if (logger.isDebugEnabled()) {
-                    int parentServiceId = serviceInstanceInventoryCache.get(standardBuilder.getParentServiceInstanceId()).getServiceId();
                     logger.debug("parent endpoint name: {} from service id: {} exchange failed", parentEndpointName, parentServiceId);
                 }
                 return false;
