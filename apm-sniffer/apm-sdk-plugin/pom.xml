@@ -66,6 +66,7 @@
         <module>trace-ignore-plugin</module>
         <module>hbase-1.x-plugin</module>
         <module>hbase-2.x-plugin</module>
+        <module>xxl-job-plugin</module>
     </modules>
     <packaging>pom</packaging>
 

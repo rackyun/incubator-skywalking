@@ -26,7 +26,8 @@ public enum SpanLayer {
     RPC_FRAMEWORK(2),
     HTTP(3),
     MQ(4),
-    CACHE(5);
+    CACHE(5),
+    SCHEDULED(6);
 
     private int code;
 
@@ -56,5 +57,9 @@ public enum SpanLayer {
 
     public static void asMQ(AbstractSpan span) {
         span.setLayer(SpanLayer.MQ);
+    }
+
+    public static void asScheduled(AbstractSpan span) {
+        span.setLayer(SpanLayer.SCHEDULED);
     }
 }
