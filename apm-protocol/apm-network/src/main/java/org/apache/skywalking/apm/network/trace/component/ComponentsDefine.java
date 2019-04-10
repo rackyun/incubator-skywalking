@@ -106,6 +106,10 @@ public class ComponentsDefine {
 
     public static final OfficialComponent HBASE = new OfficialComponent(101, "hbase");
 
+    public static final OfficialComponent SPRING_SCHEDULED = new OfficialComponent(102, "spring-scheduled");
+
+    public static final OfficialComponent XX_JOB = new OfficialComponent(103, "xx-job");
+
     private static ComponentsDefine INSTANCE = new ComponentsDefine();
 
     private String[] components;
@@ -115,7 +119,7 @@ public class ComponentsDefine {
     }
 
     public ComponentsDefine() {
-        components = new String[102];
+        components = new String[104];
         addComponent(TOMCAT);
         addComponent(HTTPCLIENT);
         addComponent(DUBBO);
@@ -155,6 +159,8 @@ public class ComponentsDefine {
         addComponent(RABBITMQ_PRODUCER);
         addComponent(RABBITMQ_CONSUMER);
         addComponent(HBASE);
+        addComponent(SPRING_SCHEDULED);
+        addComponent(XX_JOB);
     }
 
     private void addComponent(OfficialComponent component) {
