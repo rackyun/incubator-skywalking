@@ -39,6 +39,7 @@
         <module>mvc-annotation-5.x-plugin</module>
         <module>webflux-5.x-plugin</module>
         <module>spring-kafka-1.x-plugin</module>
+        <module>scheduler-plugin</module>
     </modules>
     <packaging>pom</packaging>
 
