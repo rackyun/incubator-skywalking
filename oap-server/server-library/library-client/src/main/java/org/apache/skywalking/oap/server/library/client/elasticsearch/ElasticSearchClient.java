@@ -133,9 +133,13 @@ public class ElasticSearchClient implements Client {
     }
 
     public SearchResponse search(String indexName, SearchSourceBuilder searchSourceBuilder) throws IOException {
+        return search(indexName, TYPE, searchSourceBuilder);
+    }
+
+    public SearchResponse search(String indexName, String type, SearchSourceBuilder searchSourceBuilder) throws IOException {
         indexName = formatIndexName(indexName);
         SearchRequest searchRequest = new SearchRequest(indexName);
-        searchRequest.types(TYPE);
+        searchRequest.types(type);
         searchRequest.source(searchSourceBuilder);
         return client.search(searchRequest);
     }

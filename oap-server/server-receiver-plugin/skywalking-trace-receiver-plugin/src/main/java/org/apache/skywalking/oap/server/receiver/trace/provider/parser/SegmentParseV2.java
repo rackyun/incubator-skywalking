@@ -86,6 +86,9 @@ public class SegmentParseV2 {
             }
             SegmentObject segmentObject = parseBinarySegment(upstreamSegment);
 
+            if (logger.isDebugEnabled()) {
+                logger.debug("This trace segment object {}", segmentObject.toString());
+            }
             SegmentDecorator segmentDecorator = new SegmentDecorator(segmentObject);
 
             if (!preBuild(traceIds, segmentDecorator)) {

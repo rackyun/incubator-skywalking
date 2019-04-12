@@ -300,7 +300,7 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public AbstractSpan createEntrySpan(final String operationName) {
-        if (isLimitMechanismWorking()) {
+        if (isLimitMechanismWorking(operationName)) {
             NoopSpan span = new NoopSpan();
             return push(span);
         }
@@ -349,7 +349,7 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public AbstractSpan createLocalSpan(final String operationName) {
-        if (isLimitMechanismWorking()) {
+        if (isLimitMechanismWorking(operationName)) {
             NoopSpan span = new NoopSpan();
             return push(span);
         }
@@ -385,7 +385,7 @@ public class TracingContext implements AbstractTracerContext {
                             new PossibleFound.FoundAndObtain() {
                                 @Override
                                 public Object doProcess(final int peerId) {
-                                    if (isLimitMechanismWorking()) {
+                                    if (isLimitMechanismWorking(operationName)) {
                                         return new NoopExitSpan(peerId);
                                     }
 
@@ -410,7 +410,7 @@ public class TracingContext implements AbstractTracerContext {
                             new PossibleFound.NotFoundAndObtain() {
                                 @Override
                                 public Object doProcess() {
-                                    if (isLimitMechanismWorking()) {
+                                    if (isLimitMechanismWorking(operationName)) {
                                         return new NoopExitSpan(remotePeer);
                                     }
 
@@ -482,7 +482,7 @@ public class TracingContext implements AbstractTracerContext {
      * TracingContext.ListenerManager}
      */
     private void finish() {
-        TraceSegment finishedSegment = segment.finish(isLimitMechanismWorking());
+        TraceSegment finishedSegment = segment.finish(isLimitMechanismWorking(null));
         /**
          * Recheck the segment if the segment contains only one span.
          * Because in the runtime, can't sure this segment is part of distributed trace.
@@ -570,12 +570,15 @@ public class TracingContext implements AbstractTracerContext {
         return activeSpanStack.iterator();
     }
 
-    private boolean isLimitMechanismWorking() {
+    private boolean isLimitMechanismWorking(String operationName) {
         if (spanIdGenerator >= Config.Agent.SPAN_LIMIT_PER_SEGMENT) {
             long currentTimeMillis = System.currentTimeMillis();
             if (currentTimeMillis - lastWarningTimestamp > 30 * 1000) {
-                logger.warn(new RuntimeException("Shadow tracing context. Thread dump"), "More than {} spans required to create",
-                        Config.Agent.SPAN_LIMIT_PER_SEGMENT);
+//                logger.warn(new RuntimeException("Shadow tracing context. Thread dump"), "More than {} spans required to create",
+//                        Config.Agent.SPAN_LIMIT_PER_SEGMENT);
+
+                logger.warn("More than {} spans required to create span {}, entryOperationName is {}, globalTraceId is {}",
+                        Config.Agent.SPAN_LIMIT_PER_SEGMENT, operationName, first().getOperationName(), getReadableGlobalTraceId());
                 lastWarningTimestamp = currentTimeMillis;
             }
             return true;
