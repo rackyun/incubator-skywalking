@@ -38,6 +38,7 @@ public class StorageModuleElasticsearchProvider extends ModuleProvider {
 
     private final StorageModuleElasticsearchConfig config;
     private ElasticSearchClient elasticSearchClient;
+    private ElasticSearchClient logElasticSearchClient;
 
     public StorageModuleElasticsearchProvider() {
         super();
@@ -79,6 +80,9 @@ public class StorageModuleElasticsearchProvider extends ModuleProvider {
         this.registerServiceImplementation(IMetadataQueryDAO.class, new MetadataQueryEsDAO(elasticSearchClient));
         this.registerServiceImplementation(IAggregationQueryDAO.class, new AggregationQueryEsDAO(elasticSearchClient));
         this.registerServiceImplementation(IAlarmQueryDAO.class, new AlarmQueryEsDAO(elasticSearchClient));
+
+        logElasticSearchClient = new ElasticSearchClient(config.getLogClusterNodes(), "");
+        this.registerServiceImplementation(ILogQueryDAO.class, new LogQueryEsDAO(logElasticSearchClient));
     }
 
     @Override
@@ -91,6 +95,8 @@ public class StorageModuleElasticsearchProvider extends ModuleProvider {
 
             RegisterLockInstaller lockInstaller = new RegisterLockInstaller(elasticSearchClient);
             lockInstaller.install();
+
+            logElasticSearchClient.connect();
         } catch (StorageException e) {
             throw new ModuleStartException(e.getMessage(), e);
         }
