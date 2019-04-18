@@ -96,7 +96,6 @@ public class SnifferConfigInitializer {
             logger.error(e, "Failed to read the system env.");
         }
 
-        //todo
         String appName = readApplicationName();
         if (appName != null) {
             Config.Agent.SERVICE_NAME = appName;
@@ -119,11 +118,7 @@ public class SnifferConfigInitializer {
             throw new ExceptionInInitializerError("`agent.service_code` is missing.");
         }
 
-        String appEnv = System.getenv("APP_ENV");
-        if (StringUtil.isEmpty(appEnv)) {
-            appEnv = "dev";
-        }
-        String backendService = selectBackendService(appEnv);
+        String backendService = selectBackendService();
         if (StringUtil.isEmpty(backendService)) {
             throw new ExceptionInInitializerError("`collector.direct_servers` and `collector.servers` cannot be empty at the same time.");
         }
@@ -132,7 +127,11 @@ public class SnifferConfigInitializer {
         IS_INIT_COMPLETED = true;
     }
 
-    private static String selectBackendService(String appEnv) {
+    private static String selectBackendService() {
+        String appEnv = System.getenv("APP_ENV");
+        if (StringUtil.isEmpty(appEnv)) {
+            appEnv = "dev";
+        }
 
         switch (AppEnv.valueOfName(appEnv)) {
             case DEV:
