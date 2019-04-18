@@ -13,3 +13,5 @@ packages/
 /dist/
 /docker/snapshot/*.gz
 .mvn/wrapper/*.jar
+apm-protocol/apm-network/src/main/proto/
+oap-server/server-query-plugin/query-graphql-plugin/src/main/resources/query-protocol/
