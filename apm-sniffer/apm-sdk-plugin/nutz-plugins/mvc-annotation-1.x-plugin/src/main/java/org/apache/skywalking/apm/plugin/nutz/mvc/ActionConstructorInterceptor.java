@@ -36,6 +36,6 @@ public class ActionConstructorInterceptor implements InstanceConstructorIntercep
             basePath = basePathRequestMapping.value()[0];
         }
         PathMappingCache pathMappingCache = new PathMappingCache(basePath);
-        objInst.setSkyWalkingDynamicField(pathMappingCache);
+        objInst.enSetSkyWalkingDynamicField(pathMappingCache);
     }
 }

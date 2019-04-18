@@ -143,7 +143,7 @@ public class HttpClientExecuteInterceptorTest {
 
         assertThat(spans.size(), is(1));
 
-        List<KeyValuePair> tags = SpanHelper.getTags(spans.get(0));
+        List<TagValuePair> tags = SpanHelper.getTags(spans.get(0));
         assertThat(tags.size(), is(4));
         assertThat(tags.get(3).getValue(), is("500"));
 
@@ -184,7 +184,7 @@ public class HttpClientExecuteInterceptorTest {
     private void assertHttpSpan(AbstractTracingSpan span) {
         assertThat(span.getOperationName(), is("/test-web/test/ID"));
         assertThat(SpanHelper.getComponentId(span), is(2));
-        List<KeyValuePair> tags = SpanHelper.getTags(span);
+        List<TagValuePair> tags = SpanHelper.getTags(span);
         assertThat(tags.get(1).getValue(), is("http://127.0.0.1:8080/test-web/test/123"));
         assertThat(tags.get(2).getValue(), is("GET"));
         assertThat(span.isExit(), is(true));

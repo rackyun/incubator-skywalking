@@ -23,13 +23,12 @@
     <parent>
         <artifactId>apm-toolkit-activation</artifactId>
         <groupId>org.apache.skywalking</groupId>
-        <version>6.0.0-beta-SNAPSHOT</version>
+        <version>6.0.0-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.apache.skywalking</groupId>
     <artifactId>apm-toolkit-keep-log-activation</artifactId>
-    <version>6.0.0-beta-SNAPSHOT</version>
 
     <dependencies>
         <dependency>

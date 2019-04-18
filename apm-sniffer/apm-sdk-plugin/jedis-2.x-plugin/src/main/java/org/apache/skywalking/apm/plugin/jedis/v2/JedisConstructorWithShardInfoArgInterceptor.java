@@ -30,6 +30,6 @@ public class JedisConstructorWithShardInfoArgInterceptor implements InstanceCons
         String redisConnInfo;
         JedisShardInfo shardInfo = (JedisShardInfo)allArguments[0];
         redisConnInfo = shardInfo.getHost() + ":" + shardInfo.getPort();
-        objInst.setSkyWalkingDynamicField(redisConnInfo);
+        objInst.enSetSkyWalkingDynamicField(redisConnInfo);
     }
 }

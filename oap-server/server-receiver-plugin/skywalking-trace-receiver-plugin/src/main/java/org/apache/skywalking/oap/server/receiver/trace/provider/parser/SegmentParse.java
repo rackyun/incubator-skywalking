@@ -135,8 +135,8 @@ public class SegmentParse {
                 uniqueId.getIdParts(2));
 
         segmentCoreInfo.setSegmentId(segmentId);
-        segmentCoreInfo.setApplicationId(segmentDecorator.getApplicationId());
-        segmentCoreInfo.setApplicationInstanceId(segmentDecorator.getApplicationInstanceId());
+        segmentCoreInfo.setServiceId(segmentDecorator.getServiceId());
+        segmentCoreInfo.setServiceInstanceId(segmentDecorator.getServiceInstanceId());
         segmentCoreInfo.setDataBinary(segmentDecorator.toByteArray());
         segmentCoreInfo.setV2(false);
 

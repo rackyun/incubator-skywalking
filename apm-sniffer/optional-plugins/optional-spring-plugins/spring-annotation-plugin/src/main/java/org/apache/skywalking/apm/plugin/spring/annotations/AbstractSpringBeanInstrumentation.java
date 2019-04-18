@@ -32,7 +32,7 @@ import static net.bytebuddy.matcher.ElementMatchers.not;
 public abstract class AbstractSpringBeanInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
     private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.spring.annotations.SpringAnnotationInterceptor";
     public static final String INTERCEPT_GET_SKYWALKING_DYNAMIC_FIELD_METHOD = "getSkyWalkingDynamicField";
-    public static final String INTERCEPT_SET_SKYWALKING_DYNAMIC_FEILD_METHOD = "setSkyWalkingDynamicField";
+    public static final String INTERCEPT_SET_SKYWALKING_DYNAMIC_FEILD_METHOD = "enSetSkyWalkingDynamicField";
 
     @Override protected final ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
         return new ConstructorInterceptPoint[0];

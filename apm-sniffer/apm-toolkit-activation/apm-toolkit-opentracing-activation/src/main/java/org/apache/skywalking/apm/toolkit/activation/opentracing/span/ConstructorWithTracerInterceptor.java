@@ -27,6 +27,6 @@ public class ConstructorWithTracerInterceptor implements InstanceConstructorInte
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(ContextManager.activeSpan());
+        objInst.enSetSkyWalkingDynamicField(ContextManager.activeSpan());
     }
 }

@@ -62,7 +62,7 @@ public class RedisConnectionMethodInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             this.object = value;
         }
     }
@@ -72,7 +72,7 @@ public class RedisConnectionMethodInterceptorTest {
     public void setUp() throws Exception {
         mockRedisConnectionInstance = new MockInstance();
         mockRedisClientInstance = new MockInstance();
-        mockRedisClientInstance.setSkyWalkingDynamicField("127.0.0.1:6379;127.0.0.1:6378;");
+        mockRedisClientInstance.enSetSkyWalkingDynamicField("127.0.0.1:6379;127.0.0.1:6378;");
         interceptor = new RedisConnectionMethodInterceptor();
     }
 

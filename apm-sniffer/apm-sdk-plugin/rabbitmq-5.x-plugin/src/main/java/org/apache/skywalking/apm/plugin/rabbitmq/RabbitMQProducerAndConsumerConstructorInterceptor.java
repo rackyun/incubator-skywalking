@@ -27,6 +27,6 @@ public class RabbitMQProducerAndConsumerConstructorInterceptor implements Instan
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Connection connection = (Connection)allArguments[0];
         String url =  connection.getAddress().toString().replace("/","") + ":" + connection.getPort();
-        objInst.setSkyWalkingDynamicField(url);
+        objInst.enSetSkyWalkingDynamicField(url);
     }
 }

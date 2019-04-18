@@ -71,7 +71,7 @@ public class CanalInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     }
@@ -87,7 +87,7 @@ public class CanalInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
         }
 
 

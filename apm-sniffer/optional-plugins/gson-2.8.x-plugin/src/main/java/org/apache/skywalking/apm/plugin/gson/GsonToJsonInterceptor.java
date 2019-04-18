@@ -27,10 +27,15 @@ import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
 
 import java.lang.reflect.Method;
 
+import static org.apache.skywalking.apm.plugin.gson.define.Constants.LENGTH_TAG;
+
 /**
  * @author withlin
  */
 public class GsonToJsonInterceptor implements InstanceMethodsAroundInterceptor {
+
+
+
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
                              Class<?>[] argumentsTypes,
@@ -39,7 +44,7 @@ public class GsonToJsonInterceptor implements InstanceMethodsAroundInterceptor {
         AbstractSpan span = ContextManager.createLocalSpan("Gson/ToJson");
         span.setComponent(ComponentsDefine.GSON);
         Integer length = allArguments[0].toString().length();
-        span.tag("length", length.toString());
+        span.tag(LENGTH_TAG, length.toString());
 
     }
 

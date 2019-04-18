@@ -38,7 +38,7 @@ public class CanalConstructorInterceptor implements InstanceConstructorIntercept
             canalEnhanceInfo.setUrl(url.replace('/',' '));
         }
         canalEnhanceInfo.setDestination(destination);
-        objInst.setSkyWalkingDynamicField(canalEnhanceInfo);
+        objInst.enSetSkyWalkingDynamicField(canalEnhanceInfo);
 
     }
 }

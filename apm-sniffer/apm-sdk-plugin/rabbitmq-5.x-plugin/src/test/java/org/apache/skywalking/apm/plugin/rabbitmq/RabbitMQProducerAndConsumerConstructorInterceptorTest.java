@@ -51,7 +51,7 @@ public class RabbitMQProducerAndConsumerConstructorInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             test = (String)value;
         }
     };

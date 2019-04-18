@@ -93,7 +93,7 @@ public class ControllerConstructorInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             this.value = value;
         }
     }
@@ -107,7 +107,7 @@ public class ControllerConstructorInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             this.value = value;
         }
     }
@@ -122,7 +122,7 @@ public class ControllerConstructorInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             this.value = value;
         }
     }

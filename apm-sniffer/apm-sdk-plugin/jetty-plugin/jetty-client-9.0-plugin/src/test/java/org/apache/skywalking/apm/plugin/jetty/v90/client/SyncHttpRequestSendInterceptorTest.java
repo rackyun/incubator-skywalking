@@ -126,7 +126,7 @@ public class SyncHttpRequestSendInterceptorTest {
             return null;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
 

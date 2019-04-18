@@ -24,6 +24,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedI
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.network.trace.component.ComponentsDefine;
+import org.apache.skywalking.apm.plugin.gson.define.Constants;
 
 import java.lang.reflect.Method;
 
@@ -40,7 +41,7 @@ public class GsonFromJsonInterceptor implements InstanceMethodsAroundInterceptor
         AbstractSpan span = ContextManager.createLocalSpan("Gson/FromJson");
         span.setComponent(ComponentsDefine.GSON);
         Integer length = allArguments[0].toString().length();
-        span.tag("length", length.toString());
+        span.tag(Constants.LENGTH_TAG, length.toString());
 
     }
 

@@ -53,7 +53,7 @@ public class HystrixPluginsInterceptor implements InstanceMethodsAroundIntercept
             synchronized (objInst) {
                 if (wrapperCache == null) {
                     wrapperCache = new SWHystrixPluginsWrapperCache();
-                    objInst.setSkyWalkingDynamicField(wrapperCache);
+                    objInst.enSetSkyWalkingDynamicField(wrapperCache);
                 }
                 if (wrapperCache.getSwExecutionHookWrapper() == null) {
                     // Return and register wrapper only for the first time

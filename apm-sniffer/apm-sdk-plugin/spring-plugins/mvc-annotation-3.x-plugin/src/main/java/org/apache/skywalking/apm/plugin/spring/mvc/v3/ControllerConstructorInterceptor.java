@@ -44,6 +44,6 @@ public class ControllerConstructorInterceptor implements InstanceConstructorInte
 
         EnhanceRequireObjectCache enhanceCache = new EnhanceRequireObjectCache();
         enhanceCache.setPathMappingCache(new PathMappingCache(basePath));
-        objInst.setSkyWalkingDynamicField(enhanceCache);
+        objInst.enSetSkyWalkingDynamicField(enhanceCache);
     }
 }

@@ -61,7 +61,7 @@ public class KafkaProducerInterceptorTest {
             return "localhost:9092";
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     };
@@ -78,7 +78,7 @@ public class KafkaProducerInterceptorTest {
             return "test";
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     }

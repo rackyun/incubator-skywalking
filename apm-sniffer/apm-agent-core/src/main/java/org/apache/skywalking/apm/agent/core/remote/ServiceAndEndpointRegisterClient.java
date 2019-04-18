@@ -19,6 +19,8 @@
 package org.apache.skywalking.apm.agent.core.remote;
 
 import io.grpc.Channel;
+
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -36,6 +38,7 @@ import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.os.OSUtil;
 import org.apache.skywalking.apm.network.common.KeyIntValuePair;
+import org.apache.skywalking.apm.network.common.KeyStringValuePair;
 import org.apache.skywalking.apm.network.register.v2.RegisterGrpc;
 import org.apache.skywalking.apm.network.register.v2.Service;
 import org.apache.skywalking.apm.network.register.v2.ServiceInstance;
@@ -122,14 +125,19 @@ public class ServiceAndEndpointRegisterClient implements BootService, Runnable, 
                 } else {
                     if (registerBlockingStub != null) {
                         if (RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID == DictionaryUtil.nullValue()) {
-
+                            List<KeyStringValuePair> osInfo = OSUtil.buildOSInfo();
+                            if (logger.isDebugEnable()) {
+                                for (KeyStringValuePair info : osInfo) {
+                                    logger.debug("server instance property {}:{}", info.getKey(), info.getValue());
+                                }
+                            }
                             ServiceInstanceRegisterMapping instanceMapping = registerBlockingStub.doServiceInstanceRegister(ServiceInstances.newBuilder()
                                 .addInstances(
                                     ServiceInstance.newBuilder()
                                         .setServiceId(RemoteDownstreamConfig.Agent.SERVICE_ID)
                                         .setInstanceUUID(PROCESS_UUID)
                                         .setTime(System.currentTimeMillis())
-                                        .addAllProperties(OSUtil.buildOSInfo())
+                                        .addAllProperties(osInfo)
                                 ).build());
                             for (KeyIntValuePair serviceInstance : instanceMapping.getServiceInstancesList()) {
                                 if (PROCESS_UUID.equals(serviceInstance.getKey())) {

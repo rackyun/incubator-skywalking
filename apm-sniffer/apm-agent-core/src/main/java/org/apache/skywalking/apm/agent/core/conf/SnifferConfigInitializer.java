@@ -27,11 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -54,7 +51,6 @@ public class SnifferConfigInitializer {
     private static String SPECIFIED_CONFIG_PATH = "skywalking_config";
     private static String DEFAULT_CONFIG_FILE_NAME = "/config/agent.config";
     private static String ENV_KEY_PREFIX = "skywalking.";
-    private static String BOOTSTRAP_FILE_PATH = "BOOT-INF/classes/";
     private static String BOOTSTRAP_FILE_NAME = "bootstrap.properties";
     private static String APPLICATION_NAME_KEY = "spring.application.name";
     private static boolean IS_INIT_COMPLETED = false;

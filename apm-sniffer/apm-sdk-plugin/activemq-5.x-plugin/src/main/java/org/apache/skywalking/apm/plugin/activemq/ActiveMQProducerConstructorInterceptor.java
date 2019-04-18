@@ -29,6 +29,6 @@ public class ActiveMQProducerConstructorInterceptor implements InstanceConstruct
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         ActiveMQSession session = (ActiveMQSession)allArguments[0];
-        objInst.setSkyWalkingDynamicField(session.getConnection().getTransport().getRemoteAddress().split("//")[1]);
+        objInst.enSetSkyWalkingDynamicField(session.getConnection().getTransport().getRemoteAddress().split("//")[1]);
     }
 }

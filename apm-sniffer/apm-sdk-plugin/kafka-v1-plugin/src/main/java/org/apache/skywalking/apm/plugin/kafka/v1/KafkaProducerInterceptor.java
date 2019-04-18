@@ -63,7 +63,7 @@ public class KafkaProducerInterceptor implements InstanceMethodsAroundIntercepto
 
         EnhancedInstance callbackInstance = (EnhancedInstance)allArguments[1];
         if (callbackInstance != null) {
-            callbackInstance.setSkyWalkingDynamicField(ContextManager.capture());
+            callbackInstance.enSetSkyWalkingDynamicField(ContextManager.capture());
         }
     }
 

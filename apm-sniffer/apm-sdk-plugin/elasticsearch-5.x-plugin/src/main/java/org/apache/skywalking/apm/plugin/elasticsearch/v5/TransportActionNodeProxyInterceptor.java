@@ -79,6 +79,6 @@ public class TransportActionNodeProxyInterceptor implements InstanceConstructorI
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         EnhancedInstance actions = (EnhancedInstance)allArguments[1];
-        objInst.setSkyWalkingDynamicField(actions);
+        objInst.enSetSkyWalkingDynamicField(actions);
     }
 }

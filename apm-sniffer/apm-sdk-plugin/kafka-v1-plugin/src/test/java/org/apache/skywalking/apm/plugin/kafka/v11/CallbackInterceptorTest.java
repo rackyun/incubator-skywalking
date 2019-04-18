@@ -71,7 +71,7 @@ public class CallbackInterceptorTest {
             return MockContextSnapshot.INSTANCE.mockContextSnapshot();
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     };

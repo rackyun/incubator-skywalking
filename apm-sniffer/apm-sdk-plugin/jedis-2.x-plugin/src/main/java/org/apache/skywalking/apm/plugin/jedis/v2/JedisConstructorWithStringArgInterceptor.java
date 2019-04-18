@@ -32,6 +32,6 @@ public class JedisConstructorWithStringArgInterceptor implements InstanceConstru
             port = String.valueOf(allArguments[1]);
         }
 
-        objInst.setSkyWalkingDynamicField(host + ":" + port);
+        objInst.enSetSkyWalkingDynamicField(host + ":" + port);
     }
 }

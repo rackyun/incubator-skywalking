@@ -56,7 +56,7 @@ public class AsyncCallInterceptor implements InstanceConstructorInterceptor, Ins
         EnhancedInstance realCallInstance = (EnhancedInstance)allArguments[1];
         Object enhanceRequireInfo = realCallInstance.getSkyWalkingDynamicField();
 
-        objInst.setSkyWalkingDynamicField(enhanceRequireInfo);
+        objInst.enSetSkyWalkingDynamicField(enhanceRequireInfo);
     }
 
     @Override

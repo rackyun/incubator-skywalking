@@ -28,6 +28,6 @@ public class JedisConstructorWithUriArgInterceptor implements InstanceConstructo
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         URI uri = (URI)allArguments[0];
-        objInst.setSkyWalkingDynamicField(uri.getHost() + ":" + uri.getPort());
+        objInst.enSetSkyWalkingDynamicField(uri.getHost() + ":" + uri.getPort());
     }
 }

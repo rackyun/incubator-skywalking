@@ -35,7 +35,7 @@ public class AbstractStubInterceptor implements InstanceMethodsAroundInterceptor
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Channel channel = (Channel)allArguments[0];
-        objInst.setSkyWalkingDynamicField(ClientInterceptors.intercept(channel, new GRPCClientInterceptor()));
+        objInst.enSetSkyWalkingDynamicField(ClientInterceptors.intercept(channel, new GRPCClientInterceptor()));
     }
 
     @Override

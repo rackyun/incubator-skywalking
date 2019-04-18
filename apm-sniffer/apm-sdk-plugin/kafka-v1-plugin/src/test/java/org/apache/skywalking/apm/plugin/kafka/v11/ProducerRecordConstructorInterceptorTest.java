@@ -42,7 +42,7 @@ public class ProducerRecordConstructorInterceptorTest {
             return brokerServers;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             brokerServers = (String)value;
         }
     };

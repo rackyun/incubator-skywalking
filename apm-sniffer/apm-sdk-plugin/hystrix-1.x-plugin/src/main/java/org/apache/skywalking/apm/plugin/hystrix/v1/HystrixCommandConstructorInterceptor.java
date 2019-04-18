@@ -54,7 +54,7 @@ public class HystrixCommandConstructorInterceptor implements InstanceConstructor
             commandIdentify = hystrixObservableCommand.getCommandKey().name();
         }
 
-        objInst.setSkyWalkingDynamicField(new EnhanceRequireObjectCache(OPERATION_NAME_PREFIX + commandIdentify));
+        objInst.enSetSkyWalkingDynamicField(new EnhanceRequireObjectCache(OPERATION_NAME_PREFIX + commandIdentify));
     }
 
 }

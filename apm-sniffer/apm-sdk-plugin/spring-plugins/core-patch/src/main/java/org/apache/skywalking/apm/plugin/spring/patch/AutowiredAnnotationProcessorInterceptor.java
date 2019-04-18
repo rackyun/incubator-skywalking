@@ -105,6 +105,6 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
 
     @Override public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Map<Class<?>, Constructor<?>[]> candidateConstructorsCache = new ConcurrentHashMap<Class<?>, Constructor<?>[]>(20);
-        objInst.setSkyWalkingDynamicField(candidateConstructorsCache);
+        objInst.enSetSkyWalkingDynamicField(candidateConstructorsCache);
     }
 }

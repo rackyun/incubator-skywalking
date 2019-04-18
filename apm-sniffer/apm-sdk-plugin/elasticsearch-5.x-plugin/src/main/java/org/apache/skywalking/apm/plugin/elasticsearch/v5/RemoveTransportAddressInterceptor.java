@@ -38,7 +38,7 @@ public class RemoveTransportAddressInterceptor implements InstanceMethodsAroundI
             transportAddressCache = new TransportAddressCache();
         }
         transportAddressCache.removeDiscoveryNode((TransportAddress)allArguments[0]);
-        objInst.setSkyWalkingDynamicField(transportAddressCache);
+        objInst.enSetSkyWalkingDynamicField(transportAddressCache);
         return ret;
     }
 

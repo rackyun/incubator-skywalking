@@ -166,7 +166,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     }
 
     private static void setServiceInstanceTag(AbstractSpan span) {
-        Tags.SERVICE_INSTANCE.set(span, OSUtil.getHostName() + "-" + Config.Agent.APPLICATION_CODE);
+        Tags.SERVICE_INSTANCE.set(span, OSUtil.getHostName() + "-" + Config.Agent.SERVICE_NAME);
     }
 
     public static void inject(ContextCarrier carrier) {

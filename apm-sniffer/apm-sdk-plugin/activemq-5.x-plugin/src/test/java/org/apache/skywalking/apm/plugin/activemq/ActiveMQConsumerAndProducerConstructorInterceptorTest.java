@@ -195,7 +195,7 @@ public class ActiveMQConsumerAndProducerConstructorInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             test = (String)value;
         }
     };

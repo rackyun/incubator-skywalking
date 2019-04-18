@@ -361,7 +361,7 @@ public class SkywalkingSpanActivationTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
             this.object = value;
         }
     }

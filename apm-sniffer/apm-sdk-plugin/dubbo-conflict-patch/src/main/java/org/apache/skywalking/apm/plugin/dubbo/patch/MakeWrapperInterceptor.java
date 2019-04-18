@@ -104,7 +104,7 @@ public class MakeWrapperInterceptor implements StaticMethodsAroundInterceptor {
         for (Method m : methods) {
             // ignore Object's method
             // ignore EnhanceInstance's method
-            if (m.getDeclaringClass() == Object.class || "getSkyWalkingDynamicField".equals(m.getName()) || "setSkyWalkingDynamicField".equals(m.getName())) {
+            if (m.getDeclaringClass() == Object.class || "getSkyWalkingDynamicField".equals(m.getName()) || "enSetSkyWalkingDynamicField".equals(m.getName())) {
                 continue;
             }
 

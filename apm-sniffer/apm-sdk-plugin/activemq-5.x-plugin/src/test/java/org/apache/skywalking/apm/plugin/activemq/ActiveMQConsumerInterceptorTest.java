@@ -120,7 +120,7 @@ public class ActiveMQConsumerInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
         }
     };
 

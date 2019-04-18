@@ -61,6 +61,9 @@ public class InstanceDiscoveryServiceHandler extends InstanceDiscoveryServiceGrp
         instanceProperties.addProperty(PropertyUtil.OS_NAME, osinfo.getOsName());
         instanceProperties.addProperty(PropertyUtil.PROCESS_NO, osinfo.getProcessNo() + "");
         instanceProperties.addProperty(PropertyUtil.IPV4S, PropertyUtil.ipv4sSerialize(osinfo.getIpv4SList()));
+        if (logger.isDebugEnabled()) {
+            logger.debug("register instance {}", instanceProperties);
+        }
 
         ServiceInventory serviceInventory = serviceInventoryCache.get(request.getApplicationId());
 

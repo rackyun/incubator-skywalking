@@ -50,7 +50,7 @@ public class ConstructorWithSpanBuilderInterceptor implements InstanceConstructo
             span.errorOccurred();
         }
 
-        objInst.setSkyWalkingDynamicField(span);
+        objInst.enSetSkyWalkingDynamicField(span);
     }
 
     private String buildRemotePeer(SkywalkingSpanBuilder spanBuilder) {

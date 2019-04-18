@@ -38,7 +38,7 @@ public class AddTransportAddressesInterceptor implements InstanceMethodsAroundIn
             transportAddressCache = new TransportAddressCache();
         }
         transportAddressCache.addDiscoveryNode((TransportAddress[])allArguments[0]);
-        objInst.setSkyWalkingDynamicField(transportAddressCache);
+        objInst.enSetSkyWalkingDynamicField(transportAddressCache);
         return ret;
     }
 

@@ -28,6 +28,6 @@ public class JedisClusterConstructorWithHostAndPortArgInterceptor implements Ins
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         HostAndPort hostAndPort = (HostAndPort)allArguments[0];
-        objInst.setSkyWalkingDynamicField(hostAndPort.getHost() + ":" + hostAndPort.getPort());
+        objInst.enSetSkyWalkingDynamicField(hostAndPort.getHost() + ":" + hostAndPort.getPort());
     }
 }

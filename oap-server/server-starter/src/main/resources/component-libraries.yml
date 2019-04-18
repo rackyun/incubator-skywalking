@@ -201,6 +201,15 @@ Redisson:
 hbase:
   id: 57
   languages: Java
+Scheduled:
+  id: 101
+  languages: Java
+spring-scheduled:
+  id: 102
+  languages: Java
+xx-job:
+  id: 103
+  languages: Java
 
 
 # .NET/.NET Core components
@@ -296,4 +305,6 @@ Component-Server-Mappings:
   Pomelo.EntityFrameworkCore.MySql: Mysql
   Npgsql.EntityFrameworkCore.PostgreSQL: PostgreSQL
   transport-client: Elasticsearch
-  //todo
+  hbase: hbase
+  spring-scheduled: Scheduled
+  xx-job: Scheduled

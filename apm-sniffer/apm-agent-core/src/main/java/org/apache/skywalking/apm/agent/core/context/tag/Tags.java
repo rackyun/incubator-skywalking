@@ -82,4 +82,6 @@ public final class Tags {
      * SERVICE_INSTANCE records the service host and port.
      */
     public static final StringTag SERVICE_INSTANCE = new StringTag("service.instance");
+
+    public static final StringTag SENDER_HOST = new StringTag("sender.host");
 }

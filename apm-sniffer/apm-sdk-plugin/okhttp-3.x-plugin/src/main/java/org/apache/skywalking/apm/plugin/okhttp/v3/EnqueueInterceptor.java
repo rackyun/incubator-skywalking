@@ -53,7 +53,7 @@ public class EnqueueInterceptor implements InstanceMethodsAroundInterceptor, Ins
          * 5. Create the exit span by using the `RealCall` instance when `AsyncCall` method called.
          */
 
-        callbackInstance.setSkyWalkingDynamicField(new EnhanceRequiredInfo(objInst, ContextManager.capture()));
+        callbackInstance.enSetSkyWalkingDynamicField(new EnhanceRequiredInfo(objInst, ContextManager.capture()));
     }
 
     @Override
@@ -69,6 +69,6 @@ public class EnqueueInterceptor implements InstanceMethodsAroundInterceptor, Ins
     }
 
     @Override public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(allArguments[1]);
+        objInst.enSetSkyWalkingDynamicField(allArguments[1]);
     }
 }

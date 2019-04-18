@@ -108,6 +108,6 @@ public class RedisConnectionMethodInterceptor implements InstanceMethodsAroundIn
         if (peer == null) {
             peer = ((RedisClient) allArguments[0]).getConfig().getAddress().getAuthority();
         }
-        objInst.setSkyWalkingDynamicField(peer);
+        objInst.enSetSkyWalkingDynamicField(peer);
     }
 }

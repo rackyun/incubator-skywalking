@@ -46,7 +46,7 @@ public class HystrixConcurrencyStrategyInterceptor implements InstanceMethodsAro
             synchronized (objInst) {
                 if (wrapperCache == null) {
                     wrapperCache = new SWHystrixPluginsWrapperCache();
-                    objInst.setSkyWalkingDynamicField(wrapperCache);
+                    objInst.enSetSkyWalkingDynamicField(wrapperCache);
                 }
                 if (wrapperCache.getSwHystrixConcurrencyStrategyWrapper() == null) {
                     // Return and register wrapper only for the first time

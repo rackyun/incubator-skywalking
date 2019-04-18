@@ -179,7 +179,7 @@ public class RequestMappingMethodInterceptorTest {
         }
 
         @Override
-        public void setSkyWalkingDynamicField(Object value) {
+        public void enSetSkyWalkingDynamicField(Object value) {
 
         }
     }

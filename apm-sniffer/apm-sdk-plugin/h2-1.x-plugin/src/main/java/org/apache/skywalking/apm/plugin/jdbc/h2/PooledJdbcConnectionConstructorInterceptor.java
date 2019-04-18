@@ -28,6 +28,6 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceC
 public class PooledJdbcConnectionConstructorInterceptor implements InstanceConstructorInterceptor {
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        objInst.setSkyWalkingDynamicField(((EnhancedInstance)allArguments[0]).getSkyWalkingDynamicField());
+        objInst.enSetSkyWalkingDynamicField(((EnhancedInstance)allArguments[0]).getSkyWalkingDynamicField());
     }
 }

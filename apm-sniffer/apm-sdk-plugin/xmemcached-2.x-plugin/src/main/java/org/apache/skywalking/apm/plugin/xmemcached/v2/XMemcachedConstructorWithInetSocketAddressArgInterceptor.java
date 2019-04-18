@@ -34,6 +34,6 @@ public class XMemcachedConstructorWithInetSocketAddressArgInterceptor implements
         InetSocketAddress inetSocketAddress = (InetSocketAddress)allArguments[0];
         String host = inetSocketAddress.getAddress().getHostAddress();
         int port = inetSocketAddress.getPort();
-        objInst.setSkyWalkingDynamicField(host + ":" + port);
+        objInst.enSetSkyWalkingDynamicField(host + ":" + port);
     }
 }

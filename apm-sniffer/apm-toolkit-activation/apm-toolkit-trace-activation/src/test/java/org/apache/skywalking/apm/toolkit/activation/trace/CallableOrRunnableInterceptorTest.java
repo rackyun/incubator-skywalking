@@ -63,7 +63,7 @@ public class CallableOrRunnableInterceptorTest {
             return object;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             this.object = value;
         }
     };
@@ -98,7 +98,7 @@ public class CallableOrRunnableInterceptorTest {
     @Test
     public void testCall() throws Throwable {
 
-        enhancedInstance.setSkyWalkingDynamicField(contextSnapshot);
+        enhancedInstance.enSetSkyWalkingDynamicField(contextSnapshot);
         callableCallInterceptor.beforeMethod(enhancedInstance, callMethod, arguments, null, null);
         callableCallInterceptor.afterMethod(enhancedInstance, callMethod, arguments, null, "result");
 

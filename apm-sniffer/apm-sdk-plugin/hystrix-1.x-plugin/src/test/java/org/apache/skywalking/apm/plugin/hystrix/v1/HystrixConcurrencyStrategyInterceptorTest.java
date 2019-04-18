@@ -47,7 +47,7 @@ public class HystrixConcurrencyStrategyInterceptorTest {
                 return cache;
             }
 
-            @Override public void setSkyWalkingDynamicField(Object cache) {
+            @Override public void enSetSkyWalkingDynamicField(Object cache) {
                 this.cache = (SWHystrixPluginsWrapperCache) cache;
             }
         };

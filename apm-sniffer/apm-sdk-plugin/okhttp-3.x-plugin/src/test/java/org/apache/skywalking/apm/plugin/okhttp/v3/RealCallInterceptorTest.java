@@ -83,7 +83,7 @@ public class RealCallInterceptorTest {
             return object;
         }
 
-        @Override public void setSkyWalkingDynamicField(Object value) {
+        @Override public void enSetSkyWalkingDynamicField(Object value) {
             this.object = value;
         }
     };

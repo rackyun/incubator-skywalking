@@ -56,7 +56,7 @@ public class TransportProxyClientInterceptor implements InstanceConstructorInter
                 elasticSearchEnhanceInfo.setClusterName(clusterName);
                 parseRequestInfo(action, elasticSearchEnhanceInfo);
                 elasticSearchEnhanceInfo.setTransportAddressHolder(nodeService);
-                ((EnhancedInstance)action).setSkyWalkingDynamicField(elasticSearchEnhanceInfo);
+                ((EnhancedInstance)action).enSetSkyWalkingDynamicField(elasticSearchEnhanceInfo);
             }
         }
     }
