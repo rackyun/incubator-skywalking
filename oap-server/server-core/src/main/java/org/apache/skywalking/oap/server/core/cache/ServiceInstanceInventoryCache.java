@@ -75,6 +75,8 @@ public class ServiceInstanceInventoryCache implements Service {
             serviceInstanceInventory = getCacheDAO().get(serviceInstanceId);
             if (Objects.nonNull(serviceInstanceInventory)) {
                 serviceInstanceIdCache.put(serviceInstanceId, serviceInstanceInventory);
+            } else {
+                logger.debug("service instance {} is not found", serviceInstanceId);
             }
         }
         return serviceInstanceInventory;

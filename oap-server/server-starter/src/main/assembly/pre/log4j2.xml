@@ -47,7 +47,7 @@
         <logger name="org.eclipse.jetty" level="INFO"/>
         <logger name="org.apache.zookeeper" level="INFO"/>
         <logger name="io.grpc.netty" level="INFO"/>
-        <logger name="org.apache.skywalking.oap.server.receiver.trace" level="info">
+        <logger name="org.apache.skywalking.oap.server.receiver.trace" level="info" additivity="false">
             <AppenderRef ref="TraceReceiverFile"/>
         </logger>
         <Root level="info">

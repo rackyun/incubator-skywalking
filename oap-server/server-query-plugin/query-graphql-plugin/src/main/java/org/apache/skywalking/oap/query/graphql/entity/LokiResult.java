@@ -16,21 +16,32 @@
  *
  */
 
-package org.apache.skywalking.oap.query.graphql;
+package org.apache.skywalking.oap.query.graphql.entity;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.skywalking.oap.server.library.module.ModuleConfig;
+
+import java.io.Serializable;
 
 /**
- * The config of {@code query.graphql}.
- *
- * @author gaohongtao
+ * @author yunhai.hu
+ * at 2019/4/22
  */
-@Getter(AccessLevel.PACKAGE)
-@Setter(AccessLevel.PUBLIC)
-public class GraphQLQueryConfig extends ModuleConfig {
-    private String path;
-    private String logUrl;
+@Getter @Setter
+public class LokiResult implements Serializable {
+
+    private Stream[] streams;
+
+    @Getter @Setter
+    public static class Stream implements Serializable {
+        private String labels;
+        private Entry[] entries;
+    }
+
+    @Getter @Setter
+    public static class Entry implements Serializable {
+        private String ts;
+        private String line;
+    }
+
 }

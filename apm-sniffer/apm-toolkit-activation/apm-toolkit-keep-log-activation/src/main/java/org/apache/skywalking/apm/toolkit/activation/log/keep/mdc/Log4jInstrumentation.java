@@ -33,8 +33,8 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
  */
 public class Log4jInstrumentation extends LogMDCInstrumentation {
 
-    private static final String ENHANCE_CLASS = "org.apache.logging.slf4j.Log4jLoggerFactory";
-    private static final String CONSTRUCTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.keep.MDCConstructorInterceptor";
+    private static final String ENHANCE_CLASS = "org.slf4j.impl.Log4jMDCAdapter";
+    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.log.keep.MDCConstructorInterceptor";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
@@ -47,7 +47,7 @@ public class Log4jInstrumentation extends LogMDCInstrumentation {
 
                 @Override
                 public String getConstructorInterceptor() {
-                    return CONSTRUCTOR_CLASS;
+                    return INTERCEPTOR_CLASS;
                 }
             }
         };

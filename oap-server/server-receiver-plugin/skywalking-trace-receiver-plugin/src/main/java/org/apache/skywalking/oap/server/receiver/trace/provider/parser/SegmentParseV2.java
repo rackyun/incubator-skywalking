@@ -75,7 +75,7 @@ public class SegmentParseV2 {
 
     public boolean parse(BufferData<UpstreamSegment> bufferData, SegmentSource source) {
         createSpanListeners();
-
+        SegmentObject segmentObject = null;
         try {
             UpstreamSegment upstreamSegment = bufferData.getMessageType();
 
@@ -84,7 +84,7 @@ public class SegmentParseV2 {
             if (bufferData.getV2Segment() == null) {
                 bufferData.setV2Segment(parseBinarySegment(upstreamSegment));
             }
-            SegmentObject segmentObject = parseBinarySegment(upstreamSegment);
+            segmentObject = parseBinarySegment(upstreamSegment);
 
             if (logger.isDebugEnabled()) {
                 logger.debug("This trace segment object {}", segmentObject.toString());
@@ -95,8 +95,9 @@ public class SegmentParseV2 {
 //                if (logger.isDebugEnabled()) {
 //                    logger.debug("This segment id exchange not success, write to buffer file, id: {}", segmentCoreInfo.getSegmentId());
 //                }
-                logger.warn("This segment id exchange not success, write to buffer file, id: {}, serviceId: {}",
-                        segmentCoreInfo.getSegmentId(), segmentCoreInfo.getServiceId());
+                logger.warn("This segment id exchange not success, write to buffer file, segment id: {}, serviceId: {}, traceId: {}",
+                        segmentCoreInfo.getSegmentId(), segmentCoreInfo.getServiceId(),
+                        HexUtil.traceIdToString(segmentObject.getTraceSegmentId().getIdPartsList()));
 
                 if (source.equals(SegmentSource.Agent)) {
                     writeToBufferFile(segmentCoreInfo.getSegmentId(), upstreamSegment);
@@ -114,7 +115,8 @@ public class SegmentParseV2 {
             }
         } catch (Throwable e) {
             TRACE_PARSE_ERROR.inc();
-            logger.error(e.getMessage(), e);
+            logger.error("parse error", e);
+            logger.info("error occurred, segment object {}", segmentObject);
             return true;
         }
     }

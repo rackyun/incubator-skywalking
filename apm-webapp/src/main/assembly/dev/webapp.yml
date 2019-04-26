@@ -22,7 +22,7 @@ collector:
   ribbon:
     ReadTimeout: 10000
     # Point to all backend's restHost:restPort, split by ,
-    listOfServers: localhost:12800
+    listOfServers: localhost:20510
 
 security:
   user:

@@ -27,11 +27,13 @@ zuul:
 collector:
   path: /graphql
   ribbon:
+    ReadTimeout: 10000
     # Point to all backend's restHost:restPort, split by ,
-    listOfServers: 127.0.0.1:12800
+    listOfServers: localhost:20510
 
 security:
   user:
+    # username
     admin:
+      # password
       password: admin
-      

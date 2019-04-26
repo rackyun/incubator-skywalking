@@ -33,4 +33,9 @@ public class Topology {
         this.nodes = new ArrayList<>();
         this.calls = new ArrayList<>();
     }
+
+    public Topology(List<Node> nodes, List<Call> calls) {
+        this.nodes = nodes;
+        this.calls = calls;
+    }
 }

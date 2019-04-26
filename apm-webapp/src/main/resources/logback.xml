@@ -17,10 +17,20 @@
   ~
   -->
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!--<include resource="org/springframework/boot/logging/logback/defaults.xml" />
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
     <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
     <root level="INFO">
         <appender-ref ref="FILE" />
+    </root>-->
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS} %thread] %-5level - %m%n</Pattern>
+        </layout>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
     </root>
 </configuration>

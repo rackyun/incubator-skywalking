@@ -21,23 +21,38 @@ package org.apache.skywalking.apm.toolkit.activation.log.keep;
 import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
 import org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.Slf4jMDCSpanLog;
+
+import java.lang.reflect.Method;
 
 /**
  * @author yunhai.hu
  * at 2018/12/19
  */
-public class MDCConstructorInterceptor implements InstanceConstructorInterceptor {
+public class MDCConvertInterceptor implements StaticMethodsAroundInterceptor {
 
-    private static final ILog logger = LogManager.getLogger(MDCConstructorInterceptor.class);
+    private static final ILog logger = LogManager.getLogger(MDCConvertInterceptor.class);
+
 
     @Override
-    public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
+    public void beforeMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes,
+                             MethodInterceptResult result) {
+
+    }
+
+    @Override
+    public Object afterMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes, Object ret) {
         if (ContextManager.getSPANLOG() == null) {
             ContextManager.setSPANLOG(new Slf4jMDCSpanLog());
             logger.info("init slf4jMDCSpanLog");
         }
+        return ret;
+    }
+
+    @Override
+    public void handleMethodException(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes, Throwable t) {
+
     }
 }

@@ -70,12 +70,11 @@ public class SkyWalkingAgent {
 
         final ByteBuddy byteBuddy = new ByteBuddy()
             .with(TypeValidation.of(Config.Agent.IS_OPEN_DEBUGGING_CLASS));
-
+        //.or(nameStartsWith("org.apache.logging."))
         new AgentBuilder.Default(byteBuddy)
             .ignore(
                 nameStartsWith("net.bytebuddy.")
                 .or(nameStartsWith("org.slf4j."))
-                .or(nameStartsWith("org.apache.logging."))
                 .or(nameStartsWith("org.groovy."))
                 .or(nameContains("javassist"))
                 .or(nameContains(".asm."))

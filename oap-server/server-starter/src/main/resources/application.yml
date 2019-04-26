@@ -65,7 +65,6 @@ storage:
     bulkSize: 20 # flush the bulk every 20mb
     flushInterval: 10 # flush the bulk every 10 seconds whatever the number of requests
     concurrentRequests: 2 # the number of concurrent requests
-    logClusterNodes: 172.16.1.40:19200
 receiver-register:
   default:
 receiver-trace:
@@ -93,6 +92,7 @@ receiver-jvm:
 query:
   graphql:
     path: ${SW_QUERY_GRAPHQL_PATH:/graphql}
+    logUrl: http://localhost:3100/api/prom/query
 alarm:
   default:
 telemetry:

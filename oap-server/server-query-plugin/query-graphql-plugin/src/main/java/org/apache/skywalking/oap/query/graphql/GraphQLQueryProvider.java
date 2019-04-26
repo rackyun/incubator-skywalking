@@ -67,7 +67,7 @@ public class GraphQLQueryProvider extends ModuleProvider {
             .file("query-protocol/alarm.graphqls")
             .resolvers(new AlarmQuery(getManager()))
             .file("query-protocol/log.graphqls")
-            .resolvers(new LogQuery(getManager()))
+            .resolvers(new LogQuery(getManager(), config.getLogUrl()))
             .build()
             .makeExecutableSchema();
         this.graphQL = GraphQL.newGraphQL(schema).build();

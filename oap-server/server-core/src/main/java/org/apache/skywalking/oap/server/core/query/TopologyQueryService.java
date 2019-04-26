@@ -20,6 +20,8 @@ package org.apache.skywalking.oap.server.core.query;
 
 import java.io.IOException;
 import java.util.*;
+
+import org.apache.skywalking.apm.util.StringUtil;
 import org.apache.skywalking.oap.server.core.*;
 import org.apache.skywalking.oap.server.core.cache.EndpointInventoryCache;
 import org.apache.skywalking.oap.server.core.config.IComponentLibraryCatalogService;
@@ -45,9 +47,11 @@ public class TopologyQueryService implements Service {
     private IMetadataQueryDAO metadataQueryDAO;
     private EndpointInventoryCache endpointInventoryCache;
     private IComponentLibraryCatalogService componentLibraryCatalogService;
+    private Map<String, Node> conjectureNodes;
 
     public TopologyQueryService(ModuleManager moduleManager) {
         this.moduleManager = moduleManager;
+        conjectureNodes = initConjectureNodes();
     }
 
     private IMetadataQueryDAO getMetadataQueryDAO() {
@@ -108,7 +112,7 @@ public class TopologyQueryService implements Service {
             }
         });
 
-        return topology;
+        return simplifyNginxTopology(topology);
     }
 
     public Topology getServiceTopology(final Step step, final long startTB, final long endTB,
@@ -172,6 +176,78 @@ public class TopologyQueryService implements Service {
         node.setName(getEndpointInventoryCache().get(endpointId).getName());
         node.setType(Const.EMPTY_STRING);
         node.setReal(true);
+        return node;
+    }
+
+    public Topology simplifyNginxTopology(Topology topology) {
+
+        List<Call> simplifiedCalls = new ArrayList<>();
+        topology.getCalls().forEach(call -> {
+            String[] ids = call.getId().split(Const.ID_SPLIT);
+            if (ids[0].equals(ids[1])) {
+                return;
+            }
+            simplifiedCalls.add(call);
+        });
+
+        return new Topology(topology.getNodes(), simplifiedCalls);
+    }
+
+    public Topology simplifyTopology(Topology topology) {
+        Map<Integer, Node> idNodeMap = new HashMap<>();
+        List<Node> simplifiedNodes = new ArrayList<>();
+        topology.getNodes().forEach(node -> {
+            if (StringUtil.isEmpty(node.getType())) {
+                simplifiedNodes.add(node);
+                return;
+            }
+            Node conNode = conjectureNodes.get(node.getType());
+            if (conNode != null) {
+                idNodeMap.put(node.getId(), conNode);
+            } else {
+                simplifiedNodes.add(node);
+            }
+        });
+
+        simplifiedNodes.addAll(conjectureNodes.values());
+
+        List<Call> simplifiedCalls = new ArrayList<>();
+        topology.getCalls().forEach(call -> {
+            String[] ids = call.getId().split(Const.ID_SPLIT);
+            if (ids[0].equals(ids[1])) {
+                return;
+            }
+            if (DetectPoint.CLIENT.equals(call.getDetectPoint())) {
+                Node compNode = idNodeMap.get(call.getTarget());
+                if (compNode != null) {
+                    call.setTarget(compNode.getId());
+                    call.setId(call.getSource() + Const.ID_SPLIT + call.getTarget() + Const.ID_SPLIT + ids[2]);
+                }
+            }
+            simplifiedCalls.add(call);
+        });
+
+        return new Topology(simplifiedNodes, simplifiedCalls);
+    }
+
+    private Map<String, Node> initConjectureNodes() {
+        Map<String, Node> conjectureNodes = new HashMap<>();
+        conjectureNodes.put("Redis", buildConjectureNode(10001, "Redis"));
+        conjectureNodes.put("Mysql", buildConjectureNode(10002, "Mysql"));
+        conjectureNodes.put("MongoDB", buildConjectureNode(10003, "MongoDB"));
+        conjectureNodes.put("hbase", buildConjectureNode(10004, "hbase"));
+        conjectureNodes.put("Elasticsearch", buildConjectureNode(10005, "Elasticsearch"));
+        conjectureNodes.put("Kafka", buildConjectureNode(10006, "Kafka"));
+        conjectureNodes.put("RocketMQ", buildConjectureNode(10007, "RocketMQ"));
+        return Collections.unmodifiableMap(conjectureNodes);
+    }
+
+    private Node buildConjectureNode(int id, String type) {
+        Node node = new Node();
+        node.setId(id);
+        node.setType(type);
+        node.setReal(false);
+        node.setName(type);
         return node;
     }
 }

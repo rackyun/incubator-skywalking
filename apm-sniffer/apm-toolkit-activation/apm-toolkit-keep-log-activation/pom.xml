@@ -27,7 +27,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.apache.skywalking</groupId>
     <artifactId>apm-toolkit-keep-log-activation</artifactId>
 
     <dependencies>

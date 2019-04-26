@@ -19,11 +19,11 @@
 package org.apache.skywalking.oap.query.graphql.resolver;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.skywalking.oap.server.core.CoreModule;
-import org.apache.skywalking.oap.server.core.query.LogQueryService;
+import org.apache.skywalking.oap.query.graphql.service.LogQueryService;
 import org.apache.skywalking.oap.server.core.query.TraceQueryService;
 import org.apache.skywalking.oap.server.core.query.entity.LogBrief;
+import org.apache.skywalking.oap.server.core.query.entity.Span;
 import org.apache.skywalking.oap.server.core.query.entity.Trace;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 import org.slf4j.Logger;
@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yunhai.hu
@@ -44,14 +46,12 @@ public class LogQuery implements GraphQLQueryResolver {
     private LogQueryService logQueryService;
     private TraceQueryService traceQueryService;
 
-    public LogQuery(ModuleManager moduleManager) {
+    public LogQuery(ModuleManager moduleManager, String logUrl) {
         this.moduleManager = moduleManager;
+        this.logQueryService = new LogQueryService(moduleManager, logUrl);
     }
 
     private LogQueryService getLogQueryService() {
-        if (logQueryService == null) {
-            this.logQueryService = moduleManager.find(CoreModule.NAME).provider().getService(LogQueryService.class);
-        }
         return logQueryService;
     }
 
@@ -72,8 +72,13 @@ public class LogQuery implements GraphQLQueryResolver {
             return logBrief;
         }
 
-        String date = DateFormatUtils.format(trace.getSpans().get(0).getStartTime(), DATE_FORMAT);
-        logBrief.setLogRecords(getLogQueryService().queryLog(traceId, date));
+        Set<String> services = new HashSet<>();
+        for (Span span : trace.getSpans()) {
+            services.add(span.getServiceCode());
+        }
+        long startTime = trace.getSpans().get(0).getStartTime();
+//        String date = DateFormatUtils.format(trace.getSpans().get(0).getStartTime(), DATE_FORMAT);
+        logBrief.setLogRecords(getLogQueryService().queryLog(traceId, startTime, services));
         logger.debug("log query result {}", logBrief.getLogRecords());
         return logBrief;
     }

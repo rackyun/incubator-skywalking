@@ -16,3 +16,4 @@
 
 keep-log-activation=org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.Log4j2Instrumentation
 keep-log-activation=org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.LogbackInstrumentation
+# keep-log-activation=org.apache.skywalking.apm.toolkit.activation.log.keep.mdc.Log4jInstrumentation

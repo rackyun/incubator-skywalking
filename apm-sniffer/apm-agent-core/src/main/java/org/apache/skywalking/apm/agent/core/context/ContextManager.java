@@ -267,6 +267,10 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         SPANLOG = spanLog;
     }
 
+    public static SpanLog getSPANLOG() {
+        return SPANLOG;
+    }
+
     private static void logStartedSpan(AbstractSpan span) {
         if (SPANLOG != null) {
             SPANLOG.logStartedSpan(getGlobalTraceId(), span);

@@ -40,7 +40,6 @@ public class StorageModuleElasticsearchConfig extends ModuleConfig {
     private int bulkSize = 20;
     private int flushInterval = 10;
     private int concurrentRequests = 2;
-    @Setter @Getter private String logClusterNodes;
 
     int getIndexShardsNumber() {
         return indexShardsNumber;
