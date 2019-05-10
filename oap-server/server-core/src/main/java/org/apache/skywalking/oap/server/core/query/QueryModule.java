@@ -20,6 +20,9 @@ package org.apache.skywalking.oap.server.core.query;
 
 import org.apache.skywalking.oap.server.library.module.ModuleDefine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The root module of Query plugin.
  *
@@ -27,13 +30,18 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
  */
 public class QueryModule extends ModuleDefine {
 
-    private static final String NAME = "query";
+    public static final String NAME = "query";
+    private List<Class> classes = new ArrayList<>();
 
     public QueryModule() {
         super(NAME);
     }
 
     @Override public Class[] services() {
-        return new Class[] {};
+        return classes.toArray(new Class[0]);
+    }
+
+    public void addQueryService(Class clazz) {
+        classes.add(clazz);
     }
 }

@@ -168,4 +168,8 @@ public class Config {
             public static boolean TRACE_DSL = false;
         }
     }
+
+    public static class Monitor {
+        public static String MONITOR_SERVER_URL = "http://localhost:1988";
+    }
 }

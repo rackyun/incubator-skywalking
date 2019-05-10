@@ -45,4 +45,10 @@ public class RateLimiter {
             return false;
         }
     }
+
+    public void forceSampled() {
+        synchronized (this) {
+            balance -= 1L;
+        }
+    }
 }

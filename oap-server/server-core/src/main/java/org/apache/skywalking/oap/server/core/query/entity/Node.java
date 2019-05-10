@@ -30,4 +30,6 @@ public class Node {
     private String name;
     private String type;
     private boolean isReal;
+    private int sla;
+    private int cpm;
 }

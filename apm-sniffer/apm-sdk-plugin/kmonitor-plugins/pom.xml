@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>apm-sdk-plugin</artifactId>
+        <groupId>org.apache.skywalking</groupId>
+        <version>6.0.0-GA</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kmonitor-plugins</artifactId>
+    <version>6.0.0-GA</version>
+
+    <properties>
+        <keep.monitor.version>2.2.1</keep.monitor.version>
+        <spring-webmvc.version>4.3.8.RELEASE</spring-webmvc.version>
+        <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
+        <dubbo.version>2.6.2</dubbo.version>
+        <spring-kafka.version>1.3.4.RELEASE</spring-kafka.version>
+        <hystrix-core.version>1.4.26</hystrix-core.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.keep.monitor</groupId>
+            <artifactId>monitor-agent-core</artifactId>
+            <version>${keep.monitor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.keep.monitor</groupId>
+            <artifactId>monitor-annotation</artifactId>
+            <version>${keep.monitor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.keep.monitor</groupId>
+            <artifactId>monitor-core</artifactId>
+            <version>${keep.monitor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>${spring-kafka.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <version>${hystrix-core.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

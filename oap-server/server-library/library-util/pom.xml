@@ -31,6 +31,7 @@
     <properties>
         <ststem-rules.version>1.18.0</ststem-rules.version>
         <apache-httpclient.version>4.5.3</apache-httpclient.version>
+        <httpasyncclient.version>4.1.4</httpasyncclient.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${apache-httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>${httpasyncclient.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -39,6 +39,7 @@
         <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 
         <ui.path>${project.parent.basedir}/skywalking-ui</ui.path>
+        <skipWeb>true</skipWeb>
     </properties>
 
     <dependencyManagement>
@@ -115,6 +116,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>${frontend-maven-plugin.version}</version>
                 <configuration>
+                    <skip>${skipWeb}</skip>
                     <workingDirectory>${ui.path}</workingDirectory>
                     <nodeVersion>v8.9.4</nodeVersion>
                 </configuration>

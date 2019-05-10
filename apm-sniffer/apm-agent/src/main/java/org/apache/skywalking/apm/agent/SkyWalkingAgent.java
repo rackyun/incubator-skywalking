@@ -35,7 +35,10 @@ import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.*;
 
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
@@ -56,13 +59,27 @@ public class SkyWalkingAgent {
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) throws PluginException {
         final PluginFinder pluginFinder;
+        final PluginFinder pluginFinder1, pluginFinder2;
+
         long start = System.currentTimeMillis();
         try {
             SnifferConfigInitializer.initialize(agentArgs);
             logger.debug("premain() initialize complete at {}ms since premain start.", System.currentTimeMillis() - start);
 
-            pluginFinder = new PluginFinder(new PluginBootstrap().loadPlugins());
+            List<AbstractClassEnhancePluginDefine> pluginDefines = new PluginBootstrap().loadPlugins();
+            pluginFinder = new PluginFinder(pluginDefines);
             logger.debug("premain() PluginFinder complete at {}ms since premain start.", System.currentTimeMillis() - start);
+            List<AbstractClassEnhancePluginDefine> pluginDefines1 = new ArrayList<AbstractClassEnhancePluginDefine>();
+            List<AbstractClassEnhancePluginDefine> pluginDefines2 = new ArrayList<AbstractClassEnhancePluginDefine>();
+            for (AbstractClassEnhancePluginDefine pluginDefine : pluginDefines) {
+                if (pluginDefine.getClass().getName().startsWith("org.apache.skywalking.apm.plugin.kmonitor.")) {
+                    pluginDefines2.add(pluginDefine);
+                } else {
+                    pluginDefines1.add(pluginDefine);
+                }
+            }
+            pluginFinder1 = new PluginFinder(pluginDefines1);
+            pluginFinder2 = new PluginFinder(pluginDefines2);
         } catch (Exception e) {
             logger.error(e, "Skywalking agent initialized failure. Shutting down.");
             return;
@@ -71,6 +88,7 @@ public class SkyWalkingAgent {
         final ByteBuddy byteBuddy = new ByteBuddy()
             .with(TypeValidation.of(Config.Agent.IS_OPEN_DEBUGGING_CLASS));
         //.or(nameStartsWith("org.apache.logging."))
+        final Set<String> enhancedType = new HashSet<String>();
         new AgentBuilder.Default(byteBuddy)
             .ignore(
                 nameStartsWith("net.bytebuddy.")
@@ -79,10 +97,15 @@ public class SkyWalkingAgent {
                 .or(nameContains("javassist"))
                 .or(nameContains(".asm."))
                 .or(nameStartsWith("sun.reflect"))
+                .or(nameStartsWith("com.keep.monitor."))
+                .or(nameStartsWith("com.keep.commons.log."))
+                .or(nameStartsWith("com.keep.infra.tracing."))
                 .or(allSkyWalkingAgentExcludeToolkit())
                 .or(ElementMatchers.<TypeDescription>isSynthetic()))
             .type(pluginFinder.buildMatch())
-            .transform(new Transformer(pluginFinder))
+            .transform(new Transformer(pluginFinder1, enhancedType))
+            .transform(new Transformer(pluginFinder2, enhancedType))
+            .asTerminalTransformation()
             .with(new Listener())
             .installOn(instrumentation);
 
@@ -102,9 +125,11 @@ public class SkyWalkingAgent {
 
     private static class Transformer implements AgentBuilder.Transformer {
         private PluginFinder pluginFinder;
+        private Set<String> enhancedType;
 
-        Transformer(PluginFinder pluginFinder) {
+        Transformer(PluginFinder pluginFinder, Set<String> enhancedType) {
             this.pluginFinder = pluginFinder;
+            this.enhancedType = enhancedType;
         }
 
         @Override
@@ -114,6 +139,9 @@ public class SkyWalkingAgent {
             if (pluginDefines.size() > 0) {
                 DynamicType.Builder<?> newBuilder = builder;
                 EnhanceContext context = new EnhanceContext();
+                if (enhancedType.contains(typeDescription.getName())) {
+                    context.extendObjectCompleted();
+                }
                 for (AbstractClassEnhancePluginDefine define : pluginDefines) {
                     DynamicType.Builder<?> possibleNewBuilder = define.define(typeDescription, newBuilder, classLoader, context);
                     if (possibleNewBuilder != null) {
@@ -122,6 +150,7 @@ public class SkyWalkingAgent {
                 }
                 if (context.isEnhanced()) {
                     logger.debug("Finish the prepare stage for {}.", typeDescription.getName());
+                    enhancedType.add(typeDescription.getName());
                 }
 
                 return newBuilder;

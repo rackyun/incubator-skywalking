@@ -21,6 +21,12 @@ package org.apache.skywalking.oap.query.graphql.resolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.skywalking.oap.query.graphql.entity.MetricValues;
+import org.apache.skywalking.oap.query.graphql.service.OpenTsdbQueryService;
 import org.apache.skywalking.oap.query.graphql.type.Duration;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.query.*;
@@ -34,6 +40,7 @@ public class TopologyQuery implements GraphQLQueryResolver {
 
     private final ModuleManager moduleManager;
     private TopologyQueryService queryService;
+    private OpenTsdbQueryService openTsdbQueryService;
 
     public TopologyQuery(ModuleManager moduleManager) {
         this.moduleManager = moduleManager;
@@ -46,6 +53,14 @@ public class TopologyQuery implements GraphQLQueryResolver {
         return queryService;
     }
 
+    private OpenTsdbQueryService getOpenTsdbQueryService() {
+        if (openTsdbQueryService == null) {
+            this.openTsdbQueryService =
+                    moduleManager.find(QueryModule.NAME).provider().getService(OpenTsdbQueryService.class);
+        }
+        return openTsdbQueryService;
+    }
+
     public Topology getGlobalTopology(final Duration duration) throws IOException, ParseException {
         long startTimeBucket = DurationUtils.INSTANCE.exchangeToTimeBucket(duration.getStart());
         long endTimeBucket = DurationUtils.INSTANCE.exchangeToTimeBucket(duration.getEnd());
@@ -53,7 +68,17 @@ public class TopologyQuery implements GraphQLQueryResolver {
         long startTimestamp = DurationUtils.INSTANCE.startTimeToTimestamp(duration.getStep(), duration.getStart());
         long endTimestamp = DurationUtils.INSTANCE.endTimeToTimestamp(duration.getStep(), duration.getEnd());
 
-        return getQueryService().getGlobalTopology(duration.getStep(), startTimeBucket, endTimeBucket, startTimestamp, endTimestamp);
+        Topology topology = getQueryService().getGlobalTopology(duration.getStep(), startTimeBucket, endTimeBucket, startTimestamp, endTimestamp);
+        List<String> serviceNames = topology.getNodes().stream().map(node -> node.getName()).collect(Collectors.toList());
+        Map<String, MetricValues> metrics = getOpenTsdbQueryService().queryMetric(startTimestamp, serviceNames);
+        topology.getNodes().forEach(node -> {
+            MetricValues metricValues = metrics.get(node.getName());
+            if (metricValues != null) {
+                node.setSla(Math.round((float) metricValues.getSla() * 10000));
+                node.setCpm(metricValues.getCpm());
+            }
+        });
+        return topology;
     }
 
     public Topology getServiceTopology(final int serviceId, final Duration duration) throws IOException {

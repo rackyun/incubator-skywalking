@@ -22,6 +22,7 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import org.apache.skywalking.oap.query.graphql.resolver.*;
+import org.apache.skywalking.oap.query.graphql.service.OpenTsdbQueryService;
 import org.apache.skywalking.oap.server.core.CoreModule;
 import org.apache.skywalking.oap.server.core.query.QueryModule;
 import org.apache.skywalking.oap.server.core.server.JettyHandlerRegister;
@@ -71,6 +72,8 @@ public class GraphQLQueryProvider extends ModuleProvider {
             .build()
             .makeExecutableSchema();
         this.graphQL = GraphQL.newGraphQL(schema).build();
+        ((QueryModule) getModule()).addQueryService(OpenTsdbQueryService.class);
+        this.registerServiceImplementation(OpenTsdbQueryService.class, new OpenTsdbQueryService(getManager(), config.getMetricUrl()));
     }
 
     @Override public void start() throws ServiceNotProvidedException, ModuleStartException {

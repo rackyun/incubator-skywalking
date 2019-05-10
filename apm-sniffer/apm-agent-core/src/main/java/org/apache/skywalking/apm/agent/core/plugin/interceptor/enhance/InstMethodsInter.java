@@ -19,20 +19,14 @@
 
 package org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.base.Stopwatch;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
-import net.bytebuddy.implementation.bind.annotation.This;
+import net.bytebuddy.implementation.bind.annotation.*;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.PluginException;
 import org.apache.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
-import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 /**
  * The actual byte-buddy's interceptor to intercept class instance methods.
@@ -81,12 +75,11 @@ public class InstMethodsInter {
         EnhancedInstance targetObject = (EnhancedInstance)obj;
 
         MethodInterceptResult result = new MethodInterceptResult();
-        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
+            logger.debug("target {}, interceptor {}",
+                    obj.getClass().getCanonicalName(), interceptor.getClass().getCanonicalName());
             interceptor.beforeMethod(targetObject, method, allArguments, method.getParameterTypes(),
                 result);
-            stopwatch.stop();
-            logger.debug("invoke {}.{} beforeMethod() cost {}ms.", obj.getClass(), method.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
         } catch (Throwable t) {
             logger.error(t, "class[{}] before method[{}] intercept failure", obj.getClass(), method.getName());
         }
@@ -100,22 +93,16 @@ public class InstMethodsInter {
             }
         } catch (Throwable t) {
             try {
-                stopwatch.reset().start();
                 interceptor.handleMethodException(targetObject, method, allArguments, method.getParameterTypes(),
                     t);
-                stopwatch.stop();
-                logger.debug("invoke {}.{} handleMethodException() cost {}ms.", obj.getClass(), method.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
             } catch (Throwable t2) {
                 logger.error(t2, "class[{}] handle method[{}] exception failure", obj.getClass(), method.getName());
             }
             throw t;
         } finally {
             try {
-                stopwatch.reset().start();
                 ret = interceptor.afterMethod(targetObject, method, allArguments, method.getParameterTypes(),
                     ret);
-                stopwatch.stop();
-                logger.debug("invoke {}.{} afterMethod() cost {}ms.", obj.getClass(), method.getName(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
             } catch (Throwable t) {
                 logger.error(t, "class[{}] after method[{}] intercept failure", obj.getClass(), method.getName());
             }

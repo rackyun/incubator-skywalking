@@ -33,4 +33,5 @@ import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 public class GraphQLQueryConfig extends ModuleConfig {
     private String path;
     private String logUrl;
+    private String metricUrl;
 }

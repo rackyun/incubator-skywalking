@@ -96,6 +96,8 @@ receiver-jvm:
 query:
   graphql:
     path: ${SW_QUERY_GRAPHQL_PATH:/graphql}
+    logUrl: http://p-logstorage-02:3100/api/prom/query
+    metricUrl: https://opentsdb.sre.gotokeep.com
 alarm:
   default:
 telemetry:

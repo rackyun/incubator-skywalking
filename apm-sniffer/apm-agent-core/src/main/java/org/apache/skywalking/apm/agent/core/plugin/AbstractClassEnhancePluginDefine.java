@@ -60,7 +60,7 @@ public abstract class AbstractClassEnhancePluginDefine {
         if (opponentClasses != null) {
             for (String opponentClass : opponentClasses) {
                 if (WitnessClassFinder.INSTANCE.exist(opponentClass, classLoader)) {
-                    logger.warn("enhance class {} by plugin {] is not working. Because opponent class {] is existed.",
+                    logger.warn("enhance class {} by plugin {} is not working. Because opponent class {} is existed.",
                             transformClassName, interceptorDefineClassName, opponentClass);
                     return null;
                 }

@@ -118,7 +118,7 @@ public abstract class ModuleProvider implements ModuleServiceHolder {
         throw new ServiceNotProvidedException("Service " + serviceType.getName() + " should not be provided, based on moduleDefine define.");
     }
 
-    ModuleDefine getModule() {
+    protected ModuleDefine getModule() {
         return moduleDefine;
     }
 

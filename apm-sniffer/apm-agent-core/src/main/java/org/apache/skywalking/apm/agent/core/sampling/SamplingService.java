@@ -19,19 +19,13 @@
 
 package org.apache.skywalking.apm.agent.core.sampling;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.skywalking.apm.agent.core.boot.BootService;
 import org.apache.skywalking.apm.agent.core.boot.DefaultImplementor;
-import org.apache.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
-import org.apache.skywalking.apm.util.RunnableWithExceptionProtection;
+import org.apache.skywalking.apm.agent.core.util.RateLimiter;
 
 /**
  * The <code>SamplingService</code> take charge of how to sample the {@link TraceSegment}. Every {@link TraceSegment}s
@@ -47,8 +41,7 @@ public class SamplingService implements BootService {
     private static final ILog logger = LogManager.getLogger(SamplingService.class);
 
     private volatile boolean on = false;
-    private volatile AtomicInteger samplingFactorHolder;
-    private volatile ScheduledFuture<?> scheduledFuture;
+    private RateLimiter rateLimiter;
 
     @Override
     public void prepare() throws Throwable {
@@ -57,28 +50,17 @@ public class SamplingService implements BootService {
 
     @Override
     public void boot() throws Throwable {
-        if (scheduledFuture != null) {
+        if (rateLimiter != null) {
             /**
              * If {@link #boot()} invokes twice, mostly in test cases,
              * cancel the old one.
              */
-            scheduledFuture.cancel(true);
+            return;
         }
         if (Config.Agent.SAMPLE_N_PER_3_SECS > 0) {
             on = true;
-            this.resetSamplingFactor();
-            ScheduledExecutorService service = Executors
-                .newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("SamplingService"));
-            scheduledFuture = service.scheduleAtFixedRate(new RunnableWithExceptionProtection(new Runnable() {
-                @Override
-                public void run() {
-                    resetSamplingFactor();
-                }
-            }, new RunnableWithExceptionProtection.CallbackWhenException() {
-                @Override public void handle(Throwable t) {
-                    logger.error("unexpected exception.", t);
-                }
-            }), 0, 3, TimeUnit.SECONDS);
+            rateLimiter = new RateLimiter((double) Config.Agent.SAMPLE_N_PER_3_SECS / 3,
+                    (double) Config.Agent.SAMPLE_N_PER_3_SECS);
             logger.debug("Agent sampling mechanism started. Sample {} traces in 3 seconds.", Config.Agent.SAMPLE_N_PER_3_SECS);
         }
     }
@@ -90,9 +72,7 @@ public class SamplingService implements BootService {
 
     @Override
     public void shutdown() throws Throwable {
-        if (scheduledFuture != null) {
-            scheduledFuture.cancel(true);
-        }
+
     }
 
     /**
@@ -100,13 +80,7 @@ public class SamplingService implements BootService {
      */
     public boolean trySampling() {
         if (on) {
-            int factor = samplingFactorHolder.get();
-            if (factor < Config.Agent.SAMPLE_N_PER_3_SECS) {
-                boolean success = samplingFactorHolder.compareAndSet(factor, factor + 1);
-                return success;
-            } else {
-                return false;
-            }
+            return rateLimiter.checkCredit();
         }
         return true;
     }
@@ -119,11 +93,8 @@ public class SamplingService implements BootService {
      */
     public void forceSampled() {
         if (on) {
-            samplingFactorHolder.incrementAndGet();
+            rateLimiter.forceSampled();
         }
     }
 
-    private void resetSamplingFactor() {
-        samplingFactorHolder = new AtomicInteger(0);
-    }
 }
