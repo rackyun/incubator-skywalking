@@ -11,61 +11,53 @@
 
     <artifactId>kmonitor-plugins</artifactId>
     <version>6.0.0-GA</version>
+    <modules>
+        <module>kmonitor-commons</module>
+        <module>kmonitor-annotation-plugin</module>
+        <module>kmonitor-dubbo</module>
+        <module>kmonitor-kafka</module>
+        <module>kmonitor-spring4</module>
+        <module>kmonitor-hystrix</module>
+        <module>kmonitor-mongodb-2.x</module>
+        <module>kmonitor-mongodb-3.x</module>
+        <module>kmonitor-mysql-5.x</module>
+        <module>kmonitor-hbase-1.x</module>
+        <module>kmonitor-hbase-2.x</module>
+        <module>kmonitor-elasticsearch-5.x</module>
+        <module>kmonitor-elasticsearch-6.x</module>
+        <module>kmonitor-okhttp-3.x</module>
+        <module>kmonitor-feign-default-http-9.x</module>
+        <module>kmonitor-httpClient-4.x</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <name>apm-sdk-plugin</name>
+    <url>http://maven.apache.org</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sdk.plugin.related.dir>/..</sdk.plugin.related.dir>
         <keep.monitor.version>2.2.1</keep.monitor.version>
-        <spring-webmvc.version>4.3.8.RELEASE</spring-webmvc.version>
-        <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
-        <dubbo.version>2.6.2</dubbo.version>
-        <spring-kafka.version>1.3.4.RELEASE</spring-kafka.version>
-        <hystrix-core.version>1.4.26</hystrix-core.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.keep.monitor</groupId>
-            <artifactId>monitor-agent-core</artifactId>
-            <version>${keep.monitor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.keep.monitor</groupId>
-            <artifactId>monitor-annotation</artifactId>
-            <version>${keep.monitor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.keep.monitor</groupId>
-            <artifactId>monitor-core</artifactId>
-            <version>${keep.monitor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>${spring-webmvc.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-            <version>${dubbo.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <version>${spring-kafka.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-core</artifactId>
-            <version>${hystrix-core.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.keep.monitor</groupId>
+                <artifactId>monitor-agent-core</artifactId>
+                <version>${keep.monitor.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.keep.monitor</groupId>
+                <artifactId>monitor-annotation</artifactId>
+                <version>${keep.monitor.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.keep.monitor</groupId>
+                <artifactId>monitor-core</artifactId>
+                <version>${keep.monitor.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

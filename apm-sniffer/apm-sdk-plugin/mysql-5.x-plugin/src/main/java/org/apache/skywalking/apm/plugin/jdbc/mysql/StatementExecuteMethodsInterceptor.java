@@ -28,6 +28,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceM
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.plugin.jdbc.define.StatementEnhanceInfos;
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
+import org.apache.skywalking.apm.plugin.jdbc.util.SqlUtil;
 
 /**
  * {@link StatementExecuteMethodsInterceptor} create the exit span when the client call the interceptor methods.
@@ -48,16 +49,16 @@ public class StatementExecuteMethodsInterceptor implements InstanceMethodsAround
          *
          * @see JDBCDriverInterceptor#afterMethod(EnhancedInstance, Method, Object[], Class[], Object)
          */
-        if (connectInfo != null && !cacheObject.isSkip()) {
+        String sql = "";
+        if (allArguments.length > 0) {
+            sql = (String)allArguments[0];
+        }
+        if (connectInfo != null && !SqlUtil.isSkip(sql)) {
 
             /**
              * The first argument of all intercept method in `com.mysql.jdbc.StatementImpl` class is SQL, except the
              * `executeBatch` method that the jdbc plugin need to trace, because of this method argument size is zero.
              */
-            String sql = "";
-            if (allArguments.length > 0) {
-                sql = (String)allArguments[0];
-            }
 
             AbstractSpan span = ContextManager.createExitSpan(buildOperationName(connectInfo, method.getName(), cacheObject.getStatementName()), connectInfo.getDatabasePeer());
             Tags.DB_TYPE.set(span, "sql");

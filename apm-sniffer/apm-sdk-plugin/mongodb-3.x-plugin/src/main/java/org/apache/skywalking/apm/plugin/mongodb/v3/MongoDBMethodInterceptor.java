@@ -54,6 +54,8 @@ import org.apache.skywalking.apm.agent.core.context.ContextManager;
 import org.apache.skywalking.apm.agent.core.context.tag.Tags;
 import org.apache.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.apache.skywalking.apm.agent.core.context.trace.SpanLayer;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
@@ -77,6 +79,7 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
     private static final int FILTER_LENGTH_LIMIT = 256;
 
     private static final String EMPTY = "";
+    private static final ILog logger = LogManager.getLogger(MongoDBMethodInterceptor.class);
 
     /**
      * Convert ReadOperation interface or WriteOperation interface to the implementation class. Get the method name and
@@ -201,11 +204,15 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
         Cluster cluster = (Cluster)allArguments[0];
         StringBuilder peers = new StringBuilder();
-        for (ServerDescription description : cluster.getDescription().getAll()) {
-            ServerAddress address = description.getAddress();
-            peers.append(address.getHost() + ":" + address.getPort() + ";");
+        try {
+            for (ServerDescription description : cluster.getDescription().getServerDescriptions()) {
+                ServerAddress address = description.getAddress();
+                peers.append(address.getHost() + ":" + address.getPort() + ";");
+            }
+        } catch (Exception e) {
+            logger.error(e, "get mongoDB server descriptions occurred error");
         }
 
-        objInst.enSetSkyWalkingDynamicField(peers.subSequence(0, peers.length() - 1).toString());
+        objInst.enSetSkyWalkingDynamicField(peers.length() > 0 ? peers.subSequence(0, peers.length() - 1).toString() : "");
     }
 }

@@ -18,11 +18,13 @@
 
 package org.apache.skywalking.apm.agent.core.plugin.loader;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import org.apache.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
+import org.apache.skywalking.apm.agent.core.boot.AgentPackagePath;
+import org.apache.skywalking.apm.agent.core.logging.api.ILog;
+import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
+import org.apache.skywalking.apm.agent.core.plugin.PluginBootstrap;
+
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,11 +35,6 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
-import org.apache.skywalking.apm.agent.core.boot.AgentPackagePath;
-import org.apache.skywalking.apm.agent.core.logging.api.ILog;
-import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
-import org.apache.skywalking.apm.agent.core.plugin.PluginBootstrap;
 
 /**
  * The <code>AgentClassLoader</code> represents a classloader,
@@ -120,29 +117,7 @@ public class AgentClassLoader extends ClassLoader {
             if (entry != null) {
                 try {
                     URL classFileUrl = new URL("jar:file:" + jar.sourceFile.getAbsolutePath() + "!/" + path);
-                    byte[] data = null;
-                    BufferedInputStream is = null;
-                    ByteArrayOutputStream baos = null;
-                    try {
-                        is = new BufferedInputStream(classFileUrl.openStream());
-                        baos = new ByteArrayOutputStream();
-                        int ch = 0;
-                        while ((ch = is.read()) != -1) {
-                            baos.write(ch);
-                        }
-                        data = baos.toByteArray();
-                    } finally {
-                        if (is != null)
-                            try {
-                                is.close();
-                            } catch (IOException ignored) {
-                            }
-                        if (baos != null)
-                            try {
-                                baos.close();
-                            } catch (IOException ignored) {
-                            }
-                    }
+                    byte[] data = readBytes(classFileUrl);
                     return defineClass(name, data, 0, data.length);
                 } catch (MalformedURLException e) {
                     logger.error(e, "find class fail.");
@@ -152,6 +127,33 @@ public class AgentClassLoader extends ClassLoader {
             }
         }
         throw new ClassNotFoundException("Can't find " + name);
+    }
+
+    private byte[] readBytes(URL classFileUrl) throws IOException {
+        byte[] data = null;
+        BufferedInputStream is = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            is = new BufferedInputStream(classFileUrl.openStream());
+            baos = new ByteArrayOutputStream();
+            int ch = 0;
+            while ((ch = is.read()) != -1) {
+                baos.write(ch);
+            }
+            data = baos.toByteArray();
+        } finally {
+            if (is != null)
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            if (baos != null)
+                try {
+                    baos.close();
+                } catch (IOException ignored) {
+                }
+        }
+        return data;
     }
 
     @Override

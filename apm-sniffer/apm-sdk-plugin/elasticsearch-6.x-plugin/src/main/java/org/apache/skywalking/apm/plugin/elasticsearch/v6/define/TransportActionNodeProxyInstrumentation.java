@@ -22,7 +22,6 @@ import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.ConstructorInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.InstanceMethodsInterceptPoint;
-import org.apache.skywalking.apm.agent.core.plugin.interceptor.StaticMethodsInterceptPoint;
 import org.apache.skywalking.apm.agent.core.plugin.match.ClassMatch;
 
 import static net.bytebuddy.matcher.ElementMatchers.any;
@@ -34,8 +33,8 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.NameMatch.byName
  */
 public class TransportActionNodeProxyInstrumentation extends ElasticsearchBaseClassEnhancePluginDefine {
 
-    public static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.elasticsearch.v6.TransportActionNodeProxyInterceptor";
-    public static final String ENHANCE_CLASS = "org.elasticsearch.action.TransportActionNodeProxy";
+    private static final String INTERCEPTOR_CLASS = "org.apache.skywalking.apm.plugin.elasticsearch.v6.TransportActionNodeProxyInterceptor";
+    private static final String ENHANCE_CLASS = "org.elasticsearch.action.TransportActionNodeProxy";
 
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
@@ -72,11 +71,6 @@ public class TransportActionNodeProxyInstrumentation extends ElasticsearchBaseCl
                 }
             }
         };
-    }
-
-    @Override
-    protected StaticMethodsInterceptPoint[] getStaticMethodsInterceptPoints() {
-        return new StaticMethodsInterceptPoint[0];
     }
 
     @Override

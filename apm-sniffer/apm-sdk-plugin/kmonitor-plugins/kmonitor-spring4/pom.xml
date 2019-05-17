@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kmonitor-plugins</artifactId>
+        <groupId>org.apache.skywalking</groupId>
+        <version>6.0.0-GA</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kmonitor-spring4</artifactId>
+    <version>6.0.0-GA</version>
+
+    <properties>
+        <spring-webmvc.version>4.3.8.RELEASE</spring-webmvc.version>
+        <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>kmonitor-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

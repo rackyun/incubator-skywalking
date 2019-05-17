@@ -28,6 +28,7 @@ import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceM
 import org.apache.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.apache.skywalking.apm.plugin.jdbc.define.StatementEnhanceInfos;
 import org.apache.skywalking.apm.plugin.jdbc.trace.ConnectionInfo;
+import org.apache.skywalking.apm.plugin.jdbc.util.SqlUtil;
 
 /**
  * @author zhang xin
@@ -40,17 +41,17 @@ public class PreparedStatementExecuteMethodsInterceptor implements InstanceMetho
         MethodInterceptResult result) throws Throwable {
         StatementEnhanceInfos cacheObject = (StatementEnhanceInfos)objInst.getSkyWalkingDynamicField();
         ConnectionInfo connectInfo = cacheObject.getConnectionInfo();
+        String sql = (String) allArguments[0];
         /**
          * For avoid NPE. In this particular case, Execute sql inside the {@link com.mysql.jdbc.ConnectionImpl} constructor,
          * before the interceptor sets the connectionInfo.
          *
          * @see JDBCDriverInterceptor#afterMethod(EnhancedInstance, Method, Object[], Class[], Object)
          */
-        if (connectInfo != null && !cacheObject.isSkip()) {
+        if (connectInfo != null && !SqlUtil.isSkip(sql)) {
             if (!ContextManager.isActive()) {
                 return;
             }
-            String sql = cacheObject.getSql();
 
             AbstractSpan span = ContextManager.createExitSpan(buildOperationName(connectInfo, method.getName(), cacheObject.getStatementName()), connectInfo.getDatabasePeer());
             Tags.DB_TYPE.set(span, "sql");
